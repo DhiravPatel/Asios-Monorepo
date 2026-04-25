@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import InquiryModal from "./InquiryModal";
 import ImgsViewer from "react-images-viewer";
 import SkeletonLoader from "../../SkeletonLoader";
@@ -8,7 +8,11 @@ import { useGetProductById } from "../../hooks/Product/ProductHook";
 const Second_product_details = () => {
   const navigate = useNavigate();
   const { _id } = useParams();
-  const { data: product } = useGetProductById(_id);
+  const location = useLocation();
+  const productFromState = location.state?.product;
+  // Only fetch when we don't already have the product (e.g. direct URL / refresh).
+  const { data: fetchedProduct } = useGetProductById(productFromState ? null : _id);
+  const product = productFromState || fetchedProduct;
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [viewerIsOpen, setViewerIsOpen] = useState(false);
   const [currImg, setCurrImg] = useState(0);

@@ -57,7 +57,7 @@ const Product_details = () => {
                       className="mt-10 relative flex justify-center flex-col items-center cursor-pointer"
                       key={product._id}
                     >
-                      <Link to={`/product-detail/${product._id}`}>
+                      <Link to={`/product-detail/${product._id}`} state={{ product }}>
                         <img
                           src={product.image || "fallback-image.jpg"}
                           alt={product.productName}
