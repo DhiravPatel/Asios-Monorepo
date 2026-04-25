@@ -1,0 +1,218 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  margin: 0%;
+  padding: 0%;
+  box-sizing: border-box;
+  font-family: montserrat;
+  /* font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif; */
+
+}
+h1 {
+  font-size: 48px; /* Heading */
+}
+
+h2 {
+  font-size: 36px; /* Subheading */
+}
+h3{
+  font-size: 28px;
+}
+p {
+  font-size: 18px; /* Description */
+}
+
+button {
+  font-size: 16px; /* Button text */
+}
+@media (max-width: 991px) {
+  h1 {
+    font-size: 40px;
+  }
+
+  h2 {
+    font-size: 32px;
+  }
+  h3{
+    font-size: 24px;
+  }
+  p {
+    font-size: 16px;
+  }
+
+  button {
+    font-size: 14px;
+  }
+}
+@media (max-width: 767px) {
+  h1 {
+    font-size: 32px;
+  }
+
+  h2 {
+    font-size: 24px;
+  }
+  h3{
+    font-size: 20px;
+  }
+  p {
+    font-size: 14px;
+  }
+
+  button {
+    font-size: 12px;
+  }
+}
+
+.button {
+  background-color: #a42832;
+  color: white;
+  font-weight: bold;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 16px;
+  padding-right: 16px;
+  border-radius: 5px;
+  width: fit-content;
+}
+
+.button:hover {
+  background-color: #691a21;
+}
+
+.bodyh1 {
+  text-align: left;
+  padding: 12px;
+  font-weight: 500;
+  font-size: 14px;
+  max-width: 160px !important;
+  width: 100%;
+  margin-right: -35px;
+}
+.tableborder{
+  border-bottom: 1px solid #2d3031;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+.tableborder:hover{
+  background-color: #ede5e5;
+}
+.bodyh2 {
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.btn {
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #2d3031;
+  padding: 10px 20px;
+  position: relative;
+  overflow: hidden;
+  z-index: 0;
+  border-radius: 0;
+  margin: 5px 0;
+  width: 180px;
+  box-shadow: unset;
+  color: #2d3031;
+  background-color: #fff;
+  transition: color 0.15s ease-in-out, border-color 0.15s ease-in-out;
+  text-align: center;
+  cursor: pointer;
+  text-transform: uppercase;
+}
+
+.btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background-color: #2d3031;
+  z-index: -1;
+  transition: left 0.3s ease-in-out;
+}
+
+.btn:hover {
+  color: #fff;
+  border-color: #2d3031;
+}
+
+.btn:hover::before {
+  left: 0;
+}
+.swiper-pagination-bullet{
+  display: none;
+}
+.boll{
+  background: black;
+  height: 20px;
+  width: 20px;
+  border-radius: 100%;
+}
+
+
+/* Shimmer Animation for Skeleton Loader */
+@keyframes react-loading-skeleton {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.react-loading-skeleton {
+  --base-color: #ebebeb;
+  --highlight-color: #f5f5f5;
+  --animation-duration: 1.5s;
+  --animation-direction: normal;
+  --pseudo-element-display: block;
+
+  background-color: var(--base-color);
+  width: 100%;
+  border-radius: 0.25rem;
+  display: inline-flex;
+  line-height: 1;
+
+  position: relative;
+  user-select: none;
+  overflow: hidden;
+}
+
+.react-loading-skeleton::after {
+  content: ' ';
+  display: var(--pseudo-element-display);
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
+  background-repeat: no-repeat;
+  background-image: var(
+    --custom-highlight-background,
+    linear-gradient(
+      90deg,
+      var(--base-color) 0%,
+      var(--highlight-color) 50%,
+      var(--base-color) 100%
+    )
+  );
+  transform: translateX(-100%);
+  animation-name: react-loading-skeleton;
+  animation-direction: var(--animation-direction);
+  animation-duration: var(--animation-duration);
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+
+/* Media query to disable animation for users who prefer reduced motion */
+@media (prefers-reduced-motion) {
+  .react-loading-skeleton {
+    --pseudo-element-display: none;
+  }
+}
+

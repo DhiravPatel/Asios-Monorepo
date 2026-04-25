@@ -1,0 +1,28 @@
+{
+  "name": "asios",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Asios platform monorepo (landing site, admin panel, REST API).",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "concurrently -n api,web,admin -c blue,green,magenta \"npm:dev:api\" \"npm:dev:web\" \"npm:dev:admin\"",
+    "dev:web": "npm run dev --workspace=@asios/web",
+    "dev:admin": "npm run start --workspace=@asios/admin",
+    "dev:api": "npm run dev --workspace=@asios/api",
+    "start:api": "npm run start --workspace=@asios/api",
+    "build": "npm run build --workspaces --if-present",
+    "build:web": "npm run build --workspace=@asios/web",
+    "build:admin": "npm run build --workspace=@asios/admin",
+    "lint": "npm run lint --workspaces --if-present",
+    "clean": "rm -rf node_modules apps/*/node_modules apps/*/dist apps/*/build packages/*/node_modules"
+  },
+  "devDependencies": {
+    "concurrently": "^9.0.1"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

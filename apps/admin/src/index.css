@@ -1,0 +1,30 @@
+/* globals.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.iconbutton{
+    color: white;
+    background-color: rgb(160, 19, 19);
+    height: 30px;
+    width: 30px;
+    padding: 10px 20px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+}
+.iconbutton:hover{
+    background-color: rgb(120, 36, 36);
+    color: white;
+}
+.ant-menu-item-selected{
+    background-color: rgb(120, 36, 36) !important;
+}
+
+
+.custom-card-header .ant-card-head {
+    background-color: #d6d6d6; 
+    color: black;
+  }

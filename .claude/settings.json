@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git -C /Users/dhiravpatel/Documents/asios log --oneline)",
+      "Bash(git -C /Users/dhiravpatel/Documents/asios status --short)"
+    ]
+  }
+}
