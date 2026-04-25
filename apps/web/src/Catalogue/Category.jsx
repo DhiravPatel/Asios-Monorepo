@@ -5,7 +5,7 @@ import { useGetAllCatalogueSubCategory } from "../hooks/Catalogue/CatalogueSubCa
 
 const Category = ({ onSelectSubcategory }) => {
   const [openIndex, setOpenIndex] = useState(null);
-  const [selectedSubcategories, setSelectedSubcategories] = useState([]);
+  const [selectedSubcategoryIds, setSelectedSubcategoryIds] = useState([]);
 
   const { data: catalogueCategoryData } = useGetAllCatalogueCategory();
   const { data: catalogueSubCategoryData } = useGetAllCatalogueSubCategory();
@@ -14,8 +14,11 @@ const Category = ({ onSelectSubcategory }) => {
     return (catalogueCategoryData || []).map((category) => ({
       ...category,
       submenu: (catalogueSubCategoryData || [])
-        .filter((sub) => sub.cataloguecategory === category.cataloguecategory)
-        .map((sub) => sub.cataloguesubcategory),
+        .filter((sub) => {
+          const parentId = sub.cataloguecategory?._id || sub.cataloguecategory;
+          return String(parentId) === String(category._id);
+        })
+        .map((sub) => ({ _id: sub._id, name: sub.cataloguesubcategory })),
     }));
   }, [catalogueCategoryData, catalogueSubCategoryData]);
 
@@ -23,24 +26,20 @@ const Category = ({ onSelectSubcategory }) => {
     setOpenIndex(openIndex === index ? null : index);
   };
 
-  const handleCheckboxChange = (subcategory) => {
-    setSelectedSubcategories((prevSelected) => {
-      if (prevSelected.includes(subcategory)) {
-        return prevSelected.filter((item) => item !== subcategory);
-      } else {
-        return [...prevSelected, subcategory];
-      }
-    });
+  const handleCheckboxChange = (subId) => {
+    setSelectedSubcategoryIds((prev) =>
+      prev.includes(subId) ? prev.filter((id) => id !== subId) : [...prev, subId]
+    );
   };
 
   useEffect(() => {
-    onSelectSubcategory(selectedSubcategories);  // Pass the selected subcategories to parent component
-  }, [selectedSubcategories, onSelectSubcategory]);
+    onSelectSubcategory(selectedSubcategoryIds);
+  }, [selectedSubcategoryIds, onSelectSubcategory]);
 
   return (
     <div className="lg:w-[300px] md:w-[250px] w-full mx-auto sticky top-32">
       {catalogueCategories.map((item, index) => (
-        <div key={index} className="flex flex-col">
+        <div key={item._id} className="flex flex-col">
           <div
             className={`flex justify-between items-center p-3 cursor-pointer ${
               openIndex === index ? "bg-[#a42832] text-white" : "bg-[#F5F5F5] text-[#333333]"
@@ -61,19 +60,18 @@ const Category = ({ onSelectSubcategory }) => {
             <ul
               className="pl-20 cursor-pointer py-2 space-y-1 w-full bg-[#FFF8E1] text-[#333333]"
             >
-              {item.submenu.map((subitem, subIndex) => (
-                <div key={subIndex} className="flex gap-2 items-center">
-                  {/* Checkbox */}
+              {item.submenu.map((subitem) => (
+                <div key={subitem._id} className="flex gap-2 items-center">
                   <input
                     type="checkbox"
-                    id={subitem}
-                    value={subitem}
-                    checked={selectedSubcategories.includes(subitem)}
-                    onChange={() => handleCheckboxChange(subitem)}
+                    id={subitem._id}
+                    value={subitem._id}
+                    checked={selectedSubcategoryIds.includes(subitem._id)}
+                    onChange={() => handleCheckboxChange(subitem._id)}
                     className="cursor-pointer"
                   />
-                  <label htmlFor={subitem} className="text-sm hover:text-primary transition-colors delay-100">
-                    {subitem}
+                  <label htmlFor={subitem._id} className="text-sm hover:text-primary transition-colors delay-100">
+                    {subitem.name}
                   </label>
                 </div>
               ))}

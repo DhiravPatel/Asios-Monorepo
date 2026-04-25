@@ -16,13 +16,14 @@ const Catelogue = () => {
     }
   }, [allCatalogues]);
 
-  const fetchCataloguesBySubcategory = (selectedSubcategories) => {
-    if (selectedSubcategories.length === 0) {
+  const fetchCataloguesBySubcategory = (selectedSubcategoryIds) => {
+    if (selectedSubcategoryIds.length === 0) {
       setCatalogues(allCatalogues);
     } else {
-      const filteredCatalogues = allCatalogues.filter((catalogue) =>
-        selectedSubcategories.includes(catalogue.cataloguesubcategory)
-      );
+      const filteredCatalogues = allCatalogues.filter((catalogue) => {
+        const subId = catalogue.cataloguesubcategory?._id || catalogue.cataloguesubcategory;
+        return selectedSubcategoryIds.includes(String(subId));
+      });
       setCatalogues(filteredCatalogues);
     }
   };

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import InquiryModal from "./InquiryModal";
 import ImgsViewer from "react-images-viewer";
@@ -13,7 +13,27 @@ const Second_product_details = () => {
   const [viewerIsOpen, setViewerIsOpen] = useState(false);
   const [currImg, setCurrImg] = useState(0);
 
-  const productDetails = product ? JSON.parse(product.details) : {};
+  const productDetails = useMemo(() => {
+    if (!product?.details) return {};
+    if (typeof product.details === 'string') {
+      try { return JSON.parse(product.details); } catch { return {}; }
+    }
+    return product.details;
+  }, [product]);
+
+  const categoryName = product?.category?.category || '';
+  const subcategoryName = product?.subcategory?.subcategory || '';
+  const categoryId = product?.category?._id;
+
+  const isFramedImage = useMemo(() => {
+    if (!product) return false;
+    return (
+      (categoryName === "Tiles" && subcategoryName !== "Wooden Strip Tiles" && subcategoryName !== "Subway Tiles" && subcategoryName !== "Elevation Wall Tiles") ||
+      (categoryName === "Decorative Wall & Ceiling Panel" && subcategoryName === "Soffit Ceiling Panel") ||
+      categoryName === "Quartz Slab" ||
+      categoryName === "Other Products"
+    );
+  }, [product, categoryName, subcategoryName]);
 
   const handleView = (pdfLink) => {
     window.open(pdfLink, "_blank");
@@ -23,24 +43,21 @@ const Second_product_details = () => {
     navigate(-1);
   };
 
-  // Open the image viewer with the clicked image
   const openImageViewer = () => {
     setViewerIsOpen(true);
-    setCurrImg(0); // Open the first image
+    setCurrImg(0);
   };
 
-  // Close the image viewer
   const closeViewer = () => {
     setViewerIsOpen(false);
   };
 
-  // Handle navigation between images (if you have multiple images)
   const gotoPrevious = () => {
-    setCurrImg((prev) => (prev - 1 + 1) % 1); // Just one image in this case
+    setCurrImg((prev) => (prev - 1 + 1) % 1);
   };
 
   const gotoNext = () => {
-    setCurrImg((prev) => (prev + 1) % 1); // Just one image in this case
+    setCurrImg((prev) => (prev + 1) % 1);
   };
 
   return (
@@ -53,13 +70,13 @@ const Second_product_details = () => {
           <Link to={"/product"}>Product</Link> <span>{">"}</span>
         </div>
         <div className="capitalize">
-          <Link to={`/main-product/${product ? product.category : ""}`}>
-            {product ? product.category : "Loading..."}
+          <Link to={categoryId ? `/main-product/${categoryId}` : '#'}>
+            {categoryName || "Loading..."}
           </Link>
           <span>{">"}</span>
         </div>
         <div className="capitalize" onClick={GoBack}>
-          <Link>{product ? product.subcategory : "Loading..."}</Link>
+          <Link>{subcategoryName || "Loading..."}</Link>
           <span>{">"}</span>
         </div>
         <div className="capitalize">
@@ -69,32 +86,13 @@ const Second_product_details = () => {
       <div className="container">
         <div className="md:pt-[40px] pb-[25px] mb-[50px]">
           <div className="flex md:flex-row flex-col md:gap-20 gap-5 items-start">
-            {/* <div className="flex flex-col">
-              <img
-                src={product ? product.image : ""}
-                alt={product ? product.productName : "Loading..."}
-                className={`h-[350px] w-[350px] sm:h-[400px] sm:w-[400px] ${
-                  product?.category === "Tiles"
-                    ? "border-[#dfdfdf] border object-cover"
-                    : "object-contain"
-                }`}
-                onClick={openImageViewer}
-              />
-            </div> */}
             <div className="flex flex-col">
               {product ? (
                 <img
                   src={product.image}
                   alt={product.productName}
                   className={`h-[350px] w-[350px] sm:h-[400px] sm:w-[400px] cursor-pointer ${
-                    (product?.category === "Tiles" && (product.subcategory != "Wooden Strip Tiles") && (product.subcategory != "Subway Tiles") && (product.subcategory != "Elevation Wall Tiles")) 
-                    || (product.category === "Decorative Wall & Ceiling Panel" && (product.subcategory === "Soffit Ceiling Panel")) 
-                    || product.category === "Quartz Slab" 
-                    ||product.category === "Other Products"
-
-                      ? "border-[#dfdfdf] border object-cover"
-
-                      : "object-contain"
+                    isFramedImage ? "border-[#dfdfdf] border object-cover" : "object-contain"
                   }`}
                   onClick={openImageViewer}
                 />

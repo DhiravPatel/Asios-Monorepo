@@ -54,7 +54,7 @@ const Footer = () => {
           {data && data.length > 0 && (
               data.map((item) => (
                 <Link
-                  to={`/main-product/${item.category}`}
+                  to={`/main-product/${item._id}`}
                   key={item._id}
                   className="'sm:w-[300px] w-full sm:text-sm text-xs text-white hover:text-[#A42832] transition-colors duration-300"
                 >

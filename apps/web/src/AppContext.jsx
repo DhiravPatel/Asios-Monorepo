@@ -1,27 +1,72 @@
-// AppContext.jsx
-import React, { createContext, useState, ReactNode, useEffect } from 'react';
+import React, { createContext, useEffect, useMemo, useState } from 'react';
+import api from './hooks/api';
 
 export const AppContext = createContext();
 
 export const AppProvider = ({ children }) => {
-  const [footerData, setFooterData] = useState('');
+  const [categories, setCategories] = useState(() => {
+    const cached = typeof window !== 'undefined' && localStorage.getItem('asios_categories');
+    return cached ? JSON.parse(cached) : [];
+  });
+  const [subcategories, setSubcategories] = useState(() => {
+    const cached = typeof window !== 'undefined' && localStorage.getItem('asios_subcategories');
+    return cached ? JSON.parse(cached) : [];
+  });
+  const [footerData, setFooterData] = useState(() => {
+    const cached = typeof window !== 'undefined' && localStorage.getItem('footerData');
+    return cached ? JSON.parse(cached) : [];
+  });
 
   useEffect(() => {
-    const savedFooterData = localStorage.getItem('footerData');
-    if (savedFooterData) {
-      setFooterData(JSON.parse(savedFooterData));
-    }
+    let cancelled = false;
+    Promise.all([
+      api.get('/category/getAllCategories'),
+      api.get('/subcategory/getAllSubCategories'),
+    ])
+      .then(([catRes, subRes]) => {
+        if (cancelled) return;
+        const cats = catRes.data?.data ?? [];
+        const subs = subRes.data?.data ?? [];
+        setCategories(cats);
+        setSubcategories(subs);
+        setFooterData(cats);
+        try {
+          localStorage.setItem('asios_categories', JSON.stringify(cats));
+          localStorage.setItem('asios_subcategories', JSON.stringify(subs));
+          localStorage.setItem('footerData', JSON.stringify(cats));
+        } catch {
+          // ignore quota errors
+        }
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
-  useEffect(() => {
-    if (footerData.length > 0) {
-      localStorage.setItem('footerData', JSON.stringify(footerData));
-    }
-  }, [footerData]);
+  const categoryById = useMemo(() => {
+    const map = new Map();
+    for (const c of categories) map.set(c._id, c);
+    return map;
+  }, [categories]);
 
-  return (
-    <AppContext.Provider value={{ footerData, setFooterData }}>
-      {children}
-    </AppContext.Provider>
+  const subcategoryById = useMemo(() => {
+    const map = new Map();
+    for (const s of subcategories) map.set(s._id, s);
+    return map;
+  }, [subcategories]);
+
+  const value = useMemo(
+    () => ({
+      categories,
+      subcategories,
+      categoryById,
+      subcategoryById,
+      footerData,
+      setFooterData,
+    }),
+    [categories, subcategories, categoryById, subcategoryById, footerData]
   );
+
+  return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 };

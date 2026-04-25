@@ -1,171 +1,103 @@
 const Catalogue = require('../Model/Catalogue.js')
 const cloudinary = require('cloudinary').v2;
 
-async function AddCatalogue(req,res) {
-    try {
-        const { cataloguecategory,cataloguesubcategory,name,link} = req.body;
-        const image = req.file.path
-        const newCatalogue = new Catalogue({
-          cataloguecategory,
-          cataloguesubcategory,
-          name,
-          link,
-          image
-        })
-      const result = await newCatalogue.save();
-      res.status(201).json({
-        message: 'Catalogue Added',
-        data: result
-      })
-    } catch (error) {
-        res.status(500).json({
-            message: 'Error adding catalogue',
-            error: error.message
-          })
-    }
+function extractPublicId(imageUrl, folder) {
+  if (!imageUrl) return null
+  const parts = imageUrl.split('/')
+  const last = parts[parts.length - 1]
+  const idPart = last.split('.').shift()
+  return `${folder}/${idPart}`
+}
+
+const POPULATE = [
+  { path: 'cataloguecategory', select: 'cataloguecategory' },
+  { path: 'cataloguesubcategory', select: 'cataloguesubcategory' },
+]
+
+async function AddCatalogue(req, res) {
+  try {
+    const { cataloguecategory, cataloguesubcategory, name, link } = req.body
+    const image = req.file?.path
+    const newCatalogue = new Catalogue({
+      cataloguecategory,
+      cataloguesubcategory,
+      name,
+      link,
+      image,
+    })
+    const saved = await newCatalogue.save()
+    const result = await Catalogue.findById(saved._id).populate(POPULATE)
+    res.status(201).json({ message: 'Catalogue Added', data: result })
+  } catch (error) {
+    res.status(500).json({ message: 'Error adding catalogue', error: error.message })
+  }
 }
 
 async function GetAllCatalogue(req, res) {
-    try {
-      const catalogue = await Catalogue.find()
-      res.status(200).json({
-        message: 'catalogue fetched successfully',
-        data: catalogue
-      });
-    } catch (error) {
-      res.status(500).json({
-        message: 'Error fetching catalogue',
-        error: error.message
-      })
-    }
+  try {
+    const { cataloguecategory, cataloguesubcategory } = req.query
+    const filter = {}
+    if (cataloguecategory) filter.cataloguecategory = cataloguecategory
+    if (cataloguesubcategory) filter.cataloguesubcategory = cataloguesubcategory
+
+    const catalogue = await Catalogue.find(filter).populate(POPULATE).sort({ createdAt: -1 })
+    res.status(200).json({ message: 'catalogue fetched successfully', data: catalogue })
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching catalogue', error: error.message })
+  }
 }
 
 async function DeleteCatalogue(req, res) {
   try {
-
     const catalogueId = req.params.id
+    const catalogue = await Catalogue.findById(catalogueId)
+    if (!catalogue) return res.status(404).json({ message: 'catalogue not found' })
 
-    const catalogue1 = await Catalogue.findById(catalogueId);
-    if (!catalogue1) {
-      return res.status(404).json({
-        message: 'catalogue not found',
-      });
+    if (catalogue.image) {
+      const publicId = extractPublicId(catalogue.image, 'catalogue-image')
+      if (publicId) await cloudinary.uploader.destroy(publicId).catch(() => {})
     }
 
-    if (catalogue1.image) {
-      const urlParts = catalogue1.image.split('/');
-      const versionedPart = urlParts[urlParts.length - 1]; 
-      const publicId = versionedPart.split('/').pop().split('.')[0];
-      await cloudinary.uploader.destroy(`catalogue-image/${publicId}`, (error, result) => {
-        if (error) {
-          console.error("Error deleting image from Cloudinary:", error);
-        } else {
-        }
-      });
-    }  
-
     const deletedCatalogue = await Catalogue.findByIdAndDelete(catalogueId)
-
-    res.status(200).json({
-      message: 'Catalogue deleted successfully',
-      data: deletedCatalogue
-    });
+    res.status(200).json({ message: 'Catalogue deleted successfully', data: deletedCatalogue })
   } catch (error) {
-    res.status(500).json({
-      message: 'Error deleting Catalogue',
-      error: error.message
-    });
+    res.status(500).json({ message: 'Error deleting Catalogue', error: error.message })
   }
 }
 
 async function EditCatalogue(req, res) {
   try {
-    const catalogueId = req.params.id;
-    const { cataloguecategory, cataloguesubcategory, name, link } = req.body;
-    // const image = req.file.path
-    let image
+    const catalogueId = req.params.id
+    const { cataloguecategory, cataloguesubcategory, name, link } = req.body
+
+    if (!catalogueId) return res.status(400).json({ message: 'Catalogue ID is required' })
+
+    const existing = await Catalogue.findById(catalogueId)
+    if (!existing) return res.status(404).json({ message: 'Catalogue not found' })
+
+    const update = {}
+    if (cataloguecategory) update.cataloguecategory = cataloguecategory
+    if (cataloguesubcategory) update.cataloguesubcategory = cataloguesubcategory
+    if (name) update.name = name
+    if (link) update.link = link
+
     if (req.file) {
-      image = req.file.path; 
-    } 
-    else if (req.body.image) {
-      image = req.body.image; 
-    } 
-    else {
-      return res.status(400).json({ message: 'Image is required' });
-    }
-
-    if (!catalogueId) {
-      return res.status(400).json({
-        message: 'Catalogue ID is required for editing',
-      });
-    }
-
-    const catalogue = await Catalogue.findById(catalogueId);
-    if (!catalogue) {
-      return res.status(404).json({
-        message: 'Catalogue not found',
-      });
-    }
-    if(req.file){
-      if (catalogue.image) {
-        const urlParts = catalogue.image.split('/');
-        const versionedPart = urlParts[urlParts.length - 1];
-        const publicId = versionedPart.split('.').slice(0, -1).join('.');
-        await cloudinary.uploader.destroy(`catalogue-image/${publicId}`, (error, result) => {
-          if (error) {
-            console.error("Error deleting image from Cloudinary:", error);
-          }
-        });
+      if (existing.image) {
+        const publicId = extractPublicId(existing.image, 'catalogue-image')
+        if (publicId) await cloudinary.uploader.destroy(publicId).catch(() => {})
       }
+      update.image = req.file.path
     }
 
-    // Update catalogue fields
-    catalogue.cataloguecategory = cataloguecategory
-    catalogue.cataloguesubcategory = cataloguesubcategory
-    catalogue.name = name || catalogue.name;
-    catalogue.link = link || catalogue.link;
-    catalogue.image = image;
+    const result = await Catalogue.findByIdAndUpdate(catalogueId, update, {
+      new: true,
+      runValidators: true,
+    }).populate(POPULATE)
 
-    const result = await catalogue.save();
-    res.status(200).json({
-      message: 'Catalogue updated successfully',
-      data: result,
-    });
+    res.status(200).json({ message: 'Catalogue updated successfully', data: result })
   } catch (error) {
-    res.status(500).json({
-      message: 'Error updating catalogue',
-      error: error.message,
-    });
+    res.status(500).json({ message: 'Error updating catalogue', error: error.message })
   }
 }
 
-async function GetCatalogueBySubcategory(req, res) {
-  const { cataloguesubcategory } = req.params;
-
-  try {
-    
-      const catalogues = await Catalogue.find({ cataloguesubcategory }); 
-
-      if (catalogues.length === 0) {
-          return res.status(404).json({
-              message: 'No catalogues found for the selected catalogue subcategory',
-              data: []
-          });
-      }
-
-      res.status(200).json({
-          message: 'Catalogues fetched successfully',
-          data: catalogues
-      });
-  } catch (error) {
-      res.status(500).json({
-          message: 'Error fetching catalogues',
-          error: error.message
-      });
-  }
-}
-
-
-
-
-module.exports = {AddCatalogue,GetAllCatalogue,DeleteCatalogue,EditCatalogue,GetCatalogueBySubcategory}
+module.exports = { AddCatalogue, GetAllCatalogue, DeleteCatalogue, EditCatalogue }

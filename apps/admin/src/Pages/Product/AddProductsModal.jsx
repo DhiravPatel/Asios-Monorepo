@@ -22,13 +22,17 @@ const AddProductsModal = ({ visible, onClose, product, fetchProducts }) => {
   if (visible) {
     if (product) {
       const { productName, category, subcategory, details, image: productImage } = product;
+      const categoryId = category?._id || category;
+      const subcategoryId = subcategory?._id || subcategory;
 
-      const detailsObj = JSON.parse(details || '{}');
+      const detailsObj = typeof details === 'string'
+        ? (() => { try { return JSON.parse(details); } catch { return {}; } })()
+        : (details || {});
 
       form.setFieldsValue({
         productName,
-        category,
-        subcategory,
+        category: categoryId,
+        subcategory: subcategoryId,
         model: detailsObj.model || '',
         size: detailsObj.size || '',
         surface: detailsObj.surface || '',
@@ -44,7 +48,7 @@ const AddProductsModal = ({ visible, onClose, product, fetchProducts }) => {
 
 
       setImage(productImage);
-      setSelectedCategory(category);
+      setSelectedCategory(categoryId);
     } else {
       form.resetFields();
       setImage(null);
@@ -56,7 +60,10 @@ const AddProductsModal = ({ visible, onClose, product, fetchProducts }) => {
 
   useEffect(() => {
     if (selectedCategory) {
-      const filtered = allSubcategories.filter(sub => sub.category === selectedCategory);
+      const filtered = allSubcategories.filter(sub => {
+        const subCatId = sub.category?._id || sub.category;
+        return String(subCatId) === String(selectedCategory);
+      });
       setFilteredSubcategories(filtered);
     } else {
       setFilteredSubcategories([]);
@@ -175,8 +182,8 @@ const AddProductsModal = ({ visible, onClose, product, fetchProducts }) => {
             <Select
               placeholder="Select a category"
               options={categories.map(category => ({
-                value: category.category,
-                label: category.label
+                value: category._id,
+                label: category.category
               }))}
               onChange={handleCategoryChange}
             />
@@ -189,7 +196,7 @@ const AddProductsModal = ({ visible, onClose, product, fetchProducts }) => {
           >
             <Select placeholder="Select a subcategory">
               {filteredSubcategories.map(sub => (
-                <Select.Option key={sub.subcategory} value={sub.value}>
+                <Select.Option key={sub._id} value={sub._id}>
                   {sub.subcategory}
                 </Select.Option>
               ))}

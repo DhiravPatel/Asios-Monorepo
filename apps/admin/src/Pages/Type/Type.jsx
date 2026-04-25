@@ -51,7 +51,8 @@ const Type = () => {
 
   const showModal = (record) => {
     setModalContent(record);
-    setEditCategory(record.category);
+    const categoryId = record.category?._id || record.category;
+    setEditCategory(categoryId);
     setEditSubCategoryName(record.subcategory);
     setEditImage(record.image);
     setEditImagePreview(record.image);
@@ -124,7 +125,8 @@ const Type = () => {
   };
 
   const filteredDataSource = dataSource.filter(item => {
-    const categoryMatch = selectedCategory ? item.category === selectedCategory : true;
+    const itemCategoryId = item.category?._id || item.category;
+    const categoryMatch = selectedCategory ? String(itemCategoryId) === String(selectedCategory) : true;
     const subCategoryMatch = selectedSubCategory ? item.subcategory === selectedSubCategory : true;
     return categoryMatch && subCategoryMatch;
   });
@@ -165,8 +167,8 @@ const Type = () => {
           Category <CaretUpOutlined className="ml-1" />
         </span>
       ),
-      dataIndex: "category",
       key: "category",
+      render: (_, record) => record.category?.category || '',
       filterIcon: (filtered) => (
         <CaretUpOutlined style={{ color: filtered ? '#1890ff' : undefined }} />
       ),
@@ -221,9 +223,11 @@ const Type = () => {
             placeholder="Select Category"
             onChange={handleCategoryChange}
             style={{ width: 200, marginRight: '16px' }}
+            value={selectedCategory}
+            allowClear
           >
             {categories.map(category => (
-              <Option key={category._id} value={category.category}>
+              <Option key={category._id} value={category._id}>
                 {category.category}
               </Option>
             ))}
@@ -232,9 +236,12 @@ const Type = () => {
             placeholder="Select Sub-Category"
             onChange={handleSubCategoryChange}
             style={{ width: 200 }}
-            disabled={!selectedCategory} 
+            disabled={!selectedCategory}
+            value={selectedSubCategory}
+            allowClear
           >
-            {dataSource.filter(item => item.category === selectedCategory)
+            {dataSource
+              .filter(item => String(item.category?._id || item.category) === String(selectedCategory))
               .map(item => (
                 <Option key={item._id} value={item.subcategory}>
                   {item.subcategory}
@@ -272,8 +279,7 @@ const Type = () => {
             <span className="w-36">Category:</span>
             <Input
               type="text"
-              value={editCategory}
-              onChange={(e) => setEditCategory(e.target.value)}
+              value={modalContent?.category?.category || ''}
               placeholder="Enter category name"
               disabled
             />

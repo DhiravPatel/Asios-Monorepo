@@ -2,32 +2,34 @@ const mongoose = require('mongoose')
 
 const catalogueSchema = new mongoose.Schema({
   cataloguecategory: {
-    type: String,
-    required: true, 
-    trim: true,     
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'CatalogueCategory',
+    required: true,
+    index: true,
   },
   cataloguesubcategory: {
-    type: String,
-    required: true, 
-    trim: true,     
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'CatalogueSubCategory',
+    required: true,
+    index: true,
   },
   name: {
     type: String,
-    required: true, 
-    trim: true,     
+    required: true,
+    trim: true,
   },
   link: {
     type: String,
-    required: true, 
-    trim: true,     
+    required: true,
+    trim: true,
   },
   image: {
     type: String,
     required: false,
-    trim: true,      
+    trim: true,
   }
 }, {
-  timestamps: true 
+  timestamps: true
 })
 
 const Catalogue = mongoose.model('Catalogue', catalogueSchema)

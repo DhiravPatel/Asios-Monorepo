@@ -54,8 +54,9 @@ const AddCatelougeSubCategory = ({ visible, onClose }) => {
           <span className="w-36">Category:</span>
           <Select
                         placeholder="Select a category"
+                        value={selectedCatalogueCategory || undefined}
                         options={catalogueCategories.map(category => ({
-                            value: category.cataloguecategory,
+                            value: category._id,
                             label: category.cataloguecategory
                         }))}
                         onChange={handleCatalogueCategoryChange}

@@ -1,11 +1,31 @@
-import React from "react";
+import React, { useContext, useMemo } from "react";
 import { Link, useParams } from "react-router-dom";
 import SkeletonLoader from "../../SkeletonLoader";
-import { useGetProductBySubCategory } from "../../hooks/Product/ProductHook";
+import { useGetProductsBySubCategoryId } from "../../hooks/Product/ProductHook";
+import { AppContext } from "../../AppContext";
 
 const Product_details = () => {
-  const { subcategory, category } = useParams();
-  const { data: products } = useGetProductBySubCategory(subcategory);
+  const { categoryId, subcategoryId } = useParams();
+  const { data: products } = useGetProductsBySubCategoryId(subcategoryId);
+  const { categoryById, subcategoryById } = useContext(AppContext);
+
+  const category = categoryById?.get(categoryId);
+  const subcategory = subcategoryById?.get(subcategoryId);
+  const categoryName = category?.category || products?.[0]?.category?.category || '';
+  const subcategoryName = subcategory?.subcategory || products?.[0]?.subcategory?.subcategory || '';
+
+  const isFramedCategory = useMemo(() => {
+    if (!products || products.length === 0) return false;
+    const p = products[0];
+    const catName = p.category?.category;
+    const subName = p.subcategory?.subcategory;
+    return (
+      (catName === "Tiles" && subName !== "Wooden Strip Tiles" && subName !== "Subway Tiles" && subName !== "Elevation Wall Tiles") ||
+      (catName === "Decorative Wall & Ceiling Panel" && subName === "Soffit Ceiling Panel") ||
+      catName === "Quartz Slab" ||
+      (catName === "Other Products" && subName !== "ROOFING SHEET")
+    );
+  }, [products]);
 
   return (
     <>
@@ -17,10 +37,10 @@ const Product_details = () => {
           <Link to={"/product"}>Product</Link> <span>{">"}</span>
         </div>
         <div>
-          <Link to={`/main-product/${category}`}>{category}</Link> <span>{">"}</span>
+          <Link to={`/main-product/${categoryId}`}>{categoryName}</Link> <span>{">"}</span>
         </div>
         <div>
-          <Link>{subcategory}</Link>
+          <Link>{subcategoryName}</Link>
         </div>
       </div>
       <div className="container">
@@ -31,7 +51,7 @@ const Product_details = () => {
                 Products
               </span>
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-8 gap-y-3">
-                {products.length > 0 ? (
+                {products && products.length > 0 ? (
                   products.map((product) => (
                     <div
                       className="mt-10 relative flex justify-center flex-col items-center cursor-pointer"
@@ -40,19 +60,11 @@ const Product_details = () => {
                       <Link to={`/product-detail/${product._id}`}>
                         <img
                           src={product.image || "fallback-image.jpg"}
-                          className={`sm:w-[250px] sm:h-[250px] md:w-[300px] md:h-[300px] w-[350px] h-[350px] hover:opacity-90
-                            ${
-                              (product?.category === "Tiles" && (product.subcategory != "Wooden Strip Tiles") && (product.subcategory != "Subway Tiles") && (product.subcategory != "Elevation Wall Tiles")) 
-                              || (product.category === "Decorative Wall & Ceiling Panel" && (product.subcategory === "Soffit Ceiling Panel")) 
-                              || product.category === "Quartz Slab" 
-                              ||(product.category === "Other Products" && !product.subcategory === 'ROOFING SHEET')
-          
-                                ? "border-[#dfdfdf] border object-cover"
-          
-                                : "object-contain"
-                            }
-                            `}
-                          style={{width:'550px'}}
+                          alt={product.productName}
+                          className={`sm:w-[250px] sm:h-[250px] md:w-[300px] md:h-[300px] w-[350px] h-[350px] hover:opacity-90 ${
+                            isFramedCategory ? "border-[#dfdfdf] border object-cover" : "object-contain"
+                          }`}
+                          style={{ width: '550px' }}
                         />
                         <div className="mt-1 font-medium text-lg uppercase hover:underline hover:transition-all hover:duration-300 text-center">
                           {product.productName}

@@ -1,13 +1,38 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import api from '../api';
 
-export const useGetSubCategoriesByCategory = (category) => {
+export const useGetAllSubCategories = () => {
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const fetchData = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await api.get('/subcategory/getAllSubCategories');
+      setData(response.data?.data ?? []);
+    } catch (err) {
+      setError(err);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  return { data, loading, error, refetch: fetchData };
+};
+
+export const useGetSubCategoriesByCategoryId = (categoryId) => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (!category) {
+    if (!categoryId) {
       setData([]);
       return;
     }
@@ -15,7 +40,7 @@ export const useGetSubCategoriesByCategory = (category) => {
     setLoading(true);
     setError(null);
     api
-      .get(`/subcategory/getAllSubCategoriesByCategory/${category}`)
+      .get('/subcategory/getAllSubCategories', { params: { category: categoryId } })
       .then((res) => {
         if (!cancelled) setData(res.data?.data ?? []);
       })
@@ -28,7 +53,7 @@ export const useGetSubCategoriesByCategory = (category) => {
     return () => {
       cancelled = true;
     };
-  }, [category]);
+  }, [categoryId]);
 
   return { data, loading, error };
 };

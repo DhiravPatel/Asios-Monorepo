@@ -1,13 +1,13 @@
-import React from "react";
-// import product from "../assets/4.webp";
+import React, { useContext } from "react";
 import product from "../assets/product.webp"
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import SkeletonLoader from "../SkeletonLoader";
-import { useGetAllCategories } from "../hooks/Category/CategoryHook";
+import { AppContext } from "../AppContext";
 
 const Product = () => {
-  const { data: productData } = useGetAllCategories();
+  const { categories } = useContext(AppContext);
+  const productData = categories || [];
 
   return (
     <>
@@ -35,11 +35,11 @@ const Product = () => {
         {productData.length > 0 ? (
         productData.map((data) => (
           <div className="relative group overflow-hidden cursor-pointer" key={data._id}>
-            <Link to={`/main-product/${data.category}`}>
+            <Link to={`/main-product/${data._id}`}>
               <img
                 src={data.image || "fallback-image.jpg"}
                 className="md:w-[400px] md:h-[400px] w-[350px] h-[350px] object-cover"
-                alt={data.title}
+                alt={data.category}
               />
               <div className="absolute bottom-0 w-full text-center bg-[#A42832] text-white p-2 transform translate-y-full transition-transform duration-300 group-hover:translate-y-0">
                 {data.category}
@@ -48,7 +48,6 @@ const Product = () => {
           </div>
         ))
       ) : (
-        // Skeleton loader for each product
         Array.from({ length: 10 }).map((_, index) => (
           <div
             className="relative group overflow-hidden cursor-pointer"

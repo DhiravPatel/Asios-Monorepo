@@ -70,8 +70,8 @@ function App() {
           <Route path="/contact" element={<ContactUS />} />
           <Route path="/product" element={<Product />} />
           <Route path="/catalogue" element={<Catelogue />} />
-          <Route path="/main-product/:category" element={<Main_Product_details />} />
-          <Route path="/product/:category/:subcategory" element={<Product_details />} />
+          <Route path="/main-product/:categoryId" element={<Main_Product_details />} />
+          <Route path="/product/:categoryId/:subcategoryId" element={<Product_details />} />
           <Route path="/product-detail/:_id" element={<Second_product_details />} />
           <Route path="/export" element={<Export />} />
           <Route path="/tiles-calculator" element={<TilesCalculator />} />

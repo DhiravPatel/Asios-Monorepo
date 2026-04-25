@@ -33,22 +33,21 @@ export const useGetProductById = (id) => {
   return { data, loading, error };
 };
 
-export const useGetProductBySubCategory = (subcategory) => {
+export const useGetProductsBySubCategoryId = (subcategoryId) => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (!subcategory) {
+    if (!subcategoryId) {
       setData([]);
       return;
     }
     let cancelled = false;
     setLoading(true);
     setError(null);
-    const encoded = encodeURIComponent(subcategory);
     api
-      .get(`/product/getProductBySubCategory/${encoded}`)
+      .get('/product/getAllProducts', { params: { subcategory: subcategoryId } })
       .then((res) => {
         if (!cancelled) setData(res.data?.data ?? []);
       })
@@ -61,7 +60,7 @@ export const useGetProductBySubCategory = (subcategory) => {
     return () => {
       cancelled = true;
     };
-  }, [subcategory]);
+  }, [subcategoryId]);
 
   return { data, loading, error };
 };

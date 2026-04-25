@@ -69,13 +69,13 @@ const Product = () => {
     },
     {
       title: "Category",
-      dataIndex: "cataloguecategory",
       key: "cataloguecategory",
+      render: (_, record) => record.cataloguecategory?.cataloguecategory || '',
     },
     {
       title: "Subcategory",
-      dataIndex: "cataloguesubcategory",
       key: "cataloguesubcategory",
+      render: (_, record) => record.cataloguesubcategory?.cataloguesubcategory || '',
     },
     {
       title: "Link",

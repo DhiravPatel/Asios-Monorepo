@@ -77,18 +77,23 @@ const Product = () => {
 
   // Filter products based on selected filters
   const filteredProducts = products.filter(product => {
-    const categoryMatch = selectedCategory ? product.category === selectedCategory : true;
-    const subcategoryMatch = selectedSubcategory ? product.subcategory === selectedSubcategory : true;
+    const productCatId = product.category?._id || product.category;
+    const productSubId = product.subcategory?._id || product.subcategory;
+    const categoryMatch = selectedCategory ? String(productCatId) === String(selectedCategory) : true;
+    const subcategoryMatch = selectedSubcategory ? String(productSubId) === String(selectedSubcategory) : true;
     const nameMatch = product.productName.toLowerCase().includes(productNameFilter.toLowerCase());
     return categoryMatch && subcategoryMatch && nameMatch;
   });
 
-  
   const uniqueSubcategories = selectedCategory
     ? products
-        .filter(product => product.category === selectedCategory)
+        .filter(product => String(product.category?._id || product.category) === String(selectedCategory))
         .map(product => product.subcategory)
-        .filter((value, index, self) => self.indexOf(value) === index) // unique
+        .filter(Boolean)
+        .filter((sub, index, self) => {
+          const subId = sub?._id || sub;
+          return self.findIndex(s => String(s?._id || s) === String(subId)) === index;
+        })
     : [];
 
   const columns = [
@@ -124,8 +129,8 @@ const Product = () => {
           Category <CaretUpOutlined className="ml-1" />
         </span>
       ),
-      dataIndex: "category",
       key: "category",
+      render: (_, record) => record.category?.category || '',
     },
     {
       title: (
@@ -133,8 +138,8 @@ const Product = () => {
           Subcategory <CaretUpOutlined className="ml-1" />
         </span>
       ),
-      dataIndex: "subcategory",
       key: "subcategory",
+      render: (_, record) => record.subcategory?.subcategory || '',
     },
     {
       title: (
@@ -189,10 +194,11 @@ const Product = () => {
               onChange={handleCategoryChange}
               style={{ width: 200, marginRight: '16px' }}
               value={selectedCategory}
+              allowClear
             >
               {categories.map(category => (
-                <Option key={category._id} value={category.category}>
-                  {category.name}
+                <Option key={category._id} value={category._id}>
+                  {category.category}
                 </Option>
               ))}
             </Select>
@@ -201,12 +207,18 @@ const Product = () => {
               onChange={handleSubcategoryChange}
               style={{ width: 200 }}
               disabled={!selectedCategory}
+              value={selectedSubcategory || undefined}
+              allowClear
             >
-              {uniqueSubcategories.map((subcategory, index) => (
-                <Option key={index} value={subcategory}>
-                  {subcategory}
-                </Option>
-              ))}
+              {uniqueSubcategories.map((sub) => {
+                const subId = sub?._id || sub;
+                const subName = sub?.subcategory || sub;
+                return (
+                  <Option key={subId} value={subId}>
+                    {subName}
+                  </Option>
+                );
+              })}
             </Select>
             <Search
             placeholder="Search Product"

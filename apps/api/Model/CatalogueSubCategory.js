@@ -2,17 +2,18 @@ const mongoose = require('mongoose')
 
 const catalogueSubCategorySchema = new mongoose.Schema({
   cataloguecategory: {
-    type: String,
-    required: true, 
-    trim: true,     
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'CatalogueCategory',
+    required: true,
+    index: true,
   },
   cataloguesubcategory: {
     type: String,
-    required: true, 
-    trim: true,     
+    required: true,
+    trim: true,
   },
 }, {
-  timestamps: true 
+  timestamps: true
 })
 
 const CatalogueSubCategory = mongoose.model('CatalogueSubCategory', catalogueSubCategorySchema)

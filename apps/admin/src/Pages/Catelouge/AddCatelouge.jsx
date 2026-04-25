@@ -21,10 +21,12 @@ const AddCatelouge = ({ visible, onClose, catalogue, fetchCatalogueData }) => {
 
   useEffect(() => {
     if (visible && catalogue) {
+      const catId = catalogue.cataloguecategory?._id || catalogue.cataloguecategory;
+      const subId = catalogue.cataloguesubcategory?._id || catalogue.cataloguesubcategory;
       setCatalogueName(catalogue.name || "");
       setCatalogueLink(catalogue.link || "");
-      setSelectedCatalogueCategory(catalogue.cataloguecategory || null);
-      setSelectedCatalogueSubcategory(catalogue.cataloguesubcategory || null);
+      setSelectedCatalogueCategory(catId || null);
+      setSelectedCatalogueSubcategory(subId || null);
       if (catalogue.image) {
         setPreviewUrl(catalogue.image);
         setFile(null);
@@ -32,9 +34,10 @@ const AddCatelouge = ({ visible, onClose, catalogue, fetchCatalogueData }) => {
         setFile(null);
         setPreviewUrl("");
       }
-      const filtered = (allSubcatalogueCategories || []).filter(
-        sub => sub.cataloguecategory === catalogue.cataloguecategory
-      );
+      const filtered = (allSubcatalogueCategories || []).filter((sub) => {
+        const subCatId = sub.cataloguecategory?._id || sub.cataloguecategory;
+        return String(subCatId) === String(catId);
+      });
       setFilteredSubcatalogueCategories(filtered);
     } else if (!visible) {
       resetForm();
@@ -56,7 +59,10 @@ const AddCatelouge = ({ visible, onClose, catalogue, fetchCatalogueData }) => {
   const handleCatalogueCategoryChange = (value) => {
     setSelectedCatalogueCategory(value);
     setSelectedCatalogueSubcategory(null);
-    const filtered = (allSubcatalogueCategories || []).filter(sub => sub.cataloguecategory === value);
+    const filtered = (allSubcatalogueCategories || []).filter((sub) => {
+      const subCatId = sub.cataloguecategory?._id || sub.cataloguecategory;
+      return String(subCatId) === String(value);
+    });
     setFilteredSubcatalogueCategories(filtered);
   };
 
@@ -114,8 +120,8 @@ const AddCatelouge = ({ visible, onClose, catalogue, fetchCatalogueData }) => {
           <Select
             placeholder="Select a category"
             options={catalogueCategories.map(category => ({
-              value: category.cataloguecategory,
-              label: category.label
+              value: category._id,
+              label: category.cataloguecategory
             }))}
             onChange={handleCatalogueCategoryChange}
             value={selectedCatalogueCategory}
@@ -128,7 +134,7 @@ const AddCatelouge = ({ visible, onClose, catalogue, fetchCatalogueData }) => {
             disabled={!!catalogue}
           >
             {filteredSubcatalogueCategories.map(sub => (
-              <Select.Option key={sub.cataloguesubcategory} value={sub.cataloguesubcategory}>
+              <Select.Option key={sub._id} value={sub._id}>
                 {sub.cataloguesubcategory}
               </Select.Option>
             ))}

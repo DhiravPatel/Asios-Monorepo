@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect } from "react";
 import { Modal, Input, Upload, Button, message, Select } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import { useGetAllCategories } from "../../hooks/Category/CategoryHook";
@@ -11,13 +11,6 @@ const AddNewTypeModal = ({ visible, onClose, fetchSubCategories }) => {
   const [subCategory, setSubCategory] = useState('');
   const [image, setImage] = useState(null);
   const [previewImage, setPreviewImage] = useState(null);
-
-  const categoryMap = useMemo(() => {
-    return (categories || []).reduce((acc, category) => {
-      acc[category._id] = category.category;
-      return acc;
-    }, {});
-  }, [categories]);
 
   useEffect(() => {
     if (!visible) {
@@ -39,17 +32,16 @@ const AddNewTypeModal = ({ visible, onClose, fetchSubCategories }) => {
       setImage(null);
     }
   };
-  
+
   const handleSubmit = async () => {
     if (!selectedCategory || !subCategory || !image) {
       message.error("Please fill all fields and upload an image.");
       return;
     }
-  
+
     try {
-      const categoryName = categoryMap[selectedCategory];
       const formData = new FormData();
-      formData.append("category", categoryName);
+      formData.append("category", selectedCategory);
       formData.append("subcategory", subCategory);
       formData.append("image", image);
 

@@ -1,196 +1,108 @@
-const { Product} = require('../Model/Product.js')
+const { Product } = require('../Model/Product.js')
 const cloudinary = require('cloudinary').v2;
 
+function extractPublicId(imageUrl, folder) {
+  if (!imageUrl) return null
+  const parts = imageUrl.split('/')
+  const last = parts[parts.length - 1]
+  const idPart = last.split('.').shift()
+  return `${folder}/${idPart}`
+}
+
+const POPULATE = [
+  { path: 'category', select: 'category image' },
+  { path: 'subcategory', select: 'subcategory image' },
+]
 
 async function AddProduct(req, res) {
   try {
-    const { productName, category,subcategory,details } = req.body
-    const image = req.file.path;
-    const newProduct = new Product({
-      productName,
-      category,
-      subcategory,
-      image,
-      details
-    });
-    const result = await newProduct.save()
-    res.status(201).json({
-      message: `${category} Added`,
-      data: result
-    });
+    const { productName, category, subcategory, details } = req.body
+    const image = req.file?.path
+    const newProduct = new Product({ productName, category, subcategory, image, details })
+    const saved = await newProduct.save()
+    const result = await Product.findById(saved._id).populate(POPULATE)
+    res.status(201).json({ message: 'Product added', data: result })
   } catch (error) {
-    res.status(500).json({
-      message: 'Error creating product',
-      error: error.message
-    });
+    res.status(500).json({ message: 'Error creating product', error: error.message })
   }
 }
 
 async function GetAllProducts(req, res) {
-  try { 
-    const products = await Product.find()
-    res.status(200).json({
-      message: 'Products fetched successfully',
-      data: products
-    })
-  } catch (error) {
-    res.status(500).json({
-      message: 'Error fetching categories',
-      error: error.message
-    })
-  }
-}
-
-async function GetProductsBySubCategory(req, res) {
-  const { subcategory } = req.params; 
-
   try {
-    const products = await Product.find({ subcategory: subcategory });
+    const { category, subcategory } = req.query
+    const filter = {}
+    if (category) filter.category = category
+    if (subcategory) filter.subcategory = subcategory
 
-    if (products.length === 0) {
-      return res.status(404).json({
-        message: 'No products found for this subcategory'
-      });
-    }
-
-    res.status(200).json({
-      message: 'Products fetched successfully',
-      data: products
-    });
+    const products = await Product.find(filter).populate(POPULATE).sort({ createdAt: -1 })
+    res.status(200).json({ message: 'Products fetched successfully', data: products })
   } catch (error) {
-    res.status(500).json({
-      message: 'Error fetching products',
-      error: error.message
-    });
+    res.status(500).json({ message: 'Error fetching products', error: error.message })
   }
 }
 
 async function GetProductById(req, res) {
-  const { id } = req.params;
-
   try {
-    const product = await Product.findById(id); 
-
-    if (!product) {
-      return res.status(404).json({
-        message: 'Product not found'
-      });
-    }
-
-    res.status(200).json({
-      message: 'Product fetched successfully',
-      data: product
-    });
+    const { id } = req.params
+    const product = await Product.findById(id).populate(POPULATE)
+    if (!product) return res.status(404).json({ message: 'Product not found' })
+    res.status(200).json({ message: 'Product fetched successfully', data: product })
   } catch (error) {
-    res.status(500).json({
-      message: 'Error fetching product',
-      error: error.message
-    });
+    res.status(500).json({ message: 'Error fetching product', error: error.message })
   }
 }
 
-
 async function DeleteProduct(req, res) {
   try {
-
     const productId = req.params.id
+    const product = await Product.findById(productId)
+    if (!product) return res.status(404).json({ message: 'product not found' })
 
-    const product1 = await Product.findById(productId);
-    if (!product1) {
-      return res.status(404).json({
-        message: 'product not found',
-      });
+    if (product.image) {
+      const publicId = extractPublicId(product.image, 'product-image')
+      if (publicId) await cloudinary.uploader.destroy(publicId).catch(() => {})
     }
 
-    if (product1.image) {
-      const urlParts = product1.image.split('/');
-      const versionedPart = urlParts[urlParts.length - 1]; 
-      const publicId = versionedPart.split('/').pop().split('.')[0];
-      await cloudinary.uploader.destroy(`product-image/${publicId}`, (error, result) => {
-        if (error) {
-          console.error("Error deleting image from Cloudinary:", error);
-        } else {
-        }
-      });
-    }  
-
     const deletedProduct = await Product.findByIdAndDelete(productId)
-
-    res.status(200).json({
-      message: 'Product deleted successfully',
-      data: deletedProduct
-    });
+    res.status(200).json({ message: 'Product deleted successfully', data: deletedProduct })
   } catch (error) {
-    res.status(500).json({
-      message: 'Error deleting product',
-      error: error.message
-    });
+    res.status(500).json({ message: 'Error deleting product', error: error.message })
   }
 }
 
 async function EditProduct(req, res) {
   try {
-    const productId = req.params.id;
-    const { productName, category, subcategory, details } = req.body;
-    // const image = req.file.path
+    const productId = req.params.id
+    const { productName, category, subcategory, details } = req.body
 
-    let image
+    if (!productId) return res.status(400).json({ message: 'Product ID is required' })
+
+    const existing = await Product.findById(productId)
+    if (!existing) return res.status(404).json({ message: 'Product not found' })
+
+    const update = {}
+    if (productName) update.productName = productName
+    if (category) update.category = category
+    if (subcategory) update.subcategory = subcategory
+    if (details !== undefined) update.details = details
+
     if (req.file) {
-      image = req.file.path; 
-    } 
-    else if (req.body.image) {
-      image = req.body.image; 
-    } 
-    else {
-      return res.status(400).json({ message: 'Image is required' });
-    }
-
-    if (!productId) {
-      return res.status(400).json({
-        message: 'Product ID is required for editing',
-      });
-    }
-    const product = await Product.findById(productId);
-    if (!product) {
-      return res.status(404).json({
-        message: 'Product not found',
-      });
-    }
-    if(req.file){
-      if (product.image) {
-        const urlParts = product.image.split('/');
-        const versionedPart = urlParts[urlParts.length - 1]; 
-        const publicId = versionedPart.split('/').pop().split('.')[0];
-        await cloudinary.uploader.destroy(`product-image/${publicId}`, (error, result) => {
-          if (error) {
-            console.error("Error deleting image from Cloudinary:", error);
-          } else {
-          }
-        });
+      if (existing.image) {
+        const publicId = extractPublicId(existing.image, 'product-image')
+        if (publicId) await cloudinary.uploader.destroy(publicId).catch(() => {})
       }
+      update.image = req.file.path
     }
-    
-    let newImageUrl;
-    newImageUrl = image;
-    product.productName = productName || product.productName;
-    product.category = category || product.category;
-    product.subcategory = subcategory || product.subcategory;
-    product.image = newImageUrl
-    product.details = details || product.details;
 
-    const result = await product.save();
-    res.status(200).json({
-      message: `${category} updated`,
-      data: result,
-    });
+    const result = await Product.findByIdAndUpdate(productId, update, {
+      new: true,
+      runValidators: true,
+    }).populate(POPULATE)
+
+    res.status(200).json({ message: 'Product updated', data: result })
   } catch (error) {
-    res.status(500).json({
-      message: 'Error updating product',
-      error: error.message,
-    });
+    res.status(500).json({ message: 'Error updating product', error: error.message })
   }
 }
 
-
-
-module.exports = { AddProduct, GetAllProducts, DeleteProduct, EditProduct, GetProductsBySubCategory,GetProductById}
+module.exports = { AddProduct, GetAllProducts, DeleteProduct, EditProduct, GetProductById }
