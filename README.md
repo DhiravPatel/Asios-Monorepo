@@ -11,8 +11,6 @@ asios/
 │   ├── admin/        # Admin panel             — @asios/admin (CRA + React 18)
 │   └── api/          # REST API                — @asios/api   (Express + MongoDB)
 ├── packages/         # Reserved for shared code (empty for now)
-├── .github/
-│   └── workflows/    # CI: install + lint + build all workspaces
 ├── .editorconfig
 ├── .env.example      # Catalog of every env var across all apps
 ├── .gitignore
@@ -127,10 +125,6 @@ Each workspace deploys as a separate Vercel project from this single repo. In ea
 - **Root Directory:** `apps/web`, `apps/admin`, or `apps/api`
 - **Install Command:** leave default (`npm install` — Vercel will run it from repo root and hoist via workspaces)
 - **Build Command:** default from each workspace's `vercel.json` and `package.json`
-
-## CI
-
-[.github/workflows/ci.yml](.github/workflows/ci.yml) runs on every PR and push to `main`: checkout → Node from `.nvmrc` → `npm ci` → `npm run lint` → `npm run build`.
 
 ## Requirements
 
