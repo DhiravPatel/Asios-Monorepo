@@ -19,7 +19,7 @@ const Footer = () => {
             {/* Brand column */}
             <div className="lg:col-span-4 flex flex-col gap-5">
               <Link to="/" className="inline-block">
-                <img src={logo} alt="Asios" className="h-10 md:h-12 w-auto brightness-0 invert" />
+                <img src={logo} alt="Asios" className="h-10 md:h-12 w-auto" />
               </Link>
               <p className="text-[14px] leading-relaxed text-white/65 max-w-sm">
                 Crafted surfaces from Morbi, India. We export premium ceramic tiles, quartz slabs,
