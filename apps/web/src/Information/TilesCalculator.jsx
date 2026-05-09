@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
+import { FiChevronDown } from "react-icons/fi";
 import tileCalc from "../assets/tile-calc.webp";
 import PageHero from "../PageHero";
 
@@ -107,16 +108,22 @@ const TilesCalculator = () => {
                   </label>
                   <label className="block md:col-span-2">
                     <span className="eyebrow !text-[10px]">Tile Size (mm)</span>
-                    <select
-                      value={size}
-                      onChange={(e) => setSize(e.target.value)}
-                      className="mt-2 w-full bg-transparent border-b border-sand-300 focus:border-ink outline-none py-3 text-[15px] text-ink transition-colors appearance-none cursor-pointer"
-                    >
-                      <option value="">Select tile format…</option>
-                      {tileSizes.map((s) => (
-                        <option key={s} value={s}>{s}</option>
-                      ))}
-                    </select>
+                    <div className="relative mt-2">
+                      <select
+                        value={size}
+                        onChange={(e) => setSize(e.target.value)}
+                        className="w-full bg-transparent border-b border-sand-300 focus:border-ink outline-none py-3 pr-10 text-[15px] text-ink transition-colors appearance-none cursor-pointer"
+                      >
+                        <option value="">Select tile format…</option>
+                        {tileSizes.map((s) => (
+                          <option key={s} value={s}>{s}</option>
+                        ))}
+                      </select>
+                      <FiChevronDown
+                        aria-hidden="true"
+                        className="pointer-events-none absolute right-1 top-1/2 -translate-y-1/2 w-4 h-4 text-sand-500"
+                      />
+                    </div>
                   </label>
                 </div>
 
@@ -189,7 +196,7 @@ const TilesCalculator = () => {
 const ResultRow = ({ label, value, accent }) => (
   <div className="py-4 flex items-center justify-between">
     <span className="text-[12px] tracking-[0.18em] uppercase text-white/55">{label}</span>
-    <span className={`display text-3xl md:text-4xl ${accent ? "text-primary" : "text-white"}`}>
+    <span className={`display text-3xl md:text-4xl ${accent ? "!text-primary" : "!text-white"}`}>
       {value}
     </span>
   </div>

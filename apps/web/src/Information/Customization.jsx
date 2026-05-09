@@ -122,7 +122,7 @@ const Customization = () => {
               <img
                 src={customization}
                 alt="Private label production"
-                className="w-full h-[360px] md:h-[460px] object-cover"
+                className="w-full h-[360px] md:h-[460px] object-contain"
               />
             </motion.div>
             <motion.div
