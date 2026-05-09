@@ -1,58 +1,170 @@
 import React from "react";
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
+import { FiArrowUpRight } from "react-icons/fi";
 import customization from "../assets/customization.png";
 import customizationcover from "../assets/customizationcover.webp";
+import PageHero from "../PageHero";
+
+const services = [
+  {
+    index: "01",
+    title: "Design Consultation",
+    desc: "Our in-house team advises on schemes, layouts, and bespoke installations — helping you choose finishes that match the creative direction of the project.",
+  },
+  {
+    index: "02",
+    title: "Pattern & Format",
+    desc: "Custom sizes, layouts, and pattern work for projects that demand a signature surface — beyond what's on the catalogue page.",
+  },
+  {
+    index: "03",
+    title: "Private Label",
+    desc: "Ship our quality under your brand. Packaging, marking, and documentation prepared to your specification.",
+  },
+  {
+    index: "04",
+    title: "End-to-End Order Handling",
+    desc: "From order placement and manufacturing oversight to inspection and direct shipment — to your warehouse or fulfilment centre.",
+  },
+];
+
 const Customization = () => {
   return (
-    <>
-      <div className="relative h-[600px]">
-        <img
-            src={customizationcover}
-          className="h-full w-full object-cover"
-          alt="Contact Banner"
-        />
-        <div className="absolute inset-0 bg-black opacity-50"></div>
+    <main>
+      <PageHero
+        image={customizationcover}
+        eyebrow="Bespoke"
+        title="Customised to"
+        italicTitle="your specification."
+        description="From design tweaks to full private-label production — Asios partners with brands and specifiers who need more than off-the-shelf."
+      />
 
-        <motion.div
-          className="absolute inset-0 flex items-center justify-center"
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 1 }}
-        >
-          <h1 className="text-white lg:text-6xl md:text-4xl sm:text-3xl text-2xl font-serif font-bold text-center">
-            Customization
-          </h1>
-        </motion.div>
-      </div>
-
-      <div className="max-w-6xl mx-auto p-6 space-y-6">
-        <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 leading-tight mb-6">
-        Customized Products
-        </h1>
-
-        <div>
-            {/* <img src={customization} alt="customization" /> */}
+      {/* Intro */}
+      <section className="section bg-white">
+        <div className="max-w-[1400px] mx-auto px-6 md:px-10 lg:px-12">
+          <div className="grid lg:grid-cols-12 gap-10 items-start">
+            <div className="lg:col-span-5">
+              <div className="flex items-center gap-3 mb-5">
+                <span className="rule" />
+                <span className="eyebrow">Customised Products</span>
+              </div>
+              <h2 className="display text-4xl md:text-5xl lg:text-[52px] leading-[1.05]">
+                Inspiration is <span className="display-italic text-primary">everywhere.</span>
+              </h2>
+            </div>
+            <div className="lg:col-span-7 lg:pl-10">
+              <p className="text-[15px] md:text-[16px] text-sand-600 leading-[1.85] mb-5">
+                Asios offers advice and ideas for decorating every part of your home — indoors and
+                outdoors. Our design and development team is driven by curiosity, and our
+                catalogues exist to help you find the floor or wall covering best suited to your
+                taste, with the latest design direction firmly in mind.
+              </p>
+              <p className="text-[15px] md:text-[16px] text-sand-600 leading-[1.85]">
+                With considerable expertise, we transform what captures our imagination into truly
+                unique tiles and ceramic products. Our in-house design team offers expert advice on
+                schemes, layouts, and bespoke installations — so the right product can always meet
+                your creative vision.
+              </p>
+              <p className="mt-6 text-[12.5px] text-sand-500 leading-[1.7] italic">
+                Designs created in-house remain Asios &amp; brand-partner copyright. Designs
+                supplied by clients retain client copyright; the tile design elements developed in
+                production are exclusive to that order.
+              </p>
+            </div>
+          </div>
         </div>
+      </section>
 
-        <p className="text-gray-600 leading-relaxed mb-6 text-justify">
-         Asios offers advice and ideas for decorating all parts of your home, indoors and outdoors. Our design and development team are driven by a passion to find. For us, inspiration is everywhere. Lots of solutions for making your home unique and individual. With Asios's ideas for the home, you can find out how to choose the floor or wall covering best suited to your tastes and needs, always with the latest design trends clearly in mind. Asios collections for decorating with the very latest colours, looks and patterns. With our considerable expertise and knowledge, we transform what captures our imagination into truly unique tiles and ceramic products. Let us share our discoveries with you. Our in-house design team is here to offer its expert advice on design schemes, layouts and bespoke installations, so you can always find the right product to match your creative vision.All designs created in house are Asios and our brand partners across the globe copyright however designs created for clients drawings only the tiles design elements would suppy any design right for Asios but not full copyright.
-        </p>
-      </div>
+      {/* Capabilities grid */}
+      <section className="section bg-cream">
+        <div className="max-w-[1400px] mx-auto px-6 md:px-10 lg:px-12">
+          <div className="flex items-center gap-3 mb-5">
+            <span className="rule" />
+            <span className="eyebrow">What We Customise</span>
+          </div>
+          <h2 className="display text-3xl md:text-4xl lg:text-[44px] leading-[1.1] mb-12 max-w-3xl">
+            Four ways we tailor <span className="display-italic text-primary">to your brief.</span>
+          </h2>
 
-      <div className="max-w-6xl mx-auto p-6 space-y-6">
-        <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 leading-tight mb-6">
-        Your Brand Labeling on Our Innovative Quality Products
-        </h1>
-
-        <div>
-            <img src={customization} alt="customization" className="w-[800px] h-[370px]" />
+          <div className="grid lg:grid-cols-2 gap-0 border-t border-l border-sand-200">
+            {services.map((s, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.2 }}
+                transition={{ duration: 0.6, delay: i * 0.06, ease: [0.22, 1, 0.36, 1] }}
+                className="group p-8 md:p-10 lg:p-12 bg-white border-b border-r border-sand-200 hover:bg-cream transition-colors duration-500"
+              >
+                <div className="flex items-baseline gap-5 mb-4">
+                  <span className="display text-2xl text-sand-400 tracking-wider">{s.index}</span>
+                  <h3 className="display text-2xl md:text-[28px] leading-tight">{s.title}</h3>
+                </div>
+                <p className="text-[14.5px] text-sand-600 leading-[1.8] pl-12">{s.desc}</p>
+              </motion.div>
+            ))}
+          </div>
         </div>
+      </section>
 
-        <p className="text-gray-600 leading-relaxed mb-6 text-justify">
-        Not sure where to start? Immerse yourself in our world. Visit our design collection here in website or for an in-depth exploration, visit to our corporate office in India. Asios is the leading tiles exporter, we developed specifically to advise and inspire professionals and consumers on current interior trends, latest products and ideas not just from Asios but from our brand partners across the globe. Need help with the entire process from placing the order, get manufacturing done, have an inspection and ship the product directly from India to your doorstep or directly to a fulfillment centre? Then Asios is for you. You’ve sourced a product with us, checked samples and you are ready to pull the trigger on the order. However you’d like a professional team to handle your order not just from with the factory in India, Italy, Spain and China but from our brand partners across the globe. Get in touch with us and we’ll discuss all details.
-        </p>
-      </div>
-    </>
+      {/* Private label CTA */}
+      <section className="section bg-white">
+        <div className="max-w-[1400px] mx-auto px-6 md:px-10 lg:px-12">
+          <div className="grid lg:grid-cols-12 gap-10 lg:gap-16 items-center">
+            <motion.div
+              className="lg:col-span-6"
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+            >
+              <img
+                src={customization}
+                alt="Private label production"
+                className="w-full h-[360px] md:h-[460px] object-cover"
+              />
+            </motion.div>
+            <motion.div
+              className="lg:col-span-6"
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{ duration: 0.8, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+            >
+              <div className="flex items-center gap-3 mb-5">
+                <span className="rule" />
+                <span className="eyebrow">Private Label</span>
+              </div>
+              <h2 className="display text-3xl md:text-4xl lg:text-[44px] leading-[1.1] mb-6">
+                Your brand on our <span className="display-italic text-primary">quality.</span>
+              </h2>
+              <p className="text-[15px] md:text-[16px] text-sand-600 leading-[1.85] mb-5">
+                Not sure where to start? Visit our design collection online — or arrange an
+                in-depth visit to our corporate office in India. As a leading tiles exporter, we
+                advise and inspire professionals and consumers on current interior trends and
+                latest products from Asios and our brand partners across the globe.
+              </p>
+              <p className="text-[15px] md:text-[16px] text-sand-600 leading-[1.85] mb-10">
+                Want a professional team to handle the entire process — placing the order, manufacturing
+                oversight, inspection, and direct shipping from India, Italy, Spain, or China to
+                your doorstep or fulfilment centre? Get in touch and we'll walk through the
+                details.
+              </p>
+              <div className="flex flex-wrap items-center gap-8">
+                <Link to="/contact" className="btn-primary">
+                  Discuss a Project
+                </Link>
+                <Link to="/sample-request" className="btn-link">
+                  Request Samples
+                  <FiArrowUpRight className="arrow w-4 h-4" />
+                </Link>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+    </main>
   );
 };
 

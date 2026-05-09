@@ -17,6 +17,12 @@ export const AppProvider = ({ children }) => {
     const cached = typeof window !== 'undefined' && localStorage.getItem('footerData');
     return cached ? JSON.parse(cached) : [];
   });
+  const [categoriesReady, setCategoriesReady] = useState(
+    () => typeof window !== 'undefined' && !!localStorage.getItem('asios_categories')
+  );
+  const [subcategoriesReady, setSubcategoriesReady] = useState(
+    () => typeof window !== 'undefined' && !!localStorage.getItem('asios_subcategories')
+  );
 
   useEffect(() => {
     let cancelled = false;
@@ -41,7 +47,12 @@ export const AppProvider = ({ children }) => {
           // ignore quota errors
         }
       })
-      .catch(() => {});
+      .catch(() => {})
+      .finally(() => {
+        if (cancelled) return;
+        setCategoriesReady(true);
+        setSubcategoriesReady(true);
+      });
     return () => {
       cancelled = true;
     };
@@ -67,8 +78,10 @@ export const AppProvider = ({ children }) => {
       subcategoryById,
       footerData,
       setFooterData,
+      categoriesReady,
+      subcategoriesReady,
     }),
-    [categories, subcategories, categoryById, subcategoryById, footerData]
+    [categories, subcategories, categoryById, subcategoryById, footerData, categoriesReady, subcategoriesReady]
   );
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

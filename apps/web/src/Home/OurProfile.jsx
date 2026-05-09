@@ -1,125 +1,90 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React from 'react';
+import { motion } from 'framer-motion';
+import { FiArrowUpRight } from 'react-icons/fi';
 import service1 from '../assets/office-building.png';
 import service2 from '../assets/logistics.png';
 import service3 from '../assets/construction-site.png';
-import { FiArrowUpRight } from 'react-icons/fi';
-import { motion } from 'framer-motion';
 
-const servicesList = [
+const services = [
     {
+        index: '01',
         head: 'Company Profile',
-        para: 'Headquartered in Morbi (Ceramic Capital of India), Asios global has always stood out from the crowd. It emerged with the objective of creating a material category suitable for interior and exterior construction.',
+        para: 'Headquartered in Morbi (the Ceramic Capital of India), Asios Global was built to create a category of materials suited to thoughtful interior and exterior construction.',
         icon: service1,
     },
     {
+        index: '02',
         head: 'Infrastructure',
-        para: 'The strength and success of Asios global lies in its sound infrastructure which has advanced manufacturing facilities that comprises of latest machinery and advent-grade technologies.',
+        para: 'Our strength lies in a sound, modern infrastructure — manufacturing facilities equipped with the latest machinery and advent-grade technologies.',
         icon: service3,
     },
     {
+        index: '03',
         head: 'Export Coverage',
-        para: 'High performance levels and refined aesthetic quality, have made Asios global products greatly acknowledged by numerous industry experts in the international panorama.',
+        para: 'High performance and refined aesthetics have made our products widely acknowledged by industry experts across the international panorama.',
         icon: service2,
     },
 ];
 
 const OurProfile = () => {
-    const [hoveredIndex, setHoveredIndex] = useState(null);
-    const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-
-    const handleMouseMove = (e, index) => {
-        const { left, top, width, height } = e.currentTarget.getBoundingClientRect();
-        const x = (e.clientX - left - width / 2) / (width / 2);
-        const y = (e.clientY - top - height / 2) / (height / 2);
-        setMousePosition({ x, y });
-        setHoveredIndex(index);
-    };
-
-    const handleMouseLeave = () => {
-        setHoveredIndex(null);
-    };
-
-    const [isInView, setIsInView] = useState(false);
-    const ref = useRef(null);
-
-    useEffect(() => {
-        const handleScroll = () => {
-            if (ref.current) {
-                const rect = ref.current.getBoundingClientRect();
-                const windowHeight = window.innerHeight || document.documentElement.clientHeight;
-                setIsInView(rect.top <= windowHeight && rect.bottom >= 0);
-            }
-        };
-
-        handleScroll();
-
-        window.addEventListener('scroll', handleScroll);
-        return () => window.removeEventListener('scroll', handleScroll);
-    }, []);
-
-    const textVariants = {
-        hidden: { opacity: 0, y: -50 },
-        visible: { opacity: 1, x: 0 },
-    };
-
     return (
-        <div className='py-20 bg-gray'>
-            <div className='container' ref={ref}>
-                <motion.div
-                    variants={textVariants}
-                    initial='hidden'
-                    animate={isInView ? 'visible' : 'hidden'}
-                    transition={{ duration: 0.8, ease: 'easeIn' }}
-                >
-                    <div className='font-bold md:text-4xl sm:text-2xl text-xl text-center flex flex-col justify-center'>
-                        Our Profile
+        <section className="section bg-cream">
+            <div className="max-w-[1400px] mx-auto px-6 md:px-10 lg:px-12">
+                <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-8 mb-14 md:mb-16">
+                    <div>
+                        <div className="flex items-center gap-3 mb-5">
+                            <span className="rule" />
+                            <span className="eyebrow">Our Profile</span>
+                        </div>
+                        <h2 className="display text-4xl md:text-5xl lg:text-[56px] max-w-2xl">
+                            Founded on craft. <br />
+                            <span className="display-italic text-primary">Driven by reach.</span>
+                        </h2>
                     </div>
-                </motion.div>
-                <div className='md:pt-10 sm:pt-8 pt-5'>
-                    <div className='grid lg:grid-cols-3 sm:grid-cols-2 grid-cols-1 sm:gap-5 gap-3'>
-                        {servicesList.map((item, i) => {
-                            const { head, para, icon } = item;
-                            const isHovered = hoveredIndex === i;
+                    <p className="text-[15px] text-sand-600 leading-[1.8] max-w-md">
+                        Three pillars define how Asios operates — from the foundry floor in Morbi
+                        to ports across fifty markets.
+                    </p>
+                </div>
 
-                            return (
-                                <div
-                                    key={i}
-                                    className='service-item relative'
-                                    onMouseMove={(e) => handleMouseMove(e, i)}
-                                    onMouseLeave={handleMouseLeave}
-                                >
-                                    <div
-                                        className='group border border-gray bg-white px-5 py-5 rounded-2xl md:h-[400px] sm:h-[340px] h-[400px] flex flex-col justify-between hover:shadow-lg relative overflow-hidden'
-                                        style={{
-                                            transform: isHovered ? `rotateX(${mousePosition.y * 10}deg) rotateY(${mousePosition.x * 10}deg)` : 'none',
-                                        }}
-                                    >
-                                        <div className='xl:text-xl lg:text-lg md:text-base text-sm font-semibold px-3 py-2 bg-white group-hover:text-white group-hover:bg-primary rounded-lg w-fit z-90 relative'>
-                                            {head}
-                                        </div>
-                                        <div className={`z-90 relative ${isHovered ? '-translate-y-7' : 'translate-y-16'} transition-transform duration-700`}>
-                                            <div className='sm:text-base text-sm'>{para}</div>
-                                        </div>
-                                        <div className='sm:p-3 p-2 bg-primary rounded-full w-fit mt-4'>
-                                            <FiArrowUpRight className='sm:w-7 sm:h-7 w-5 h-5 text-white' />
-                                        </div>
-                                        <div className='absolute bottom-4 right-4 z-10'>
-                                            <img
-                                                src={icon}
-                                                alt={head}
-                                                width={150}
-                                                height={150}
-                                                className={`object-cover w-[150px] h-[150px] ${isHovered ? 'translate-x-0' : 'translate-x-[120%]'} transition-transform duration-700 md:w-[150px] md:h-[150px] !w-[120px] !h-[120px]`}
-                                            />
-                                        </div>
-                                    </div>
-                                </div>
-                            );
-                        })}
-                    </div>
+                <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-6 md:gap-8">
+                    {services.map((item, i) => (
+                        <motion.article
+                            key={i}
+                            initial={{ opacity: 0, y: 28 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true, amount: 0.2 }}
+                            transition={{ duration: 0.7, delay: i * 0.08, ease: [0.22, 1, 0.36, 1] }}
+                            className="group relative bg-white p-8 lg:p-10 border border-sand-200 hover:border-ink transition-colors duration-500 ease-editorial flex flex-col h-full"
+                        >
+                            <div className="flex items-start justify-between mb-8">
+                                <span className="display text-2xl text-sand-400 tracking-wider">
+                                    {item.index}
+                                </span>
+                                <img
+                                    src={item.icon}
+                                    alt=""
+                                    aria-hidden="true"
+                                    className="w-14 h-14 object-contain opacity-70 group-hover:opacity-100 transition-opacity"
+                                />
+                            </div>
+
+                            <h3 className="display text-3xl md:text-[34px] mb-4 leading-[1.1]">
+                                {item.head}
+                            </h3>
+                            <p className="text-[14.5px] text-sand-600 leading-[1.75] flex-1">
+                                {item.para}
+                            </p>
+
+                            <div className="mt-8 flex items-center gap-2 text-[11px] tracking-[0.22em] uppercase font-semibold text-ink">
+                                <span>Learn more</span>
+                                <FiArrowUpRight className="w-4 h-4 transition-transform duration-500 ease-editorial group-hover:translate-x-1 group-hover:-translate-y-0.5 text-primary" />
+                            </div>
+                        </motion.article>
+                    ))}
                 </div>
             </div>
-        </div>
+        </section>
     );
 };
 

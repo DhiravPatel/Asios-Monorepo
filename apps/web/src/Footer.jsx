@@ -1,107 +1,158 @@
-import React, { useContext } from 'react'
-import logo from '../src/assets/asios_logo.svg'
-import { IoLocationSharp } from "react-icons/io5";
+import React, { useContext } from 'react';
+import logo from '../src/assets/asios_logo.svg';
 import { Link } from 'react-router-dom';
-import { MdEmail } from "react-icons/md";
-import { FaPhoneAlt } from "react-icons/fa";
-import { FaFacebook } from "react-icons/fa";
-import { FaLinkedin } from "react-icons/fa";
-import { FaYoutube } from "react-icons/fa";
+import { IoLocationSharp } from 'react-icons/io5';
+import { MdEmail } from 'react-icons/md';
+import { FaPhoneAlt, FaFacebook, FaLinkedin, FaYoutube } from 'react-icons/fa';
 import { AppContext } from './AppContext';
+
 const Footer = () => {
-
   const { footerData } = useContext(AppContext);
-  const data = footerData
+  const categories = footerData || [];
+
   return (
-    <div className='md:px-20  px-8 py-12 bg-black text-white '>
-      <div className='flex justify-between  items-start gap-5 sm:gap-3 sm:flex-row  flex-wrap'>
-        <div>
-          <div className='w-[200px] flex flex-col gap-3'>
-            <img src={logo} alt="" className=' sm:w-[150px] w-[100px] h-auto ' />
-            <span className='sm:text-sm text-xs text-white'>We provides a full range of interior design, architectural design.</span>
-            <div className='flex gap-2'>
-            <Link to="https://www.facebook.com/asiosglobal?mibextid=ZbWKwL" target="_blank" >  <FaFacebook className='w-auto h-[25px] text-white hover:text-blue' /></Link> 
-           <Link to="https://www.linkedin.com/company/asios-global/" target="_blank"> <FaLinkedin className='w-auto h-[25px] text-white hover:text-blue' /></Link>   
-         <Link to="https://www.youtube.com/@asiosglobal?si=u7CNidRQInNnPMWS" target="_blank"> <FaYoutube className='w-auto h-[25px] text-white hover:text-blue' /></Link>     
-            </div>
-          </div>
-        </div>
-        <div className=' flex flex-col gap-3'>
-          <div className='font-[600] text-xl'>Quick Link</div>
-          <div className='flex flex-col gap-2 items-start text-white '>
-            <Link to="/" className="'sm:w-[300px] w-full sm:text-sm text-xs text-white hover:text-[#A42832] transition-colors duration-300">Home</Link>
-            <Link to="/product" className="'sm:w-[300px] w-full sm:text-sm text-xs text-white hover:text-[#A42832] transition-colors duration-300">Products</Link>
-            <Link to="/catalogue" className="'sm:w-[300px] w-full sm:text-sm text-xs text-white hover:text-[#A42832] transition-colors duration-300">E-catalogue</Link>
-            <Link to="/about" className="'sm:w-[300px] w-full sm:text-sm text-xs text-white hover:text-[#A42832] transition-colors duration-300">About Us</Link>
-            <Link to="/contact" className="'sm:w-[300px] w-full sm:text-sm text-xs text-white hover:text-[#A42832] transition-colors duration-300">Contact Us</Link>
-          </div>
-        </div>
-
-        <div className=' flex flex-col gap-3 lg:ml-6 md:ml-4'>
-          <div className='font-[600] text-xl'>Information</div>
-          <div className='flex flex-col gap-2 items-start text-white '>
-          <Link className="'sm:w-[300px] w-full sm:text-sm text-xs text-white hover:text-[#A42832] transition-colors duration-300" to='/tiles-calculator'>Tiles Calculator</Link>
-          <Link className="'sm:w-[300px] w-full sm:text-sm text-xs text-white hover:text-[#A42832] transition-colors duration-300" to='/packing-details'>Packing Details</Link>
-          <Link className="'sm:w-[300px] w-full sm:text-sm text-xs text-white hover:text-[#A42832] transition-colors duration-300" to='/quality-assurance'>Quality Assurance</Link>
-          <Link className="'sm:w-[300px] w-full sm:text-sm text-xs text-white hover:text-[#A42832] transition-colors duration-300" to='/sample-request'>Sample Request</Link>
-          <Link className="'sm:w-[300px] w-full sm:text-sm text-xs text-white hover:text-[#A42832] transition-colors duration-300" to='/customization'>Customization</Link>
-          <Link className="'sm:w-[300px] w-full sm:text-sm text-xs text-white hover:text-[#A42832] transition-colors duration-300" to='/blog'>Blog</Link>
-          </div>
-        </div>
-        <div className=' flex flex-col gap-3 lg:ml-6 md:ml-4'>
-          <div className='font-[600] text-xl'>Products</div>
-          <div className='flex flex-col gap-2 items-start text-white '>
-          {data && data.length > 0 && (
-              data.map((item) => (
-                <Link
-                  to={`/main-product/${item._id}`}
-                  key={item._id}
-                  className="'sm:w-[300px] w-full sm:text-sm text-xs text-white hover:text-[#A42832] transition-colors duration-300"
+    <footer className="bg-ink text-white">
+      {/* Editorial top stripe */}
+      <div className="border-t border-white/10">
+        <div className="max-w-[1400px] mx-auto px-6 md:px-10 lg:px-12 py-16 md:py-20">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-12">
+            {/* Brand column */}
+            <div className="lg:col-span-4 flex flex-col gap-5">
+              <Link to="/" className="inline-block">
+                <img src={logo} alt="Asios" className="h-10 md:h-12 w-auto brightness-0 invert" />
+              </Link>
+              <p className="text-[14px] leading-relaxed text-white/65 max-w-sm">
+                Crafted surfaces from Morbi, India. We export premium ceramic tiles, quartz slabs,
+                sanitaryware, and decorative panels to discerning markets across the globe.
+              </p>
+              <div className="flex items-center gap-3 mt-2">
+                <a
+                  href="https://www.facebook.com/asiosglobal?mibextid=ZbWKwL"
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label="Facebook"
+                  className="w-10 h-10 inline-flex items-center justify-center border border-white/20 hover:border-primary hover:bg-primary transition-colors"
                 >
-                  {item.category}
-                </Link>
-              ))
-            )}
+                  <FaFacebook className="w-4 h-4" />
+                </a>
+                <a
+                  href="https://www.linkedin.com/company/asios-global/"
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label="LinkedIn"
+                  className="w-10 h-10 inline-flex items-center justify-center border border-white/20 hover:border-primary hover:bg-primary transition-colors"
+                >
+                  <FaLinkedin className="w-4 h-4" />
+                </a>
+                <a
+                  href="https://www.youtube.com/@asiosglobal?si=u7CNidRQInNnPMWS"
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label="YouTube"
+                  className="w-10 h-10 inline-flex items-center justify-center border border-white/20 hover:border-primary hover:bg-primary transition-colors"
+                >
+                  <FaYoutube className="w-4 h-4" />
+                </a>
+              </div>
+            </div>
+
+            {/* Quick links */}
+            <div className="lg:col-span-2">
+              <span className="eyebrow eyebrow-light !text-white/60">Explore</span>
+              <ul className="mt-5 flex flex-col gap-3 text-[13.5px] text-white/75">
+                <li><Link to="/" className="hover:text-white transition-colors">Home</Link></li>
+                <li><Link to="/about" className="hover:text-white transition-colors">About</Link></li>
+                <li><Link to="/product" className="hover:text-white transition-colors">Products</Link></li>
+                <li><Link to="/catalogue" className="hover:text-white transition-colors">E-Catalogue</Link></li>
+                <li><Link to="/export" className="hover:text-white transition-colors">Export</Link></li>
+                <li><Link to="/contact" className="hover:text-white transition-colors">Contact</Link></li>
+              </ul>
+            </div>
+
+            {/* Information */}
+            <div className="lg:col-span-2">
+              <span className="eyebrow eyebrow-light !text-white/60">Information</span>
+              <ul className="mt-5 flex flex-col gap-3 text-[13.5px] text-white/75">
+                <li><Link to="/tiles-calculator" className="hover:text-white transition-colors">Tiles Calculator</Link></li>
+                <li><Link to="/packing-details" className="hover:text-white transition-colors">Packing Details</Link></li>
+                <li><Link to="/quality-assurance" className="hover:text-white transition-colors">Quality Assurance</Link></li>
+                <li><Link to="/sample-request" className="hover:text-white transition-colors">Sample Request</Link></li>
+                <li><Link to="/customization" className="hover:text-white transition-colors">Customization</Link></li>
+                <li><Link to="/blog" className="hover:text-white transition-colors">Blog</Link></li>
+              </ul>
+            </div>
+
+            {/* Collections */}
+            <div className="lg:col-span-2">
+              <span className="eyebrow eyebrow-light !text-white/60">Collections</span>
+              <ul className="mt-5 flex flex-col gap-3 text-[13.5px] text-white/75">
+                {categories.length > 0 ? (
+                  categories.map((item) => (
+                    <li key={item._id}>
+                      <Link
+                        to={`/main-product/${item._id}`}
+                        className="capitalize hover:text-white transition-colors"
+                      >
+                        {item.category}
+                      </Link>
+                    </li>
+                  ))
+                ) : (
+                  <li className="text-white/40">Loading…</li>
+                )}
+              </ul>
+            </div>
+
+            {/* Contact */}
+            <div className="lg:col-span-2">
+              <span className="eyebrow eyebrow-light !text-white/60">Reach Us</span>
+              <div className="mt-5 flex flex-col gap-4 text-[13.5px] text-white/75">
+                <a
+                  href="https://www.google.com/maps/place/ASIOS+GLOBAL/@22.8141528,70.8669576,17z"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex items-start gap-2 hover:text-white transition-colors"
+                >
+                  <IoLocationSharp className="w-4 h-4 mt-0.5 shrink-0 text-primary" />
+                  <span className="leading-relaxed">
+                    Latest Ceramic Zone, 1st Floor, B/H Ishan Ceramic Zone 8-A, National Highway,
+                    Morbi, Gujarat 363642
+                  </span>
+                </a>
+                <a href="mailto:info@asios.in" className="flex items-center gap-2 hover:text-white transition-colors">
+                  <MdEmail className="w-4 h-4 shrink-0 text-primary" />
+                  <span>info@asios.in</span>
+                </a>
+                <div className="flex items-start gap-2">
+                  <FaPhoneAlt className="w-3.5 h-3.5 mt-1 shrink-0 text-primary" />
+                  <div className="flex flex-col gap-1">
+                    <a href="tel:9409000751" className="hover:text-white transition-colors">
+                      +91 9409000751 <span className="text-white/50">(Export)</span>
+                    </a>
+                    <a href="tel:9327624243" className="hover:text-white transition-colors">
+                      +91 9327624243 <span className="text-white/50">(Domestic)</span>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
+      </div>
 
-        <div className=' flex flex-col gap-3'>
-          <div className='font-[600] text-xl'>Our Address</div>
-          <div className='flex gap-2 items-start'>
-    <IoLocationSharp className='w-auto sm:h-[25px] h-[20px] text-white' />
-    <a
-        href="https://www.google.com/maps/place/ASIOS+GLOBAL/@22.8141528,70.8669576,17z/data=!3m1!4b1!4m6!3m5!1s0x39598df7d1a60d67:0x24006f9a055d9da2!8m2!3d22.8141528!4d70.8695325!16s%2Fg%2F11pzvtscyp?entry=ttu&g_ep=EgoyMDI0MTAyNy4wIKXMDSoASAFQAw%3D%3D"
-        target="_blank"
-        rel="noopener noreferrer"
-        className='sm:w-[300px] w-full sm:text-sm text-xs text-white hover:text-[#A42832] transition-colors duration-300'
-    >
-        Latest Ceramic Zone, 1st Floor, B/H Ishan Ceramic Zone 8-A, National Highway, Morbi, Gujarat 363642
-    </a>
-</div>
-        </div>
-        <div className=' flex flex-col gap-3'>
-          <div className='font-[600] text-xl w-fit'>Reach Us</div>
-          <div className='flex items-start w-fit'>
-            <span className='sm:text-sm text-xs text-white mr-[20px]'>Email :</span>
-            <Link to="mailto:info@asios.in" className='w-fit sm:text-sm text-xs text-white hover:text-[#A42832] transition-colors duration-300'> info@asios.in</Link>
-          </div>
-          <div className="flex gap-2 w-fit">
-            <div className="sm:text-sm text-xs text-white">
-             Phone :
-            </div>
-            <div className="flex flex-col">
-              <Link to='tel:9409000751' className='w-fit sm:text-sm text-xs text-white hover:text-[#A42832] transition-colors duration-300'><span>+91 9409000751 (Export)</span></Link>
-              <Link to='tel:9327624243' className='w-fit sm:text-sm text-xs text-white hover:text-[#A42832] transition-colors duration-300' style={{lineHeight:'2.5'}}><span>+91 9327624243 (Domestic)</span></Link>
-            </div>
-          </div>  
-
+      {/* Bottom bar */}
+      <div className="border-t border-white/10">
+        <div className="max-w-[1400px] mx-auto px-6 md:px-10 lg:px-12 py-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
+          <span className="text-[12px] text-white/50 tracking-wide">
+            © 2025 Asios Global. All rights reserved.
+          </span>
+          <span className="text-[11px] tracking-[0.22em] uppercase text-white/40">
+            Crafted in Morbi · Shipped Worldwide
+          </span>
         </div>
       </div>
-      <div className=' mt-5 border-t-[1px] border-gray'>
-      <span className='sm:w-[300px] w-full sm:text-sm text-xs text-white'>@2025 Asios Global. All Rights Reserved </span>
-      </div>
-    </div>
-  )
-}
+    </footer>
+  );
+};
 
-export default Footer
+export default Footer;

@@ -1,69 +1,87 @@
 import React from "react";
+import { motion } from "framer-motion";
 import iso from "../assets/ISO.png";
 import REX from "../assets/REX.png";
 import fieo from "../assets/fieo.png";
 import cc from "../assets/cc.png";
-import { motion } from "framer-motion";
-const data = [
+
+const certifications = [
   {
-    id: 1,
     img: iso,
+    code: "ISO",
     title: "ISO 9001:2015",
     description:
-      "Our company has been certified under the ISO 9001:2015 quality management system, ensuring that we meet the highest standards of quality management."
+      "Certified under the ISO 9001:2015 quality management system — meeting the highest standards of quality management.",
   },
   {
-    id: 2,
     img: REX,
-    title: "REX",
+    code: "REX",
+    title: "Registered Exporter",
     description:
-      "We play a crucial role in simplifying trade procedures and ensuring that our products benefit from preferential tariff treatment in partner countries."
+      "We simplify trade procedures and ensure our products benefit from preferential tariff treatment in partner countries.",
   },
   {
-    id: 3,
     img: fieo,
-    title: "FIEO",
+    code: "FIEO",
+    title: "Federation Membership",
     description:
-      "This certification symbolizes our dedication to promoting Indian exports on a global scale."
+      "A symbol of our dedication to promoting Indian exports on a global scale.",
   },
   {
-    id: 4,
     img: cc,
-    title: "CE",
+    code: "CE",
+    title: "European Conformity",
     description:
-      "Our products proudly carry the CE mark, indicating compliance with European Union directives and regulations."
-  }
+      "Our products carry the CE mark, indicating compliance with European Union directives and regulations.",
+  },
 ];
 
 const Cerification = () => {
   return (
-    <div className="container lg:py-20 py-14">
-      <h2 className="font-bold text-center mb-10">Certification</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {data.map((data) => (
-          <div
-            key={data.id}
-            className="border border-gray shadow-sm hover:shadow-lg p-4 w-full rounded-lg flex flex-col justify-start items-start gap-2 cursor-pointer"
-          >
-            <motion.div
-              className="flex flex-row gap-4"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              viewport={{ once: false, amount: 0.2 }}
-            >
-              <img src={data.img} alt="" srcset="" className="h-[100px]" />
-              <div>
-                <div className="flex flex-col s">
-                  <h3 className="font-semibold">{data.title}</h3>
-                  <p className="text-start">{data.description}</p>
-                </div>
-              </div>
-            </motion.div>
+    <section className="section bg-white">
+      <div className="max-w-[1400px] mx-auto px-6 md:px-10 lg:px-12">
+        <div className="text-center mb-14 md:mb-20">
+          <div className="flex items-center justify-center gap-3 mb-5">
+            <span className="rule !w-10" />
+            <span className="eyebrow">Credentials</span>
+            <span className="rule !w-10" />
           </div>
-        ))}
+          <h2 className="display text-4xl md:text-5xl lg:text-[52px] leading-[1.05]">
+            Certified at every <span className="display-italic text-primary">standard.</span>
+          </h2>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-0 border-t border-l border-sand-200">
+          {certifications.map((c, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{ duration: 0.6, delay: i * 0.07, ease: [0.22, 1, 0.36, 1] }}
+              className="group relative p-8 lg:p-10 border-b border-r border-sand-200 hover:bg-cream transition-colors duration-500 ease-editorial flex flex-col"
+            >
+              <span className="absolute top-6 right-6 eyebrow !text-[10px] text-sand-300">
+                {String(i + 1).padStart(2, "0")}
+              </span>
+              <div className="h-20 flex items-start mb-7">
+                <img
+                  src={c.img}
+                  alt={c.title}
+                  className="h-full w-auto object-contain"
+                />
+              </div>
+              <h3 className="display text-2xl md:text-[26px] leading-tight mb-3">
+                {c.title}
+              </h3>
+              <p className="text-[14px] text-sand-600 leading-[1.75]">
+                {c.description}
+              </p>
+            </motion.div>
+          ))}
+        </div>
       </div>
-    </div>
+    </section>
   );
 };
 

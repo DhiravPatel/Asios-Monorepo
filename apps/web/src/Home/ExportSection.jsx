@@ -1,49 +1,73 @@
 import React from 'react';
-import exportImg from "../assets/export.webp";
 import { Link } from 'react-router-dom';
-import { motion } from "framer-motion";
+import { motion } from 'framer-motion';
+import { FiArrowUpRight } from 'react-icons/fi';
+import exportImg from "../assets/export.webp";
 
 const ExportSection = () => {
   return (
-    <section className="flex flex-col lg:flex-row items-center justify-center bg-white container">
-      {/* Left side - Image */}
-      <div className="w-full lg:w-1/2 relative">
-        <img
-          src={exportImg}
-          alt="Shipping containers"
-          className="object-cover w-full h-full"
-        />
-      </div>
+    <section className="section bg-cream">
+      <div className="max-w-[1400px] mx-auto px-6 md:px-10 lg:px-12">
+        <div className="grid lg:grid-cols-12 gap-10 lg:gap-16 items-center">
+          {/* Left: image with floating stat */}
+          <motion.div
+            className="lg:col-span-6 relative"
+            initial={{ opacity: 0, y: 28 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.3 }}
+            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <img
+              src={exportImg}
+              alt="Global shipping containers"
+              className="w-full h-[420px] lg:h-[600px] object-cover"
+            />
+            {/* Stat card overlapping bottom-right */}
+            <div className="hidden md:flex absolute -bottom-8 -right-4 lg:right-8 bg-white shadow-lift border border-sand-200 px-8 py-7 flex-col items-start min-w-[200px]">
+              <span className="display text-5xl lg:text-6xl text-ink leading-none">50+</span>
+              <span className="eyebrow mt-3 !text-[10px]">Export Markets</span>
+              <span className="text-[12px] text-sand-500 mt-1">Across 5 continents</span>
+            </div>
+          </motion.div>
 
-      {/* Right side - Content */}
-      <div className="w-full lg:w-1/2 p-8 lg:p-16 flex flex-col items-start">
-        {/* <h3 className="text-lg font-semibold text-gray-700 uppercase mb-4">
-          Our Presence
-        </h3> */}
-         <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 leading-tight mb-6">
-           Exporting Premium Building Material Globally with Asios Global
+          {/* Right: copy */}
+          <motion.div
+            className="lg:col-span-6 lg:pl-6"
+            initial={{ opacity: 0, y: 28 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.3 }}
+            transition={{ duration: 0.8, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <div className="flex items-center gap-3 mb-6">
+              <span className="rule" />
+              <span className="eyebrow">Global Reach</span>
+            </div>
+            <h2 className="display text-4xl md:text-5xl lg:text-[56px] mb-6 leading-[1.05]">
+              Crafted in Morbi, <br />
+              <span className="display-italic text-primary">shipped worldwide.</span>
+            </h2>
+            <p className="text-[15px] md:text-[16px] text-sand-600 leading-[1.85] mb-5">
+              At Asios Global, we deliver high-quality building materials to every corner of the world.
+              Our extensive product range — porcelain tiles, sanitary ware, wall &amp; ceiling panels —
+              caters to diverse needs across global markets.
+            </p>
+            <p className="text-[15px] md:text-[16px] text-sand-600 leading-[1.85] mb-10">
+              A robust logistics network and global supply chain enable reliable export to international
+              destinations. For residential, commercial, or industrial spaces — our materials combine
+              style, durability, and cost-effectiveness.
+            </p>
 
-        </h2>
-        <p className="lg:text-[16px] text-sm mb-6 text-justify">
-        At Asios Global, we specialize in delivering high-quality building materials to every corner of the world. Our extensive product range, including porcelain tiles, sanitary ware, wall & ceiling panels, etc. caters to diverse needs across global markets. With a dedication to superior quality and innovative designs, we offer embodies our commitment to excellence in craftsmanship and performance.
-
-        </p>
-        <p className="lg:text-[16px] text-sm mb-6 text-justify">
-        Our strong logistics network and global supply chain capabilities enable us to export tiles efficiently and reliably to international destinations. Whether for residential, commercial, or industrial spaces, our building materials are crafted to enhance both the aesthetic and functional appeal of any environment. Partner with Asios Global for building materials that combine style, durability, and cost-effectiveness.
-        </p>  
-        <Link to="/export">
-        <motion.button
-          whileHover={{ scale: 1.1 }}
-          className="mt-8 px-6 py-3 bg-primary text-white rounded-full shadow-lg"
-        >
-          Explore More
-        </motion.button>
-        </Link>
-      </div>
-
-      {/* Overlay - 50+ Export Countries */}
-      <div className="absolute bottom-0 right-0 lg:right-12 mb-8 lg:mb-0 p-4 bg-blue-600 text-white rounded-full w-24 h-24 flex items-center justify-center text-center text-lg lg:text-2xl font-bold">
-        50+ <br /> Export <br /> Country
+            <div className="flex flex-wrap items-center gap-8">
+              <Link to="/export" className="btn-primary">
+                Explore Export
+              </Link>
+              <Link to="/catalogue" className="btn-link">
+                Download E-Catalogue
+                <FiArrowUpRight className="arrow w-4 h-4" />
+              </Link>
+            </div>
+          </motion.div>
+        </div>
       </div>
     </section>
   );

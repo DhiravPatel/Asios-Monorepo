@@ -1,62 +1,47 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, useLocation } from 'react-router-dom';
-import { Helmet } from 'react-helmet';
+import React, { useState } from "react";
+import { useParams, useLocation, Link, useNavigate } from "react-router-dom";
+import { Helmet } from "react-helmet";
+import { FiArrowLeft, FiArrowUpRight } from "react-icons/fi";
 
 const BlogDetail = () => {
   const { id } = useParams();
   const { state } = useLocation();
-  const [post, setPost] = useState(state?.post || null);
-  const [loading, setLoading] = useState(!state?.post);
-  const [error, setError] = useState(null);
+  const navigate = useNavigate();
+  const [post] = useState(state?.post || null);
+  const [loading] = useState(!state?.post);
+  const [error] = useState(null);
 
-  // Helper function to generate clean meta description from HTML content
-  const generateMetaDescription = (content, maxLength = 160) => {
-    if (!content) return 'Read our latest blog post about tiles and construction materials.';
-    
-    // Strip HTML tags and clean up the content
-    const cleanContent = content
-      .replace(/<[^>]*>/g, '') // Remove HTML tags
-      .replace(/\s+/g, ' ') // Replace multiple spaces with single space
-      .trim();
-    
-    // Truncate to maxLength and ensure it ends with a sentence
-    if (cleanContent.length <= maxLength) {
-      return cleanContent;
-    }
-    
-    const truncated = cleanContent.substring(0, maxLength);
-    const lastSentenceEnd = Math.max(
-      truncated.lastIndexOf('.'),
-      truncated.lastIndexOf('!'),
-      truncated.lastIndexOf('?')
-    );
-    
-    return lastSentenceEnd > maxLength * 0.7 
-      ? truncated.substring(0, lastSentenceEnd + 1)
-      : truncated + '...';
-  };
+  const formattedDate = post?.$createdAt
+    ? new Date(post.$createdAt).toLocaleDateString("en-US", {
+        day: "2-digit",
+        month: "long",
+        year: "numeric",
+      })
+    : null;
 
-  // Generate meta data
-  const metaTitle = "Best Tiles Manufacturer in Somalia | Asios Global";
-  const metaDescription = 'Are you in Somalia and looking for tiles manufacturers who can supply best tiles for you then here are the best tiles manufacturer in Somalia with high reputation'
-  const metaImage = post?.imageUrl || '/asios_logo.svg';
-  const metaUrl = `${window.location.origin}/blog/${id}`;
-  const metaKeywords = 'Best Tiles Manufacturer in Somalia, Best Tiles Supplier in Somalia, Best Tiles Exporter in Somalia';
+  const metaTitle = post?.title
+    ? `${post.title} | Asios Global Journal`
+    : "Asios Global Journal";
+  const metaDescription = post?.content
+    ? post.content.replace(/<[^>]*>/g, "").substring(0, 160).trim()
+    : "Notes from Asios Global — industry updates, product stories, and field notes.";
+  const metaImage = post?.imageUrl || "/asios_logo.svg";
+  const metaUrl = typeof window !== "undefined" ? `${window.location.origin}/blog/${id}` : "";
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      <div className="min-h-[60vh] flex items-center justify-center">
+        <div className="animate-spin rounded-full h-10 w-10 border border-sand-300 border-t-primary" />
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center text-center">
+      <div className="min-h-[60vh] flex items-center justify-center text-center px-6">
         <div>
-          <p className="text-red-600 text-lg mb-4">Error loading blog post</p>
-          <p className="text-gray-600">{error}</p>
+          <p className="display text-2xl mb-3">Something went wrong</p>
+          <p className="text-sand-500 text-[14px]">{error}</p>
         </div>
       </div>
     );
@@ -64,60 +49,93 @@ const BlogDetail = () => {
 
   if (!post) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-xl text-gray-600">No blog post found.</p>
+      <div className="min-h-[60vh] flex items-center justify-center px-6">
+        <div className="text-center">
+          <p className="display text-2xl mb-3">Post not found</p>
+          <Link to="/blog" className="btn-link">
+            Return to Journal <FiArrowUpRight className="arrow w-4 h-4" />
+          </Link>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <main className="bg-white">
       <Helmet>
         <title>{metaTitle}</title>
         <meta name="description" content={metaDescription} />
-        <meta name="keywords" content={metaKeywords} />
-        
-        {/* Open Graph / Facebook */}
         <meta property="og:type" content="article" />
         <meta property="og:title" content={metaTitle} />
         <meta property="og:description" content={metaDescription} />
         <meta property="og:image" content={metaImage} />
         <meta property="og:url" content={metaUrl} />
         <meta property="og:site_name" content="Asios Global" />
-        
-        {/* Twitter */}
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={metaTitle} />
         <meta name="twitter:description" content={metaDescription} />
         <meta name="twitter:image" content={metaImage} />
-        
-        {/* Additional SEO meta tags */}
         <meta name="robots" content="index, follow" />
         <meta name="author" content="Asios Global" />
         <link rel="canonical" href={metaUrl} />
       </Helmet>
-      
-      <article className="max-w-4xl mx-auto px-4 py-8">
-        <header className="mb-8 border-b border-gray-200">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">{post.title}</h1>
-        </header>
 
-        {post.imageUrl && (
-          <div className="mb-8">
-            <img
-              src={post.imageUrl}
-              alt={post.title}
-              className="w-full h-[26rem] object-cover rounded-lg shadow-lg"
-              onError={(e) => (e.target.style.display = 'none')}
-            />
+      {/* Header */}
+      <section className="bg-cream">
+        <div className="max-w-[1400px] mx-auto px-6 md:px-10 lg:px-12 pt-14 md:pt-20 pb-16 md:pb-24">
+          <button
+            type="button"
+            onClick={() => navigate(-1)}
+            className="inline-flex items-center gap-2 text-[11px] tracking-[0.22em] uppercase font-semibold text-sand-600 hover:text-ink transition-colors mb-10"
+          >
+            <FiArrowLeft className="w-3.5 h-3.5" /> Back
+          </button>
+
+          <div className="max-w-3xl">
+            <div className="flex items-center gap-3 mb-6">
+              <span className="rule" />
+              <span className="eyebrow">Journal</span>
+              {formattedDate && (
+                <span className="text-[10.5px] tracking-[0.22em] uppercase text-sand-500">
+                  · {formattedDate}
+                </span>
+              )}
+            </div>
+            <h1 className="display text-4xl md:text-5xl lg:text-6xl leading-[1.05]">
+              {post.title}
+            </h1>
           </div>
-        )}
+        </div>
+      </section>
 
-        <div className="prose prose-lg max-w-none text-gray-700 leading-relaxed">
+      {/* Hero image */}
+      {post.imageUrl && (
+        <div className="max-w-[1200px] mx-auto px-6 md:px-10 lg:px-12 -mt-8 md:-mt-12">
+          <img
+            src={post.imageUrl}
+            alt={post.title}
+            className="w-full h-[360px] md:h-[520px] lg:h-[600px] object-cover shadow-lift"
+            onError={(e) => (e.currentTarget.style.display = "none")}
+          />
+        </div>
+      )}
+
+      {/* Body */}
+      <article className="max-w-3xl mx-auto px-6 md:px-10 py-16 md:py-24">
+        <div className="prose-blog">
           <div dangerouslySetInnerHTML={{ __html: post.content }} />
         </div>
+
+        <div className="mt-16 pt-10 border-t border-sand-200 flex flex-wrap items-center justify-between gap-4">
+          <Link to="/blog" className="btn-link">
+            <FiArrowLeft className="w-4 h-4" /> All Posts
+          </Link>
+          <Link to="/contact" className="btn-link">
+            Get in Touch <FiArrowUpRight className="arrow w-4 h-4" />
+          </Link>
+        </div>
       </article>
-    </div>
+    </main>
   );
 };
 

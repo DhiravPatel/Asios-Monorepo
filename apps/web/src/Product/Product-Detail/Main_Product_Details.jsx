@@ -1,11 +1,16 @@
-import React, { useContext, useMemo } from 'react';
-import { Link, useParams } from 'react-router-dom';
-import SkeletonLoader from '../../SkeletonLoader';
-import { AppContext } from '../../AppContext';
+import React, { useContext, useMemo } from "react";
+import { Link, useParams } from "react-router-dom";
+import { motion } from "framer-motion";
+import { FiArrowUpRight } from "react-icons/fi";
+import SkeletonLoader from "../../SkeletonLoader";
+import { AppContext } from "../../AppContext";
+import Breadcrumb from "../../Breadcrumb";
+
+const SKELETON_COUNT = 8;
 
 const Main_Product_details = () => {
   const { categoryId } = useParams();
-  const { categories, subcategories } = useContext(AppContext);
+  const { categories, subcategories, subcategoriesReady } = useContext(AppContext);
 
   const category = useMemo(
     () => (categories || []).find((c) => c._id === categoryId),
@@ -21,56 +26,93 @@ const Main_Product_details = () => {
     [subcategories, categoryId]
   );
 
-  const categoryName = category?.category || '';
+  const categoryName = category?.category || "Loading…";
+  const isLoading = !subcategoriesReady && filteredSubcategories.length === 0;
 
   return (
-    <div className=''>
-      <div className='flex gap-2 justify-start my-6 font-normal pl-20 py-10 bg-gray'>
-        <div>
-          <Link to={"/"}>Home</Link> <span> {">"}</span>
-        </div>
-        <div>
-          <Link to={"/product"}>Product</Link> <span>{">"}</span>
-        </div>
-        <div>
-          <Link>{categoryName}</Link>
-        </div>
-      </div>
-      <div className='my-2 mt-10 container'>
-        <div>
-          <div className='md:mt-10 mt-5 mb-10'>
-            <span className='md:font-bold font-semibold md:text-xl'>Products</span>
-            <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-8 gap-y-3'>
-              {filteredSubcategories.length > 0 ? (
-                filteredSubcategories.map((sub) => (
-                  <div className='mt-10 relative flex justify-center flex-col items-center cursor-pointer' key={sub._id}>
-                    <Link to={`/product/${categoryId}/${sub._id}`}>
-                      <img src={sub.image || 'fallback-image.jpg'} alt={sub.subcategory} className='sm:w-[250px] sm:h-[250px] md:w-[300px] md:h-[300px] w-[350px] h-[350px] object-cover hover:opacity-90' />
-                      <div className='mt-1 font-medium text-lg uppercase hover:underline hover:transition-all hover:duration-300 text-center '>
-                        {sub.subcategory}
-                      </div>
-                    </Link>
-                  </div>
-                ))
-              ) : (
-                Array.from({ length: 10 }).map((_, index) => (
-                  <div
-                    className="relative group overflow-hidden cursor-pointer"
-                    key={index}
-                  >
-                    <SkeletonLoader width="350px" height="350px" />
-                    <div className="absolute bottom-0 w-full text-center bg-[#232323] text-white p-2 transform translate-y-full transition-transform duration-300">
-                      <SkeletonLoader width="100px" height="20px" />
-                    </div>
-                  </div>
-                ))
-              )}
+    <main>
+      <Breadcrumb
+        items={[
+          { label: "Home", to: "/" },
+          { label: "Products", to: "/product" },
+          { label: categoryName },
+        ]}
+      />
+
+      <section className="section">
+        <div className="max-w-[1400px] mx-auto px-6 md:px-10 lg:px-12">
+          <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-10 md:mb-14">
+            <div className="max-w-2xl">
+              <div className="flex items-center gap-3 mb-5">
+                <span className="rule" />
+                <span className="eyebrow">Collection</span>
+              </div>
+              <h1 className="display text-4xl md:text-5xl lg:text-[56px] leading-[1.05] capitalize">
+                {categoryName}
+              </h1>
+            </div>
+            <div className="text-[12px] tracking-[0.22em] uppercase text-sand-500">
+              {isLoading
+                ? "Loading…"
+                : `${filteredSubcategories.length} ${
+                    filteredSubcategories.length === 1 ? "series" : "series"
+                  }`}
             </div>
           </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
+            {isLoading ? (
+              Array.from({ length: SKELETON_COUNT }).map((_, i) => (
+                <div key={`skeleton-${i}`}>
+                  <div className="aspect-[3/4]">
+                    <SkeletonLoader width="100%" height="100%" />
+                  </div>
+                  <div className="mt-3">
+                    <SkeletonLoader width="60%" height="14px" />
+                  </div>
+                </div>
+              ))
+            ) : filteredSubcategories.length > 0 ? (
+              filteredSubcategories.map((sub, i) => (
+                <motion.div
+                  key={sub._id}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.15 }}
+                  transition={{ duration: 0.6, delay: i * 0.04, ease: [0.22, 1, 0.36, 1] }}
+                >
+                  <Link to={`/product/${categoryId}/${sub._id}`} className="group block">
+                    <div className="relative aspect-[3/4] overflow-hidden bg-sand-100">
+                      <img
+                        src={sub.image || "fallback-image.jpg"}
+                        alt={sub.subcategory}
+                        className="w-full h-full object-cover transition-transform duration-[1200ms] ease-editorial group-hover:scale-105"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/0 to-transparent" />
+                      <div className="absolute bottom-0 left-0 right-0 p-5 md:p-6 flex items-end justify-between gap-3">
+                        <h3 className="display text-xl md:text-2xl text-white leading-tight pr-2 capitalize">
+                          {sub.subcategory}
+                        </h3>
+                        <span className="w-10 h-10 rounded-full bg-white/95 text-ink flex items-center justify-center shrink-0 transition-all duration-500 ease-editorial group-hover:bg-primary group-hover:text-white">
+                          <FiArrowUpRight className="w-4 h-4" />
+                        </span>
+                      </div>
+                    </div>
+                  </Link>
+                </motion.div>
+              ))
+            ) : (
+              <div className="col-span-full text-center py-20 border border-dashed border-sand-300">
+                <p className="text-sand-500 text-[15px]">
+                  No series available for this collection.
+                </p>
+              </div>
+            )}
+          </div>
         </div>
-      </div>
-    </div>
+      </section>
+    </main>
   );
-}
+};
 
 export default Main_Product_details;
