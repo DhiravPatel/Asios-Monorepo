@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import api from '../api';
+import { dedupedFetch } from '../requestCache';
 
 export const useGetProductById = (id) => {
   const [data, setData] = useState(null);
@@ -14,20 +15,13 @@ export const useGetProductById = (id) => {
     let cancelled = false;
     setLoading(true);
     setError(null);
-    api
-      .get(`/product/getProductById/${id}`)
-      .then((res) => {
-        if (!cancelled) setData(res.data?.data ?? null);
-      })
-      .catch((err) => {
-        if (!cancelled) setError(err);
-      })
-      .finally(() => {
-        if (!cancelled) setLoading(false);
-      });
-    return () => {
-      cancelled = true;
-    };
+    dedupedFetch(`product:${id}`, () =>
+      api.get(`/product/getProductById/${id}`).then((res) => res.data?.data ?? null)
+    )
+      .then((v) => { if (!cancelled) setData(v); })
+      .catch((err) => { if (!cancelled) setError(err); })
+      .finally(() => { if (!cancelled) setLoading(false); });
+    return () => { cancelled = true; };
   }, [id]);
 
   return { data, loading, error };
@@ -46,20 +40,15 @@ export const useGetProductsBySubCategoryId = (subcategoryId) => {
     let cancelled = false;
     setLoading(true);
     setError(null);
-    api
-      .get('/product/getAllProducts', { params: { subcategory: subcategoryId } })
-      .then((res) => {
-        if (!cancelled) setData(res.data?.data ?? []);
-      })
-      .catch((err) => {
-        if (!cancelled) setError(err);
-      })
-      .finally(() => {
-        if (!cancelled) setLoading(false);
-      });
-    return () => {
-      cancelled = true;
-    };
+    dedupedFetch(`products:sub:${subcategoryId}`, () =>
+      api
+        .get('/product/getAllProducts', { params: { subcategory: subcategoryId } })
+        .then((res) => res.data?.data ?? [])
+    )
+      .then((v) => { if (!cancelled) setData(v); })
+      .catch((err) => { if (!cancelled) setError(err); })
+      .finally(() => { if (!cancelled) setLoading(false); });
+    return () => { cancelled = true; };
   }, [subcategoryId]);
 
   return { data, loading, error };

@@ -1,5 +1,6 @@
 import React, { createContext, useEffect, useMemo, useState } from 'react';
 import api from './hooks/api';
+import { dedupedFetch } from './hooks/requestCache';
 
 export const AppContext = createContext();
 
@@ -20,13 +21,15 @@ export const AppProvider = ({ children }) => {
   useEffect(() => {
     let cancelled = false;
     Promise.all([
-      api.get('/category/getAllCategories'),
-      api.get('/subcategory/getAllSubCategories'),
+      dedupedFetch('categories:all', () =>
+        api.get('/category/getAllCategories').then((r) => r.data?.data ?? [])
+      ),
+      dedupedFetch('subcategories:all', () =>
+        api.get('/subcategory/getAllSubCategories').then((r) => r.data?.data ?? [])
+      ),
     ])
-      .then(([catRes, subRes]) => {
+      .then(([cats, subs]) => {
         if (cancelled) return;
-        const cats = catRes.data?.data ?? [];
-        const subs = subRes.data?.data ?? [];
         setCategories(cats);
         setSubcategories(subs);
         setFooterData(cats);
