@@ -25,7 +25,7 @@ const AddInquiry = async(req,res)=> {
 
 const GetInquiry = async(req, res)=> {
     try {
-      const inquiry = await Inquiry.find()
+      const inquiry = await Inquiry.find().sort({ createdAt: -1 }).lean()
       res.status(200).json({
         message: 'Inquiry fetched successfully',
         data: inquiry

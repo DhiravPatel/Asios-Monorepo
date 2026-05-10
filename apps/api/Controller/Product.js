@@ -27,14 +27,58 @@ async function AddProduct(req, res) {
   }
 }
 
+// Default fields for list views — drops the heavy `details` JSON until detail page
+const LIST_FIELDS = 'productName image category subcategory createdAt'
+
 async function GetAllProducts(req, res) {
   try {
-    const { category, subcategory } = req.query
+    const { category, subcategory, q, page, limit, fields } = req.query
+
     const filter = {}
     if (category) filter.category = category
     if (subcategory) filter.subcategory = subcategory
+    if (q && q.trim()) filter.productName = { $regex: q.trim(), $options: 'i' }
 
-    const products = await Product.find(filter).populate(POPULATE).sort({ createdAt: -1 })
+    // If page or limit is provided, return a paginated envelope.
+    // If neither is provided, preserve legacy behavior (full list — for clients that
+    // haven't migrated yet) but still apply lean + projection for speed.
+    const isPaginated = page !== undefined || limit !== undefined
+    const projection = fields
+      ? fields.replace(/,/g, ' ')
+      : isPaginated
+      ? LIST_FIELDS
+      : null // full doc when caller didn't ask for trimming and didn't page
+
+    if (isPaginated) {
+      const pageNum = Math.max(1, parseInt(page, 10) || 1)
+      const limitNum = Math.min(100, Math.max(1, parseInt(limit, 10) || 20))
+      const skip = (pageNum - 1) * limitNum
+
+      const [items, total] = await Promise.all([
+        Product.find(filter)
+          .select(projection)
+          .populate(POPULATE)
+          .sort({ createdAt: -1 })
+          .skip(skip)
+          .limit(limitNum)
+          .lean(),
+        Product.countDocuments(filter),
+      ])
+
+      return res.status(200).json({
+        message: 'Products fetched successfully',
+        data: items,
+        page: pageNum,
+        limit: limitNum,
+        total,
+        totalPages: Math.ceil(total / limitNum),
+      })
+    }
+
+    // Legacy unpaginated path — still benefits from lean (no Mongoose hydration)
+    const query = Product.find(filter).populate(POPULATE).sort({ createdAt: -1 }).lean()
+    if (projection) query.select(projection)
+    const products = await query
     res.status(200).json({ message: 'Products fetched successfully', data: products })
   } catch (error) {
     res.status(500).json({ message: 'Error fetching products', error: error.message })
@@ -105,4 +149,52 @@ async function EditProduct(req, res) {
   }
 }
 
-module.exports = { AddProduct, GetAllProducts, DeleteProduct, EditProduct, GetProductById }
+// Single-call endpoint for the admin Product page.
+// Returns ONLY the paginated product list. Filter-dropdown reference data
+// (categories, subcategories) is fetched lazily by the page on demand —
+// see /category/getAllCategories and /subcategory/getAllSubCategories.
+async function GetProductPageData(req, res) {
+  try {
+    const { category, subcategory, q, page, limit } = req.query
+
+    const filter = {}
+    if (category) filter.category = category
+    if (subcategory) filter.subcategory = subcategory
+    if (q && q.trim()) filter.productName = { $regex: q.trim(), $options: 'i' }
+
+    const pageNum = Math.max(1, parseInt(page, 10) || 1)
+    const limitNum = Math.min(100, Math.max(1, parseInt(limit, 10) || 8))
+    const skip = (pageNum - 1) * limitNum
+
+    const [items, total] = await Promise.all([
+      Product.find(filter)
+        .select(LIST_FIELDS)
+        .populate(POPULATE)
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limitNum)
+        .lean(),
+      Product.countDocuments(filter),
+    ])
+
+    res.status(200).json({
+      message: 'Product page data fetched successfully',
+      data: items,
+      page: pageNum,
+      limit: limitNum,
+      total,
+      totalPages: Math.ceil(total / limitNum),
+    })
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching product page data', error: error.message })
+  }
+}
+
+module.exports = {
+  AddProduct,
+  GetAllProducts,
+  GetProductPageData,
+  DeleteProduct,
+  EditProduct,
+  GetProductById,
+}

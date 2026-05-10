@@ -7,6 +7,7 @@ import InquiryModal from "./InquiryModal";
 import SkeletonLoader from "../../SkeletonLoader";
 import Breadcrumb from "../../Breadcrumb";
 import { useGetProductById } from "../../hooks/Product/ProductHook";
+import { cldHero } from "../../utils/cloudinary";
 
 const SPEC_LABELS = {
   size: "Size",
@@ -118,8 +119,9 @@ const Second_product_details = () => {
                   onClick={() => setViewerIsOpen(true)}
                 >
                   <img
-                    src={product.image}
+                    src={cldHero(product.image)}
                     alt={product.productName}
+                    decoding="async"
                     className={`w-full h-full transition-transform duration-[1200ms] ease-editorial group-hover:scale-[1.03] ${
                       isFramedImage ? "object-cover" : "object-contain p-6"
                     }`}

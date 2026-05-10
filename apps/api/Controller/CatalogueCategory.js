@@ -22,7 +22,7 @@ async function AddCatalogueCategory(req,res) {
 
 async function GetAllCatalogueCategory(req, res) {
     try {
-      const catalogueCategory = await CatalogueCategory.find()
+      const catalogueCategory = await CatalogueCategory.find().lean()
       res.status(200).json({
         message: 'catalogue category fetched successfully',
         data: catalogueCategory

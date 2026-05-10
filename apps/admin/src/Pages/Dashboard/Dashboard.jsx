@@ -8,13 +8,7 @@ import {
   MessageOutlined,
   ArrowRightOutlined,
 } from '@ant-design/icons';
-import { useGetAllCategories } from '../../hooks/Category/CategoryHook';
-import { useGetAllSubCategories } from '../../hooks/SubCategory/SubCategoryHook';
-import { useGetAllProducts } from '../../hooks/Product/ProductHook';
-import { useGetAllInquiries } from '../../hooks/Inquiry/InquiryHook';
-import { useGetAllProductInquiries } from '../../hooks/Product/ProductInquiryHook';
-import { useGetAllCatalogue } from '../../hooks/Catalogue/CatalogueHook';
-import { useGetAllBlogs } from '../../hooks/Blog/BlogHook';
+import { useGetDashboardStats } from '../../hooks/Dashboard/DashboardHook';
 
 const greeting = () => {
   const h = new Date().getHours();
@@ -52,20 +46,28 @@ const fmtTimeAgo = (date) => {
 
 const Dashboard = () => {
   const navigate = useNavigate();
-  const { data: category } = useGetAllCategories();
-  const { data: subCategory } = useGetAllSubCategories();
-  const { data: product } = useGetAllProducts();
-  const { data: inquiry } = useGetAllInquiries();
-  const { data: productInquiry } = useGetAllProductInquiries();
-  const { data: catalogue } = useGetAllCatalogue();
-  const { data: blogs } = useGetAllBlogs();
+  const { data: stats } = useGetDashboardStats();
+  const counts = stats?.counts || {};
+  const recentInquiries = useMemo(
+    () =>
+      (stats?.recentInquiries || []).map((i) => ({
+        id: i._id,
+        name: i.name || 'Anonymous',
+        message: i.product_name
+          ? `Asked about "${i.product_name}"`
+          : i.message || `New inquiry from ${i.email || 'someone'}`,
+        createdAt: i.createdAt,
+        type: i.type,
+      })),
+    [stats]
+  );
 
-  const stats = useMemo(
+  const statTiles = useMemo(
     () => [
       {
         key: 'products',
         label: 'Products',
-        value: product?.length ?? 0,
+        value: counts.products ?? 0,
         hint: 'Active SKUs across all collections',
         icon: <ShoppingOutlined />,
         path: '/products',
@@ -73,15 +75,15 @@ const Dashboard = () => {
       {
         key: 'category',
         label: 'Categories',
-        value: category?.length ?? 0,
+        value: counts.categories ?? 0,
         hint: 'Top-level collections',
         icon: <AppstoreOutlined />,
         path: '/category',
       },
       {
         key: 'subCategory',
-        label: 'Types',
-        value: subCategory?.length ?? 0,
+        label: 'Sub Categories',
+        value: counts.subcategories ?? 0,
         hint: 'Sub-collections under categories',
         icon: <CodeSandboxOutlined />,
         path: '/type',
@@ -89,7 +91,7 @@ const Dashboard = () => {
       {
         key: 'catalogue',
         label: 'Catalogues',
-        value: catalogue?.length ?? 0,
+        value: counts.catalogues ?? 0,
         hint: 'Published e-catalogue editions',
         icon: <BookOutlined />,
         path: '/catalogue',
@@ -97,7 +99,7 @@ const Dashboard = () => {
       {
         key: 'inquiry',
         label: 'Inquiries',
-        value: inquiry?.length ?? 0,
+        value: counts.inquiries ?? 0,
         hint: 'General inquiries received',
         icon: <MessageOutlined />,
         path: '/inquiry',
@@ -105,72 +107,28 @@ const Dashboard = () => {
       {
         key: 'productInquiry',
         label: 'Product Inquiries',
-        value: productInquiry?.length ?? 0,
+        value: counts.productInquiries ?? 0,
         hint: 'Inquiries on specific SKUs',
         icon: <MessageOutlined />,
         path: '/product-inquiry',
       },
     ],
-    [product, category, subCategory, catalogue, inquiry, productInquiry]
+    [counts]
   );
 
-  // Latest inquiries — combine general + product, sort by createdAt desc, take 6
-  const recentInquiries = useMemo(() => {
-    const general = (inquiry || []).map((i) => ({
-      id: i._id,
-      name: i.name || 'Anonymous',
-      message: i.message || `New inquiry from ${i.email || 'someone'}`,
-      createdAt: i.createdAt,
-      type: 'general',
-    }));
-    const productI = (productInquiry || []).map((i) => ({
-      id: i._id,
-      name: i.name || 'Anonymous',
-      message: i.product_name
-        ? `Asked about "${i.product_name}"`
-        : i.message || `New product inquiry`,
-      createdAt: i.createdAt,
-      type: 'product',
-    }));
-    return [...general, ...productI]
-      .sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0))
-      .slice(0, 6);
-  }, [inquiry, productInquiry]);
-
   const quickActions = [
-    {
-      label: 'Add a product',
-      hint: 'Upload a new SKU to the catalogue',
-      path: '/products',
-    },
-    {
-      label: 'New blog post',
-      hint: 'Publish a journal entry',
-      path: '/add-blog',
-    },
-    {
-      label: 'Send bulk email',
-      hint: 'Reach all inquiries at once',
-      path: '/bulk-email',
-    },
-    {
-      label: 'View inquiries',
-      hint: 'Go through unread requests',
-      path: '/inquiry',
-    },
-    {
-      label: 'Add a catalogue',
-      hint: 'Upload a new edition PDF',
-      path: '/catalogue',
-    },
+    { label: 'Add a product', hint: 'Upload a new SKU to the catalogue', path: '/products' },
+    { label: 'New blog post', hint: 'Publish a journal entry', path: '/add-blog' },
+    { label: 'Send bulk email', hint: 'Reach all inquiries at once', path: '/bulk-email' },
+    { label: 'View inquiries', hint: 'Go through unread requests', path: '/inquiry' },
+    { label: 'Add a catalogue', hint: 'Upload a new edition PDF', path: '/catalogue' },
   ];
 
   const totalContent =
-    (product?.length || 0) +
-    (category?.length || 0) +
-    (subCategory?.length || 0) +
-    (catalogue?.length || 0) +
-    (blogs?.length || 0);
+    (counts.products || 0) +
+    (counts.categories || 0) +
+    (counts.subcategories || 0) +
+    (counts.catalogues || 0);
 
   return (
     <div className="dash-page">
@@ -178,19 +136,18 @@ const Dashboard = () => {
       <div>
         <div className="dash-welcome-eyebrow">{formatDate()}</div>
         <h1 className="dash-welcome-title">
-          {greeting()},{' '}
-          <span className="dash-welcome-italic">Admin.</span>
+          {greeting()}, <span className="dash-welcome-italic">Admin.</span>
         </h1>
         <p className="dash-welcome-sub">
-          You have <strong>{recentInquiries.length}</strong> recent inquiries waiting
-          and <strong>{totalContent}</strong> content items live across the site.
-          Pick up where you left off.
+          You have <strong>{recentInquiries.length}</strong> recent inquiries waiting and{' '}
+          <strong>{totalContent}</strong> content items live across the site. Pick up where
+          you left off.
         </p>
       </div>
 
       {/* Stats grid */}
       <div className="dash-stats">
-        {stats.map((s) => (
+        {statTiles.map((s) => (
           <button
             key={s.key}
             type="button"
@@ -283,7 +240,6 @@ const Dashboard = () => {
                 type="button"
                 onClick={() => navigate(a.path)}
                 className="dash-action"
-                style={{ width: '100%' }}
               >
                 <div>
                   <div className="dash-action__label">{a.label}</div>

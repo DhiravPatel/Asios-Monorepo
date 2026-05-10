@@ -25,7 +25,42 @@ async function AddCategory(req, res) {
 
 async function GetAllCategories(req, res) {
   try {
-    const categories = await Category.find().sort({ createdAt: 1 })
+    const { page, limit, q } = req.query
+
+    const filter = {}
+    if (q && q.trim()) filter.category = { $regex: q.trim(), $options: 'i' }
+
+    // If page/limit is supplied → return paginated envelope.
+    // Otherwise → return the full list (legacy callers, web AppContext).
+    if (page !== undefined || limit !== undefined) {
+      const pageNum = Math.max(1, parseInt(page, 10) || 1)
+      const limitNum = Math.min(100, Math.max(1, parseInt(limit, 10) || 8))
+      const skip = (pageNum - 1) * limitNum
+
+      const [items, total] = await Promise.all([
+        Category.find(filter)
+          .select('category image createdAt')
+          .sort({ createdAt: 1 })
+          .skip(skip)
+          .limit(limitNum)
+          .lean(),
+        Category.countDocuments(filter),
+      ])
+
+      return res.status(200).json({
+        message: 'Categories fetched successfully',
+        data: items,
+        page: pageNum,
+        limit: limitNum,
+        total,
+        totalPages: Math.ceil(total / limitNum),
+      })
+    }
+
+    const categories = await Category.find(filter)
+      .select('category image createdAt')
+      .sort({ createdAt: 1 })
+      .lean()
     res.status(200).json({ message: 'Categories fetched successfully', data: categories })
   } catch (error) {
     res.status(500).json({ message: 'Error fetching categories', error: error.message })

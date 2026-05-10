@@ -16,6 +16,7 @@ const CatalogueRoutes = require('./Routes/CatalogueRoutes.js')
 const CatalogueCategoryRoutes = require('./Routes/CatalogueCategoryRoutes.js')
 const CatalogueSubCategoryRoutes = require('./Routes/CatalogueSubCategoryRoutes.js')
 const BlogRoutes = require('./Routes/BlogRoutes.js')
+const DashboardRoutes = require('./Routes/DashboardRoutes.js')
 
 
 app.use(cors());
@@ -43,6 +44,7 @@ app.use('/api/catalogue', CatalogueRoutes)
 app.use('/api/catalogue-category', CatalogueCategoryRoutes)
 app.use('/api/catalogue-subcategory', CatalogueSubCategoryRoutes)
 app.use('/api/blog', BlogRoutes)
+app.use('/api/dashboard', DashboardRoutes)
 
 app.listen(PORT,()=>{
     console.log(`Server is listening on http://localhost:${PORT}/`)

@@ -1,17 +1,41 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Table, Modal, Input, Upload, message, Image, Pagination } from "antd";
 import { CaretUpOutlined, DeleteOutlined, UploadOutlined, EditOutlined } from "@ant-design/icons";
 import "antd/dist/reset.css";
 import AddNewCategoryModal from "./AddNewCategoryModal";
 import Search from "antd/es/input/Search";
 import {
-  useGetAllCategories,
+  useGetCategories,
   useEditCategory,
   useDeleteCategory,
 } from "../../hooks/Category/CategoryHook";
 
+const PAGE_SIZE = 8;
+
 const Category = () => {
-  const { data: dataSource, loading, refetch: fetchCategories } = useGetAllCategories();
+  const [searchQuery, setSearchQuery] = useState('');
+  const [debouncedQ, setDebouncedQ] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+
+  useEffect(() => {
+    const t = setTimeout(() => setDebouncedQ(searchQuery.trim()), 250);
+    return () => clearTimeout(t);
+  }, [searchQuery]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [debouncedQ]);
+
+  const {
+    data: dataSource,
+    total,
+    loading,
+    refetch: fetchCategories,
+  } = useGetCategories({
+    page: currentPage,
+    limit: PAGE_SIZE,
+    q: debouncedQ || undefined,
+  });
   const { mutate: editCategory } = useEditCategory();
   const { mutate: deleteCategory } = useDeleteCategory();
 
@@ -21,9 +45,6 @@ const Category = () => {
   const [previewImage, setPreviewImage] = useState(null);
   const [updatedCategory, setUpdatedCategory] = useState('');
   const [updatedImage, setUpdatedImage] = useState(null);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize] = useState(8);
 
   const handleDelete = (id) => {
     Modal.confirm({
@@ -149,17 +170,6 @@ const Category = () => {
     setAddNewTypeModalOpen(false);
   };
 
-  // Filtered data based on search query
-  const filteredDataSource = dataSource.filter(item =>
-    item.category.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
-  // Calculate paginated data
-  const paginatedDataSource = filteredDataSource.slice(
-    (currentPage - 1) * pageSize,
-    currentPage * pageSize
-  );
-
   return (
     <div className="admin-page">
       <div className="admin-page__action-bar">
@@ -178,6 +188,7 @@ const Category = () => {
             <Search
               placeholder="Search Category"
               style={{ width: 220 }}
+              value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
@@ -185,7 +196,7 @@ const Category = () => {
 
         <div className="admin-page__card-body">
           <Table
-            dataSource={paginatedDataSource}
+            dataSource={dataSource}
             columns={columns(showModal)}
             pagination={false}
             loading={loading}
@@ -196,8 +207,8 @@ const Category = () => {
         <div className="admin-page__pagination-wrap">
           <Pagination
             current={currentPage}
-            pageSize={pageSize}
-            total={filteredDataSource.length}
+            pageSize={PAGE_SIZE}
+            total={total}
             onChange={(page) => setCurrentPage(page)}
             showSizeChanger={false}
           />

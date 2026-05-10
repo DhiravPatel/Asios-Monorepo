@@ -42,7 +42,13 @@ export const useGetProductsBySubCategoryId = (subcategoryId) => {
     setError(null);
     dedupedFetch(`products:sub:${subcategoryId}`, () =>
       api
-        .get('/product/getAllProducts', { params: { subcategory: subcategoryId } })
+        .get('/product/getAllProducts', {
+          // Trim payload — list view doesn't need the heavy `details` JSON.
+          params: {
+            subcategory: subcategoryId,
+            fields: 'productName,image,category,subcategory,createdAt',
+          },
+        })
         .then((res) => res.data?.data ?? [])
     )
       .then((v) => { if (!cancelled) setData(v); })

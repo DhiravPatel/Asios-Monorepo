@@ -8,6 +8,7 @@ import { Link } from "react-router-dom";
 import { FiArrowLeft, FiArrowRight, FiArrowUpRight } from "react-icons/fi";
 import { AppContext } from "../AppContext";
 import SkeletonLoader from "../SkeletonLoader";
+import { cldCard } from "../utils/cloudinary";
 
 const SKELETON_COUNT = 4;
 
@@ -105,8 +106,10 @@ const Portfolio = () => {
                         {/* Image — kept clean */}
                         <div className="relative aspect-[3/4] overflow-hidden bg-sand-100">
                           <img
-                            src={item.image || "fallback-image.jpg"}
+                            src={cldCard(item.image) || "fallback-image.jpg"}
                             alt={item.category}
+                            loading="lazy"
+                            decoding="async"
                             className="w-full h-full object-cover transition-transform duration-[1200ms] ease-editorial group-hover:scale-105"
                           />
                           <div className="absolute inset-0 bg-black/0 group-hover:bg-black/15 transition-colors duration-500" />

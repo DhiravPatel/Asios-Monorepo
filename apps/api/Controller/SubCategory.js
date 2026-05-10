@@ -24,19 +24,90 @@ async function AddSubCategory(req, res) {
 
 async function GetAllSubCategories(req, res) {
   try {
-    const { category } = req.query
+    const { category, page, limit, q } = req.query
+
     const filter = {}
     if (category) filter.category = category
+    if (q && q.trim()) filter.subcategory = { $regex: q.trim(), $options: 'i' }
+
+    // Paginated envelope when page/limit present; otherwise legacy full list
+    if (page !== undefined || limit !== undefined) {
+      const pageNum = Math.max(1, parseInt(page, 10) || 1)
+      const limitNum = Math.min(100, Math.max(1, parseInt(limit, 10) || 8))
+      const skip = (pageNum - 1) * limitNum
+
+      const [items, total] = await Promise.all([
+        SubCategory.find(filter)
+          .select('subcategory image category createdAt')
+          .populate('category', 'category image')
+          .sort({ createdAt: 1 })
+          .skip(skip)
+          .limit(limitNum)
+          .lean(),
+        SubCategory.countDocuments(filter),
+      ])
+
+      return res.status(200).json({
+        message: 'subcategories fetched successfully',
+        data: items,
+        page: pageNum,
+        limit: limitNum,
+        total,
+        totalPages: Math.ceil(total / limitNum),
+      })
+    }
 
     const subcategories = await SubCategory.find(filter)
+      .select('subcategory image category createdAt')
       .populate('category', 'category image')
       .sort({ createdAt: 1 })
+      .lean()
     res.status(200).json({
       message: 'subcategories fetched successfully',
       data: subcategories,
     })
   } catch (error) {
     res.status(500).json({ message: 'Error fetching subcategories', error: error.message })
+  }
+}
+
+// Single-call endpoint for the admin SubCategory (Type) page.
+// Returns ONLY the paginated subcategory list. The categories list used by
+// the filter dropdown / add-modal is fetched lazily — see
+// /category/getAllCategories.
+async function GetSubCategoryPageData(req, res) {
+  try {
+    const { category, page, limit, q } = req.query
+
+    const filter = {}
+    if (category) filter.category = category
+    if (q && q.trim()) filter.subcategory = { $regex: q.trim(), $options: 'i' }
+
+    const pageNum = Math.max(1, parseInt(page, 10) || 1)
+    const limitNum = Math.min(100, Math.max(1, parseInt(limit, 10) || 8))
+    const skip = (pageNum - 1) * limitNum
+
+    const [items, total] = await Promise.all([
+      SubCategory.find(filter)
+        .select('subcategory image category createdAt')
+        .populate('category', 'category image')
+        .sort({ createdAt: 1 })
+        .skip(skip)
+        .limit(limitNum)
+        .lean(),
+      SubCategory.countDocuments(filter),
+    ])
+
+    res.status(200).json({
+      message: 'SubCategory page data fetched successfully',
+      data: items,
+      page: pageNum,
+      limit: limitNum,
+      total,
+      totalPages: Math.ceil(total / limitNum),
+    })
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching subcategory page data', error: error.message })
   }
 }
 
@@ -105,4 +176,10 @@ async function DeleteSubCategory(req, res) {
   }
 }
 
-module.exports = { AddSubCategory, GetAllSubCategories, DeleteSubCategory, EditSubCategory }
+module.exports = {
+  AddSubCategory,
+  GetAllSubCategories,
+  GetSubCategoryPageData,
+  DeleteSubCategory,
+  EditSubCategory,
+}

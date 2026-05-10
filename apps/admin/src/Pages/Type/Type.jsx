@@ -1,19 +1,55 @@
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Button, Table, Modal, Input, Upload, message, Image, Pagination, Select } from "antd";
-import { CaretUpOutlined, DeleteOutlined, UploadOutlined, EditOutlined } from "@ant-design/icons";
+import Search from "antd/es/input/Search";
+import { DeleteOutlined, UploadOutlined, EditOutlined } from "@ant-design/icons";
 import AddNewTypeModal from "./AddNewTypeModal";
 import {
-  useGetAllSubCategories,
+  useGetSubCategoryPageData,
   useEditSubCategory,
   useDeleteSubCategory,
 } from "../../hooks/SubCategory/SubCategoryHook";
 import { useGetAllCategories } from "../../hooks/Category/CategoryHook";
 
 const { Option } = Select;
+const PAGE_SIZE = 8;
 
 const Type = () => {
-  const { data: dataSource, loading, refetch: fetchSubCategories } = useGetAllSubCategories();
-  const { data: categories } = useGetAllCategories();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [selectedSubCategory, setSelectedSubCategory] = useState('');
+  const [debouncedQ, setDebouncedQ] = useState('');
+
+  // Categories list (for filter dropdown + Add modal) is lazy-loaded — only
+  // fetched once the user opens the dropdown or clicks Add.
+  const [needsCategories, setNeedsCategories] = useState(false);
+  const triggerCategories = useCallback(() => setNeedsCategories(true), []);
+
+  // Debounce search input to avoid hammering the API on every keystroke
+  useEffect(() => {
+    const t = setTimeout(() => setDebouncedQ((selectedSubCategory || '').trim()), 250);
+    return () => clearTimeout(t);
+  }, [selectedSubCategory]);
+
+  // Reset page on filter change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [selectedCategory, debouncedQ]);
+
+  // Lean call — paginated subcategories only.
+  const {
+    data: dataSource,
+    total,
+    loading,
+    refetch: fetchSubCategories,
+  } = useGetSubCategoryPageData({
+    page: currentPage,
+    limit: PAGE_SIZE,
+    category: selectedCategory || undefined,
+    q: debouncedQ || undefined,
+  });
+
+  const { data: categories = [] } = useGetAllCategories({ enabled: needsCategories });
+
   const { mutate: editSubCategory } = useEditSubCategory();
   const { mutate: deleteSubCategory } = useDeleteSubCategory();
 
@@ -24,10 +60,6 @@ const Type = () => {
   const [editSubCategoryName, setEditSubCategoryName] = useState('');
   const [editImage, setEditImage] = useState(null);
   const [editImagePreview, setEditImagePreview] = useState(null);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize] = useState(8);
-  const [selectedCategory, setSelectedCategory] = useState(null);
-  const [selectedSubCategory, setSelectedSubCategory] = useState(null);
 
   const handleDelete = (id) => {
     Modal.confirm({
@@ -108,6 +140,7 @@ const Type = () => {
   };
 
   const openAddNewTypeModal = () => {
+    triggerCategories();
     setAddNewTypeModalOpen(true);
   };
 
@@ -120,17 +153,6 @@ const Type = () => {
     setSelectedSubCategory(null); // Reset sub-category when category changes
   };
 
-  const handleSubCategoryChange = (value) => {
-    setSelectedSubCategory(value);
-  };
-
-  const filteredDataSource = dataSource.filter(item => {
-    const itemCategoryId = item.category?._id || item.category;
-    const categoryMatch = selectedCategory ? String(itemCategoryId) === String(selectedCategory) : true;
-    const subCategoryMatch = selectedSubCategory ? item.subcategory === selectedSubCategory : true;
-    return categoryMatch && subCategoryMatch;
-  });
-
   const columns = () => [
     {
       title: "Image",
@@ -140,35 +162,21 @@ const Type = () => {
       ),
     },
     {
-      title: (
-        <span className="flex items-center">
-          Sub-Category <CaretUpOutlined className="ml-1" />
-        </span>
-      ),
+      title: "Sub-Category",
       dataIndex: "subcategory",
       key: "subcategory",
-      filterIcon: (filtered) => (
-        <CaretUpOutlined style={{ color: filtered ? "#1890ff" : undefined }} />
-      ),
     },
     {
       title: (
         <span className="flex items-center">
-          Category <CaretUpOutlined className="ml-1" />
+          Category
         </span>
       ),
       key: "category",
       render: (_, record) => record.category?.category || '',
-      filterIcon: (filtered) => (
-        <CaretUpOutlined style={{ color: filtered ? '#1890ff' : undefined }} />
-      ),
     },
     {
-      title: (
-        <span className="flex items-center">
-          Date <CaretUpOutlined className="ml-1" />
-        </span>
-      ),
+      title: "Date",
       dataIndex: "createdAt",
       key: "createdAt",
       render: (date) => new Date(date).toLocaleDateString(),
@@ -189,12 +197,6 @@ const Type = () => {
     }
   ];
 
-  // Pagination logic
-  const paginatedDataSource = filteredDataSource.slice(
-    (currentPage - 1) * pageSize,
-    currentPage * pageSize
-  );
-
   return (
     <div className="admin-page">
       <div className="admin-page__action-bar">
@@ -213,6 +215,7 @@ const Type = () => {
             <Select
               placeholder="Select Category"
               onChange={handleCategoryChange}
+              onOpenChange={(open) => open && triggerCategories()}
               style={{ width: 200 }}
               value={selectedCategory}
               allowClear
@@ -223,32 +226,18 @@ const Type = () => {
                 </Option>
               ))}
             </Select>
-            <Select
-              placeholder="Select Sub-Category"
-              onChange={handleSubCategoryChange}
-              style={{ width: 200 }}
-              disabled={!selectedCategory}
-              value={selectedSubCategory}
-              allowClear
-            >
-              {dataSource
-                .filter(
-                  (item) =>
-                    String(item.category?._id || item.category) ===
-                    String(selectedCategory)
-                )
-                .map((item) => (
-                  <Option key={item._id} value={item.subcategory}>
-                    {item.subcategory}
-                  </Option>
-                ))}
-            </Select>
+            <Search
+              placeholder="Search Sub-Category"
+              style={{ width: 220 }}
+              value={selectedSubCategory || ''}
+              onChange={(e) => setSelectedSubCategory(e.target.value)}
+            />
           </div>
         </div>
 
         <div className="admin-page__card-body">
           <Table
-            dataSource={paginatedDataSource}
+            dataSource={dataSource}
             columns={columns()}
             pagination={false}
             loading={loading}
@@ -259,8 +248,8 @@ const Type = () => {
         <div className="admin-page__pagination-wrap">
           <Pagination
             current={currentPage}
-            pageSize={pageSize}
-            total={filteredDataSource.length}
+            pageSize={PAGE_SIZE}
+            total={total}
             onChange={(page) => setCurrentPage(page)}
             showSizeChanger={false}
           />
@@ -310,7 +299,12 @@ const Type = () => {
         </div>
       </Modal>
 
-      <AddNewTypeModal visible={addNewTypeModalOpen} onClose={closeAddNewTypeModal} fetchSubCategories={fetchSubCategories} />
+      <AddNewTypeModal
+        visible={addNewTypeModalOpen}
+        onClose={closeAddNewTypeModal}
+        fetchSubCategories={fetchSubCategories}
+        categories={categories}
+      />
     </div>
   );
 };

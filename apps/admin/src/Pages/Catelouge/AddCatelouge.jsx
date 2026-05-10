@@ -2,12 +2,18 @@ import React, { useState, useEffect } from "react";
 import { Modal, Input, Upload, Button, message, Select } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import { useAddCatalogue, useEditCatalogue } from "../../hooks/Catalogue/CatalogueHook";
-import { useGetAllCatalogueCategory } from "../../hooks/Catalogue/CatalogueCategoryHook";
-import { useGetAllCatalogueSubCategory } from "../../hooks/Catalogue/CatalogueSubCategoryHook";
 
-const AddCatelouge = ({ visible, onClose, catalogue, fetchCatalogueData }) => {
-  const { data: catalogueCategories } = useGetAllCatalogueCategory();
-  const { data: allSubcatalogueCategories } = useGetAllCatalogueSubCategory();
+// Catalogue-category and catalogue-subcategory lists are passed in from the
+// parent Catelouge page (already fetched via /catalogue/page-data), so the
+// modal doesn't trigger duplicate requests on mount.
+const AddCatelouge = ({
+  visible,
+  onClose,
+  catalogue,
+  fetchCatalogueData,
+  catalogueCategories = [],
+  catalogueSubcategories: allSubcatalogueCategories = [],
+}) => {
   const { mutate: addCatalogue } = useAddCatalogue();
   const { mutate: editCatalogue } = useEditCatalogue();
 

@@ -1,32 +1,67 @@
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Button, Table, Pagination, Image, Modal, message, Select } from "antd";
 import { CaretUpOutlined, DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import AddProductsModal from "./AddProductsModal";
-import Input from "antd/es/input/Input";
 import Search from "antd/es/input/Search";
-import { useGetAllProducts, useDeleteProduct } from "../../hooks/Product/ProductHook";
+import { useGetProductPageData, useDeleteProduct } from "../../hooks/Product/ProductHook";
 import { useGetAllCategories } from "../../hooks/Category/CategoryHook";
+import { useGetAllSubCategories } from "../../hooks/SubCategory/SubCategoryHook";
 
 const { Option } = Select;
+const ITEMS_PER_PAGE = 8;
 
 const Product = () => {
-  const { data: products, refetch: fetchProducts } = useGetAllProducts();
-  const { data: categories } = useGetAllCategories();
   const { mutate: deleteProduct } = useDeleteProduct();
 
   const [isAddProductModalVisible, setIsAddProductModalVisible] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
 
-  // Pagination state
+  // Pagination state (server-driven)
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 8;
 
   // Filter states
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedSubcategory, setSelectedSubcategory] = useState('');
   const [productNameFilter, setProductNameFilter] = useState('');
+  const [debouncedQ, setDebouncedQ] = useState('');
+
+  // Reference data (categories + subcategories) is lazy-loaded — only fetched
+  // once the user opens the Add/Edit modal or engages a filter dropdown.
+  const [needsRefData, setNeedsRefData] = useState(false);
+  const triggerRefData = useCallback(() => setNeedsRefData(true), []);
+
+  // Debounce search input so we don't hit the API on every keystroke
+  useEffect(() => {
+    const t = setTimeout(() => setDebouncedQ(productNameFilter.trim()), 250);
+    return () => clearTimeout(t);
+  }, [productNameFilter]);
+
+  // Reset to first page whenever a filter or search changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [selectedCategory, selectedSubcategory, debouncedQ]);
+
+  // Lean call — paginated products only.
+  const {
+    data: products,
+    total,
+    loading,
+    refetch: fetchProducts,
+  } = useGetProductPageData({
+    page: currentPage,
+    limit: ITEMS_PER_PAGE,
+    category: selectedCategory || undefined,
+    subcategory: selectedSubcategory || undefined,
+    q: debouncedQ || undefined,
+  });
+
+  // Reference data for filter dropdowns + Add/Edit modal. Deferred via
+  // `enabled` so we don't ship the full lists on initial page load.
+  const { data: categories = [] } = useGetAllCategories({ enabled: needsRefData });
+  const { data: subcategories = [] } = useGetAllSubCategories({ enabled: needsRefData });
 
   const showAddProductModal = (product) => {
+    triggerRefData();
     setSelectedProduct(product);
     setIsAddProductModalVisible(true);
   };
@@ -56,15 +91,15 @@ const Product = () => {
     });
   };
 
-  const handleClear = ()=>{
-    setSelectedCategory(null)
-    setSelectedSubcategory('')
-    setProductNameFilter('')
-  }
+  const handleClear = () => {
+    setSelectedCategory(null);
+    setSelectedSubcategory('');
+    setProductNameFilter('');
+  };
 
   const handleCategoryChange = (value) => {
     setSelectedCategory(value);
-    setSelectedSubcategory(''); 
+    setSelectedSubcategory('');
   };
 
   const handleSubcategoryChange = (value) => {
@@ -75,26 +110,13 @@ const Product = () => {
     setProductNameFilter(e.target.value);
   };
 
-  // Filter products based on selected filters
-  const filteredProducts = products.filter(product => {
-    const productCatId = product.category?._id || product.category;
-    const productSubId = product.subcategory?._id || product.subcategory;
-    const categoryMatch = selectedCategory ? String(productCatId) === String(selectedCategory) : true;
-    const subcategoryMatch = selectedSubcategory ? String(productSubId) === String(selectedSubcategory) : true;
-    const nameMatch = product.productName.toLowerCase().includes(productNameFilter.toLowerCase());
-    return categoryMatch && subcategoryMatch && nameMatch;
-  });
-
-  const uniqueSubcategories = selectedCategory
-    ? products
-        .filter(product => String(product.category?._id || product.category) === String(selectedCategory))
-        .map(product => product.subcategory)
-        .filter(Boolean)
-        .filter((sub, index, self) => {
-          const subId = sub?._id || sub;
-          return self.findIndex(s => String(s?._id || s) === String(subId)) === index;
-        })
-    : [];
+  // Subcategories available for the selected category — cached subcategory list
+  const uniqueSubcategories = useMemo(() => {
+    if (!selectedCategory) return [];
+    return (subcategories || []).filter(
+      (s) => String(s.category?._id || s.category) === String(selectedCategory)
+    );
+  }, [subcategories, selectedCategory]);
 
   const columns = [
     {
@@ -157,10 +179,6 @@ const Product = () => {
     },
   ];
 
-  const indexOfLastProduct = currentPage * itemsPerPage;
-  const indexOfFirstProduct = indexOfLastProduct - itemsPerPage;
-  const currentProducts = filteredProducts.slice(indexOfFirstProduct, indexOfLastProduct);
-
   return (
     <div className="admin-page">
       <div className="admin-page__action-bar">
@@ -179,6 +197,7 @@ const Product = () => {
             <Select
               placeholder="Select Category"
               onChange={handleCategoryChange}
+              onOpenChange={(open) => open && triggerRefData()}
               style={{ width: 180 }}
               value={selectedCategory}
               allowClear
@@ -192,6 +211,7 @@ const Product = () => {
             <Select
               placeholder="Select Subcategory"
               onChange={handleSubcategoryChange}
+              onOpenChange={(open) => open && triggerRefData()}
               style={{ width: 180 }}
               disabled={!selectedCategory}
               value={selectedSubcategory || undefined}
@@ -221,9 +241,10 @@ const Product = () => {
 
         <div className="admin-page__card-body">
           <Table
-            dataSource={currentProducts}
+            dataSource={products}
             columns={columns}
             pagination={false}
+            loading={loading}
             rowKey={(record) => record._id}
           />
         </div>
@@ -231,8 +252,8 @@ const Product = () => {
         <div className="admin-page__pagination-wrap">
           <Pagination
             current={currentPage}
-            pageSize={itemsPerPage}
-            total={filteredProducts.length}
+            pageSize={ITEMS_PER_PAGE}
+            total={total}
             onChange={(page) => setCurrentPage(page)}
             showSizeChanger={false}
           />
@@ -244,6 +265,8 @@ const Product = () => {
         onClose={hideAddProductModal}
         product={selectedProduct}
         fetchProducts={fetchProducts}
+        categories={categories}
+        subcategories={subcategories}
       />
     </div>
   );

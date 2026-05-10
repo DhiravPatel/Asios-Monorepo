@@ -1,28 +1,58 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { Button, Table, Pagination, message, Image, Modal } from "antd";
-import { CaretUpOutlined, DeleteOutlined, EditOutlined } from "@ant-design/icons";
+import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import AddCatelouge from "./AddCatelouge";
 import AddCatelougeCategory from "./AddCatelougeCategory";
 import AddCatelougeSubCategory from "./AddCatelougeSubCategory";
-import { useGetAllCatalogue, useDeleteCatalogue } from "../../hooks/Catalogue/CatalogueHook";
+import {
+  useGetCataloguePageData,
+  useDeleteCatalogue,
+} from "../../hooks/Catalogue/CatalogueHook";
+import { useGetAllCatalogueCategory } from "../../hooks/Catalogue/CatalogueCategoryHook";
+import { useGetAllCatalogueSubCategory } from "../../hooks/Catalogue/CatalogueSubCategoryHook";
+
+const ITEMS_PER_PAGE = 8;
 
 const Product = () => {
-  const { data: catalogueData, refetch: fetchCatalogueData } = useGetAllCatalogue();
+  const [currentPage, setCurrentPage] = useState(1);
+
+  // Lean call — paginated catalogues only.
+  const {
+    data: catalogueData,
+    total,
+    loading,
+    refetch: fetchCatalogueData,
+  } = useGetCataloguePageData({
+    page: currentPage,
+    limit: ITEMS_PER_PAGE,
+  });
   const { mutate: deleteCatalogue } = useDeleteCatalogue();
+
+  // Reference data (catalogue categories/subcategories) is lazy-loaded — only
+  // fetched once an Add or Edit modal opens.
+  const [needsCategories, setNeedsCategories] = useState(false);
+  const [needsSubcategories, setNeedsSubcategories] = useState(false);
+  const triggerCategories = useCallback(() => setNeedsCategories(true), []);
+  const triggerAllRefData = useCallback(() => {
+    setNeedsCategories(true);
+    setNeedsSubcategories(true);
+  }, []);
+
+  const { data: catalogueCategories = [] } = useGetAllCatalogueCategory({
+    enabled: needsCategories,
+  });
+  const { data: catalogueSubcategories = [] } = useGetAllCatalogueSubCategory({
+    enabled: needsSubcategories,
+  });
 
   const [isAddCatalougeModalVisible, setIsAddCatalougeModalVisible] = useState(false);
   const [isAddCatalougeCategoryModalVisible, setIsAddCatalougeCategoryModalVisible] = useState(false);
   const [isAddCatalougeSubCategoryModalVisible, setIsAddCatalougeSubCategoryModalVisible] = useState(false);
   const [currentCatalogue, setCurrentCatalogue] = useState(null);
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 8;
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };
-
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const paginatedData = catalogueData.slice(startIndex, startIndex + itemsPerPage);
 
   const handleDelete = async (id) => {
     Modal.confirm({
@@ -106,6 +136,7 @@ const Product = () => {
   ];
 
   const showAddCatelougeModal = (catalogue) => {
+    triggerAllRefData();
     setCurrentCatalogue(catalogue);
     setIsAddCatalougeModalVisible(true);
   };
@@ -129,7 +160,10 @@ const Product = () => {
         </Button>
         <Button
           className="admin-add-btn"
-          onClick={() => setIsAddCatalougeSubCategoryModalVisible(true)}
+          onClick={() => {
+            triggerCategories();
+            setIsAddCatalougeSubCategoryModalVisible(true);
+          }}
         >
           Add Catalogue Sub-Category
         </Button>
@@ -145,9 +179,10 @@ const Product = () => {
 
         <div className="admin-page__card-body">
           <Table
-            dataSource={paginatedData}
+            dataSource={catalogueData}
             columns={columns}
             pagination={false}
+            loading={loading}
             rowKey="_id"
           />
         </div>
@@ -155,8 +190,8 @@ const Product = () => {
         <div className="admin-page__pagination-wrap">
           <Pagination
             current={currentPage}
-            total={catalogueData.length}
-            pageSize={itemsPerPage}
+            total={total}
+            pageSize={ITEMS_PER_PAGE}
             onChange={handlePageChange}
             showSizeChanger={false}
           />
@@ -168,6 +203,8 @@ const Product = () => {
         onClose={hideAddCatelougeModal}
         catalogue={currentCatalogue}
         fetchCatalogueData={fetchCatalogueData}
+        catalogueCategories={catalogueCategories}
+        catalogueSubcategories={catalogueSubcategories}
       />
       <AddCatelougeCategory
         visible={isAddCatalougeCategoryModalVisible}
@@ -176,6 +213,7 @@ const Product = () => {
       <AddCatelougeSubCategory
         visible={isAddCatalougeSubCategoryModalVisible}
         onClose={() => setIsAddCatalougeSubCategoryModalVisible(false)}
+        catalogueCategories={catalogueCategories}
       />
     </div>
   );

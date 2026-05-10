@@ -22,6 +22,8 @@ const BlogCard = ({ post }) => {
         <img
           src={post.imageUrl || "https://via.placeholder.com/600x800"}
           alt={post.title}
+          loading="lazy"
+          decoding="async"
           onError={(e) => {
             e.currentTarget.src = "https://via.placeholder.com/600x800";
           }}

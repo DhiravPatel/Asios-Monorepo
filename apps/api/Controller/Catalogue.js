@@ -40,7 +40,11 @@ async function GetAllCatalogue(req, res) {
     if (cataloguecategory) filter.cataloguecategory = cataloguecategory
     if (cataloguesubcategory) filter.cataloguesubcategory = cataloguesubcategory
 
-    const catalogue = await Catalogue.find(filter).populate(POPULATE).sort({ createdAt: -1 })
+    const catalogue = await Catalogue.find(filter)
+      .select('name image link cataloguecategory cataloguesubcategory createdAt')
+      .populate(POPULATE)
+      .sort({ createdAt: -1 })
+      .lean()
     res.status(200).json({ message: 'catalogue fetched successfully', data: catalogue })
   } catch (error) {
     res.status(500).json({ message: 'Error fetching catalogue', error: error.message })
@@ -100,4 +104,52 @@ async function EditCatalogue(req, res) {
   }
 }
 
-module.exports = { AddCatalogue, GetAllCatalogue, DeleteCatalogue, EditCatalogue }
+// Single-call endpoint for the admin Catalogue page.
+// Returns ONLY the paginated catalogue list. Catalogue-category and
+// catalogue-subcategory lists are fetched lazily — see
+// /cataloguecategory/getAllCatalogueCategory and
+// /cataloguesubcategory/getAllCatalogueSubCategory.
+async function GetCataloguePageData(req, res) {
+  try {
+    const { cataloguecategory, cataloguesubcategory, q, page, limit } = req.query
+
+    const filter = {}
+    if (cataloguecategory) filter.cataloguecategory = cataloguecategory
+    if (cataloguesubcategory) filter.cataloguesubcategory = cataloguesubcategory
+    if (q && q.trim()) filter.name = { $regex: q.trim(), $options: 'i' }
+
+    const pageNum = Math.max(1, parseInt(page, 10) || 1)
+    const limitNum = Math.min(100, Math.max(1, parseInt(limit, 10) || 8))
+    const skip = (pageNum - 1) * limitNum
+
+    const [items, total] = await Promise.all([
+      Catalogue.find(filter)
+        .select('name image link cataloguecategory cataloguesubcategory createdAt')
+        .populate(POPULATE)
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limitNum)
+        .lean(),
+      Catalogue.countDocuments(filter),
+    ])
+
+    res.status(200).json({
+      message: 'Catalogue page data fetched successfully',
+      data: items,
+      page: pageNum,
+      limit: limitNum,
+      total,
+      totalPages: Math.ceil(total / limitNum),
+    })
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching catalogue page data', error: error.message })
+  }
+}
+
+module.exports = {
+  AddCatalogue,
+  GetAllCatalogue,
+  GetCataloguePageData,
+  DeleteCatalogue,
+  EditCatalogue,
+}

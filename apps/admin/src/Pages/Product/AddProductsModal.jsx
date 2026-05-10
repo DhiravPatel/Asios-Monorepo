@@ -2,21 +2,27 @@ import React, { useState, useEffect } from "react";
 import { Modal, Input, Upload, Button, message, Select, Form, Spin } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import { useAddProduct, useEditProduct } from "../../hooks/Product/ProductHook";
-import { useGetAllCategories } from "../../hooks/Category/CategoryHook";
-import { useGetAllSubCategories } from "../../hooks/SubCategory/SubCategoryHook";
 
-const AddProductsModal = ({ visible, onClose, product, fetchProducts }) => {
+// `categories` and `subcategories` are passed in from the parent Product page
+// (which already has them from the unified /product/page-data call) — avoids
+// duplicate fetches when the modal mounts.
+const AddProductsModal = ({
+  visible,
+  onClose,
+  product,
+  fetchProducts,
+  categories = [],
+  subcategories: allSubcategories = [],
+}) => {
   const [form] = Form.useForm();
   const [image, setImage] = useState(null);
   const [filteredSubcategories, setFilteredSubcategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
 
-  const { data: categories, loading: loadingCategories } = useGetAllCategories();
-  const { data: allSubcategories, loading: loadingSubcategories } = useGetAllSubCategories();
   const { mutate: addProduct } = useAddProduct();
   const { mutate: editProduct } = useEditProduct();
 
-  const loading = loadingCategories || loadingSubcategories;
+  const loading = false;
 
  useEffect(() => {
   if (visible) {

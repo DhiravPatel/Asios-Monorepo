@@ -23,6 +23,7 @@ async function GetAllCatalogueSubCategory(req, res) {
     const catalogueSubCategory = await CatalogueSubCategory.find(filter)
       .populate('cataloguecategory', 'cataloguecategory')
       .sort({ createdAt: 1 })
+      .lean()
     res.status(200).json({
       message: 'catalogue sub-category fetched successfully',
       data: catalogueSubCategory,

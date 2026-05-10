@@ -5,6 +5,7 @@ import { FiArrowUpRight } from "react-icons/fi";
 import SkeletonLoader from "../../SkeletonLoader";
 import { AppContext } from "../../AppContext";
 import Breadcrumb from "../../Breadcrumb";
+import { cldCard } from "../../utils/cloudinary";
 
 const SKELETON_COUNT = 8;
 
@@ -85,8 +86,10 @@ const Main_Product_details = () => {
                     {/* Image — clean, no overlay text */}
                     <div className="relative aspect-[3/4] overflow-hidden bg-sand-100">
                       <img
-                        src={sub.image || "fallback-image.jpg"}
+                        src={cldCard(sub.image) || "fallback-image.jpg"}
                         alt={sub.subcategory}
+                        loading="lazy"
+                        decoding="async"
                         className="w-full h-full object-cover transition-transform duration-[1200ms] ease-editorial group-hover:scale-105"
                       />
                       <div className="absolute inset-0 bg-black/0 group-hover:bg-black/15 transition-colors duration-500" />

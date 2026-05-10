@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import api from '../api';
 
+// Full-list fetch (used by web + dropdowns).
 export const useGetAllCatalogue = () => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -24,6 +25,53 @@ export const useGetAllCatalogue = () => {
   }, [fetchData]);
 
   return { data, loading, error, refetch: fetchData };
+};
+
+// Lean hook for the admin Catalogue page — fetches ONLY the paginated
+// catalogue list. Catalogue-category and catalogue-subcategory lists used by
+// the modals are fetched lazily via useGetAllCatalogueCategory /
+// useGetAllCatalogueSubCategory.
+export const useGetCataloguePageData = ({
+  page = 1,
+  limit = 8,
+  cataloguecategory,
+  cataloguesubcategory,
+  q,
+} = {}) => {
+  const [data, setData] = useState([]);
+  const [total, setTotal] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const fetchData = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const params = { page, limit };
+      if (cataloguecategory) params.cataloguecategory = cataloguecategory;
+      if (cataloguesubcategory) params.cataloguesubcategory = cataloguesubcategory;
+      if (q) params.q = q;
+      const response = await api.get('/catalogue/page-data', { params });
+      setData(response.data?.data ?? []);
+      setTotal(response.data?.total ?? 0);
+    } catch (err) {
+      setError(err);
+    } finally {
+      setLoading(false);
+    }
+  }, [page, limit, cataloguecategory, cataloguesubcategory, q]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  return {
+    data,
+    total,
+    loading,
+    error,
+    refetch: fetchData,
+  };
 };
 
 export const useAddCatalogue = () => {

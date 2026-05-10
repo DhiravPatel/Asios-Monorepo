@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Modal, Input, Upload, Button, message, Select } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
-import { useGetAllCategories } from "../../hooks/Category/CategoryHook";
 import { useAddSubCategory } from "../../hooks/SubCategory/SubCategoryHook";
 
-const AddNewTypeModal = ({ visible, onClose, fetchSubCategories }) => {
-  const { data: categories } = useGetAllCategories();
+// `categories` comes in from the parent SubCategory (Type) page (already fetched
+// via /subcategory/page-data), so the modal doesn't trigger an extra request.
+const AddNewTypeModal = ({ visible, onClose, fetchSubCategories, categories = [] }) => {
   const { mutate: addSubCategory } = useAddSubCategory();
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [subCategory, setSubCategory] = useState('');

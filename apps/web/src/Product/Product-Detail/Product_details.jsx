@@ -6,6 +6,7 @@ import SkeletonLoader from "../../SkeletonLoader";
 import { useGetProductsBySubCategoryId } from "../../hooks/Product/ProductHook";
 import { AppContext } from "../../AppContext";
 import Breadcrumb from "../../Breadcrumb";
+import { cldCard } from "../../utils/cloudinary";
 
 const SKELETON_COUNT = 8;
 
@@ -110,8 +111,10 @@ const Product_details = () => {
                       }`}
                     >
                       <img
-                        src={product.image || "fallback-image.jpg"}
+                        src={cldCard(product.image) || "fallback-image.jpg"}
                         alt={product.productName}
+                        loading="lazy"
+                        decoding="async"
                         className={`w-full h-full transition-transform duration-[1200ms] ease-editorial group-hover:scale-105 ${
                           isFramedCategory ? "object-cover" : "object-contain p-4"
                         }`}

@@ -1,12 +1,12 @@
 import { Select, Input, Modal, message } from "antd";
 import React, { useState } from "react";
-import { useGetAllCatalogueCategory } from "../../hooks/Catalogue/CatalogueCategoryHook";
 import { useAddCatalogueSubCategory } from "../../hooks/Catalogue/CatalogueSubCategoryHook";
 
 const { Option } = Select;
 
-const AddCatelougeSubCategory = ({ visible, onClose }) => {
-  const { data: catalogueCategories } = useGetAllCatalogueCategory();
+// Receives `catalogueCategories` from the parent Catelouge page so the modal
+// doesn't fire its own list request on mount.
+const AddCatelougeSubCategory = ({ visible, onClose, catalogueCategories = [] }) => {
   const { mutate: addCatalogueSubCategory } = useAddCatalogueSubCategory();
   const [selectedCatalogueCategory, setSelectedCatalogueCategory] = useState("");
   const [cataloguesubcategory, setCatalogueSubCategory] = useState("");

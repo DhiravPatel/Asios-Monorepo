@@ -15,6 +15,7 @@ import Category from "./Category";
 import { useGetAllCatalogue } from "../hooks/Catalogue/CatalogueHook";
 import PageHero from "../PageHero";
 import SkeletonLoader from "../SkeletonLoader";
+import { cldCard, cldHero } from "../utils/cloudinary";
 
 const SKELETON_COUNT = 8;
 
@@ -148,8 +149,10 @@ const Catelogue = () => {
                     <div className="absolute -bottom-5 -left-5 w-36 h-36 md:w-48 md:h-48 bg-primary/95 hidden md:block" />
                     <div className="relative aspect-[4/5] max-h-[640px] mx-auto overflow-hidden bg-sand-100">
                       <img
-                        src={featured.image}
+                        src={cldHero(featured.image)}
                         alt={featured.name}
+                        loading="lazy"
+                        decoding="async"
                         className="w-full h-full object-cover transition-transform duration-[1500ms] ease-editorial group-hover:scale-[1.04]"
                       />
                       <div className="absolute inset-0 bg-black/0 group-hover:bg-black/15 transition-colors duration-500" />
@@ -331,8 +334,10 @@ const Catelogue = () => {
                         className="relative aspect-[3/4] overflow-hidden bg-sand-100 cursor-pointer text-left"
                       >
                         <img
-                          src={item.image}
+                          src={cldCard(item.image)}
                           alt={item.name}
+                          loading="lazy"
+                          decoding="async"
                           className="w-full h-full object-cover transition-transform duration-[1200ms] ease-editorial group-hover:scale-105"
                         />
                         <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-500" />

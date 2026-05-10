@@ -1,9 +1,11 @@
 import { useCallback, useEffect, useState } from 'react';
 import api from '../api';
 
-export const useGetAllCatalogueCategory = () => {
+// Pass `{ enabled: false }` to defer fetching until a consumer opens
+// (e.g. only fetch once the Add Catalogue / Add Sub-Category modal opens).
+export const useGetAllCatalogueCategory = ({ enabled = true } = {}) => {
   const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(enabled);
   const [error, setError] = useState(null);
 
   const fetchData = useCallback(async () => {
@@ -20,8 +22,8 @@ export const useGetAllCatalogueCategory = () => {
   }, []);
 
   useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+    if (enabled) fetchData();
+  }, [enabled, fetchData]);
 
   return { data, loading, error, refetch: fetchData };
 };

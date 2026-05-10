@@ -26,7 +26,7 @@ const AddProductInquiry = async(req,res)=> {
 
 const GetProductInquiry = async(req, res)=> {
     try {
-      const product_inquiry = await ProductInquiry.find()
+      const product_inquiry = await ProductInquiry.find().sort({ createdAt: -1 }).lean()
       res.status(200).json({
         message: 'Product_Inquiry fetched successfully',
         data: product_inquiry
