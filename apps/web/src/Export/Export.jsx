@@ -207,7 +207,10 @@ const Export = () => {
                 <Link to="/contact" className="btn-primary">
                   Start a Conversation
                 </Link>
-                <Link to="/catalogue" className="btn-link">
+                <Link
+                  to="/catalogue"
+                  className="btn-link hover:!text-primary transition-colors duration-300"
+                >
                   Browse Catalogue
                   <FiArrowUpRight className="arrow w-4 h-4" />
                 </Link>
@@ -453,7 +456,10 @@ const Export = () => {
                 <Link to="/contact" className="btn-primary btn-primary--invert">
                   Start an Inquiry
                 </Link>
-                <Link to="/sample-request" className="btn-link btn-link--light">
+                <Link
+                  to="/sample-request"
+                  className="btn-link btn-link--light hover:!text-primary transition-colors duration-300"
+                >
                   Request Samples
                   <FiArrowUpRight className="arrow w-4 h-4" />
                 </Link>
@@ -484,7 +490,10 @@ const Export = () => {
                 Honest answers to the inquiries that arrive before the first PO. Anything missing?
                 Write to us — we'll add it here.
               </p>
-              <Link to="/contact" className="btn-link">
+              <Link
+                to="/contact"
+                className="btn-link hover:!text-primary transition-colors duration-300"
+              >
                 Ask a Different Question
                 <FiArrowUpRight className="arrow w-4 h-4" />
               </Link>

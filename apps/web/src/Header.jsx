@@ -79,12 +79,17 @@ const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [hideAnnouncement, setHideAnnouncement] = useState(false);
+  const [openMobileSection, setOpenMobileSection] = useState(null);
   const { footerData } = useContext(AppContext);
   const categories = footerData || [];
   const location = useLocation();
 
+  const toggleMobileSection = (key) =>
+    setOpenMobileSection((prev) => (prev === key ? null : key));
+
   useEffect(() => {
     setIsOpen(false);
+    setOpenMobileSection(null);
   }, [location.pathname]);
 
   useEffect(() => {
@@ -108,8 +113,14 @@ const Header = () => {
   // Build marquee content (duplicated for seamless loop)
   const marqueeItems = [...announcements, ...announcements];
 
+  // On the home page at the top of the viewport, the header overlays the hero
+  // image transparently. Once scrolled, the glass-blur kicks in like other pages.
+  const isHomeTop = location.pathname === "/" && !scrolled;
+
   return (
-    <header className="sticky top-0 z-50 w-full">
+    <header
+      className={`sticky top-0 z-50 w-full ${isHomeTop ? "is-transparent" : ""}`}
+    >
       {/* Marquee announcement bar — dark glass */}
       <div
         className={`relative bg-ink/85 backdrop-blur-xl text-white overflow-hidden transition-all duration-500 ease-editorial border-b border-white/10 ${
@@ -137,16 +148,30 @@ const Header = () => {
         </div>
       </div>
 
-      {/* Main nav — frosted glass with ambient color blobs */}
+      {/* Main nav — transparent on home top, frosted glass elsewhere */}
       <div
         className={`relative border-b transition-all duration-500 ease-editorial ${
-          scrolled
+          isHomeTop
+            ? "bg-transparent border-transparent"
+            : scrolled
             ? "bg-white/80 backdrop-blur-2xl border-sand-200/70 shadow-soft"
             : "bg-white/65 backdrop-blur-xl border-sand-200/40"
         }`}
       >
-        {/* ambient color blobs behind glass */}
-        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        {/* Soft dark gradient backdrop — only when transparent over hero,
+            keeps white nav text legible regardless of image content beneath */}
+        <div
+          className={`absolute inset-0 pointer-events-none transition-opacity duration-500 bg-gradient-to-b from-black/45 via-black/20 to-transparent ${
+            isHomeTop ? "opacity-100" : "opacity-0"
+          }`}
+        />
+
+        {/* ambient color blobs behind glass — hidden when fully transparent */}
+        <div
+          className={`absolute inset-0 pointer-events-none overflow-hidden transition-opacity duration-500 ${
+            isHomeTop ? "opacity-0" : "opacity-100"
+          }`}
+        >
           <div className="absolute -top-24 left-1/4 w-[420px] h-[180px] bg-primary/10 rounded-full blur-3xl" />
           <div className="absolute -top-16 right-1/4 w-[480px] h-[200px] bg-primary/8 rounded-full blur-3xl" />
           <div className="absolute -bottom-20 left-1/2 -translate-x-1/2 w-[600px] h-[120px] bg-sand-200/30 rounded-full blur-3xl" />
@@ -276,7 +301,9 @@ const Header = () => {
             {/* Mobile toggle */}
             <button
               onClick={() => setIsOpen((p) => !p)}
-              className="lg:hidden p-2 -mr-2 text-ink relative w-10 h-10 inline-flex items-center justify-center"
+              className={`lg:hidden p-2 -mr-2 relative w-10 h-10 inline-flex items-center justify-center transition-colors duration-300 ${
+                isHomeTop ? "text-white" : "text-ink"
+              }`}
               aria-label="Toggle menu"
               aria-expanded={isOpen}
             >
@@ -332,104 +359,128 @@ const Header = () => {
           variants={{
             visible: { transition: { staggerChildren: 0.05, delayChildren: 0.15 } },
           }}
-          className="relative h-[calc(100%-4rem)] md:h-[calc(100%-5rem)] overflow-y-auto px-6 md:px-10 py-10"
+          className="relative h-[calc(100%-4rem)] md:h-[calc(100%-5rem)] overflow-y-auto px-6 md:px-10 py-6"
         >
-          <nav className="flex flex-col mb-10">
+          <nav className="flex flex-col">
             {[
-              { to: "/", label: "Home", index: "01" },
-              { to: "/about", label: "About", index: "02" },
-              { to: "/product", label: "Products", index: "03" },
-              { to: "/export", label: "Export", index: "04" },
-              { to: "/catalogue", label: "E-Catalogue", index: "05" },
-              { to: "/contact", label: "Contact", index: "06" },
-            ].map((link) => (
-              <motion.div
-                key={link.to}
-                variants={{
-                  hidden: { opacity: 0, x: 20 },
-                  visible: { opacity: 1, x: 0, transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] } },
-                }}
-              >
-                <Link
-                  to={link.to}
-                  onClick={() => setIsOpen(false)}
-                  className="group flex items-baseline gap-5 py-4 border-b border-sand-200 hover:bg-white/50 transition-colors px-2 -mx-2"
-                >
-                  <span className="text-[10px] tracking-[0.22em] uppercase font-semibold text-sand-400 w-7 shrink-0">
-                    {link.index}
-                  </span>
-                  <span className="display text-3xl md:text-4xl group-hover:text-primary transition-colors">
-                    {link.label}
-                  </span>
-                  <FiArrowUpRight className="ml-auto w-5 h-5 text-sand-400 -translate-x-2 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all duration-500 ease-editorial" />
-                </Link>
-              </motion.div>
-            ))}
-          </nav>
+              { type: "link", to: "/", label: "Home", index: "01" },
+              { type: "link", to: "/about", label: "About", index: "02" },
+              { type: "expandable", key: "products", label: "Products", index: "03" },
+              { type: "expandable", key: "information", label: "Information", index: "04" },
+              { type: "link", to: "/export", label: "Export", index: "05" },
+              { type: "link", to: "/catalogue", label: "E-Catalogue", index: "06" },
+              { type: "link", to: "/contact", label: "Contact", index: "07" },
+            ].map((item) => {
+              const variants = {
+                hidden: { opacity: 0, x: 20 },
+                visible: { opacity: 1, x: 0, transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] } },
+              };
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
-            <motion.div
-              variants={{
-                hidden: { opacity: 0, y: 12 },
-                visible: { opacity: 1, y: 0, transition: { duration: 0.6 } },
-              }}
-            >
-              <span className="eyebrow !text-[10px]">Information</span>
-              <div className="mt-4 flex flex-col gap-3">
-                {informationLinks.map((link) => (
-                  <Link
-                    key={link.to}
-                    to={link.to}
-                    onClick={() => setIsOpen(false)}
-                    className="text-[14px] text-ink/80 hover:text-primary transition-colors"
+              if (item.type === "expandable") {
+                const isExpanded = openMobileSection === item.key;
+                return (
+                  <motion.div
+                    key={item.key}
+                    variants={variants}
+                    className="border-b border-sand-200"
                   >
-                    {link.label}
-                  </Link>
-                ))}
-              </div>
-            </motion.div>
-
-            {categories.length > 0 && (
-              <motion.div
-                variants={{
-                  hidden: { opacity: 0, y: 12 },
-                  visible: { opacity: 1, y: 0, transition: { duration: 0.6 } },
-                }}
-              >
-                <span className="eyebrow !text-[10px]">Collections</span>
-                <div className="mt-4 flex flex-col gap-3">
-                  {categories.map((item) => (
-                    <Link
-                      key={item._id}
-                      to={`/main-product/${item._id}`}
-                      onClick={() => setIsOpen(false)}
-                      className="capitalize text-[14px] text-ink/80 hover:text-primary transition-colors"
+                    <button
+                      type="button"
+                      onClick={() => toggleMobileSection(item.key)}
+                      aria-expanded={isExpanded}
+                      className="w-full group flex items-center gap-5 py-4 hover:bg-white/50 transition-colors px-2 -mx-2 text-left"
                     >
-                      {item.category}
-                    </Link>
-                  ))}
-                </div>
-              </motion.div>
-            )}
-          </div>
+                      <span className="w-7 shrink-0 flex items-center">
+                        <span
+                          className={`block h-px bg-primary transition-all duration-500 ease-editorial ${
+                            isExpanded ? "w-7" : "w-4 group-hover:w-6"
+                          }`}
+                        />
+                      </span>
+                      <span
+                        className={`display text-3xl md:text-4xl flex-1 transition-colors ${
+                          isExpanded ? "text-primary" : "group-hover:text-primary"
+                        }`}
+                      >
+                        {item.label}
+                      </span>
+                      <FiChevronDown
+                        className={`w-5 h-5 mt-1 transition-all duration-500 ease-editorial ${
+                          isExpanded
+                            ? "rotate-180 text-primary"
+                            : "text-sand-400 group-hover:text-ink"
+                        }`}
+                      />
+                    </button>
+                    <div
+                      className={`grid transition-all duration-500 ease-editorial overflow-hidden ${
+                        isExpanded ? "grid-rows-[1fr] opacity-100 pb-5" : "grid-rows-[0fr] opacity-0"
+                      }`}
+                    >
+                      <div className="min-h-0">
+                        <div className="flex flex-col gap-3 pl-12 pt-2">
+                          {item.key === "products" && (
+                            <>
+                              <Link
+                                to="/product"
+                                onClick={() => setIsOpen(false)}
+                                className="text-[13.5px] tracking-[0.22em] uppercase font-semibold text-primary hover:text-primary-dark transition-colors"
+                              >
+                                All Products →
+                              </Link>
+                              {categories.length > 0 ? (
+                                categories.map((cat) => (
+                                  <Link
+                                    key={cat._id}
+                                    to={`/main-product/${cat._id}`}
+                                    onClick={() => setIsOpen(false)}
+                                    className="capitalize text-[14px] text-ink/75 hover:text-primary transition-colors"
+                                  >
+                                    {cat.category}
+                                  </Link>
+                                ))
+                              ) : (
+                                <span className="text-[13px] text-sand-400">Loading…</span>
+                              )}
+                            </>
+                          )}
+                          {item.key === "information" &&
+                            informationLinks.map((link) => (
+                              <Link
+                                key={link.to}
+                                to={link.to}
+                                onClick={() => setIsOpen(false)}
+                                className="text-[14px] text-ink/75 hover:text-primary transition-colors"
+                              >
+                                {link.label}
+                              </Link>
+                            ))}
+                        </div>
+                      </div>
+                    </div>
+                  </motion.div>
+                );
+              }
 
-          <motion.div
-            variants={{
-              hidden: { opacity: 0, y: 12 },
-              visible: { opacity: 1, y: 0, transition: { duration: 0.6 } },
-            }}
-            className="mt-10 pt-8 border-t border-sand-200"
-          >
-            <span className="eyebrow !text-[10px]">Reach Us</span>
-            <div className="mt-4 flex flex-col gap-2 text-[13.5px] text-ink/85">
-              <a href="mailto:info@asios.in" className="hover:text-primary transition-colors">
-                info@asios.in
-              </a>
-              <a href="tel:9409000751" className="hover:text-primary transition-colors">
-                +91 9409000751 <span className="text-sand-500">(Export)</span>
-              </a>
-            </div>
-          </motion.div>
+              return (
+                <motion.div key={item.to} variants={variants}>
+                  <Link
+                    to={item.to}
+                    onClick={() => setIsOpen(false)}
+                    className="group flex items-center gap-5 py-4 border-b border-sand-200 hover:bg-white/50 transition-colors px-2 -mx-2"
+                  >
+                    <span className="w-7 shrink-0 flex items-center">
+                      <span className="block w-4 h-px bg-primary transition-all duration-500 ease-editorial group-hover:w-6" />
+                    </span>
+                    <span className="display text-3xl md:text-4xl group-hover:text-primary transition-colors">
+                      {item.label}
+                    </span>
+                    <FiArrowUpRight className="ml-auto w-5 h-5 text-sand-400 -translate-x-2 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all duration-500 ease-editorial" />
+                  </Link>
+                </motion.div>
+              );
+            })}
+          </nav>
         </motion.div>
       </div>
     </header>

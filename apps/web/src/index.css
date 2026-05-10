@@ -168,6 +168,10 @@ button {
   padding-bottom: 4px;
   position: relative;
   cursor: pointer;
+  transition: color 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.btn-link:hover {
+  color: #a42832;
 }
 .btn-link::after {
   content: '';
@@ -193,6 +197,9 @@ button {
 }
 .btn-link--light {
   color: #ffffff;
+}
+.btn-link--light:hover {
+  color: #a42832;
 }
 
 /* ----- Editorial nav link with sliding red underline ----- */
@@ -305,6 +312,26 @@ button {
 }
 .nav-letter.is-active .nav-letter__dot {
   transform: translateX(-50%) scale(1);
+}
+
+/* Transparent header — light text over dark hero (home page, top of viewport) */
+header.is-transparent .nav-letter,
+header.is-transparent button.nav-letter,
+header.is-transparent .nav-letter .nav-letter__char,
+header.is-transparent .nav-letter .nav-letter__row {
+  color: rgba(255, 255, 255, 0.95) !important;
+}
+header.is-transparent .nav-letter:hover,
+header.is-transparent button.nav-letter:hover {
+  color: #ffffff !important;
+}
+header.is-transparent .nav-letter__chevron {
+  color: rgba(255, 255, 255, 0.8) !important;
+}
+/* keep the red ghost copy (slides up on hover/active) */
+header.is-transparent .nav-letter .nav-letter__row--ghost,
+header.is-transparent .nav-letter .nav-letter__row--ghost .nav-letter__char {
+  color: #a42832 !important;
 }
 
 /* ----- Marquee announcement strip ----- */
