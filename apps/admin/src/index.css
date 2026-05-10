@@ -25,6 +25,882 @@
 
 
 .custom-card-header .ant-card-head {
-    background-color: #d6d6d6; 
+    background-color: #d6d6d6;
     color: black;
   }
+
+/* ============================================================
+   Login page — editorial/animated design system
+   ============================================================ */
+
+.login-display {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    line-height: 1.05;
+    color: #ffffff;
+}
+.login-display-italic {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-style: italic;
+    font-weight: 400;
+}
+.login-eyebrow {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+}
+.login-rule {
+    display: inline-block;
+    width: 40px;
+    height: 1px;
+    background-color: #a01313;
+    vertical-align: middle;
+}
+.login-rule-light {
+    background-color: rgba(255, 255, 255, 0.55);
+}
+
+/* Floating gradient blobs (drift continuously) */
+@keyframes blob-1 {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    33%       { transform: translate(80px, 60px) scale(1.15); }
+    66%       { transform: translate(-40px, 30px) scale(1.05); }
+}
+@keyframes blob-2 {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    33%       { transform: translate(-60px, 40px) scale(1.2); }
+    66%       { transform: translate(30px, -30px) scale(1.1); }
+}
+@keyframes blob-3 {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    33%       { transform: translate(-40px, -50px) scale(1.1); }
+    66%       { transform: translate(60px, 20px) scale(1.2); }
+}
+.login-blob {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    pointer-events: none;
+    will-change: transform;
+}
+.login-blob-1 { animation: blob-1 18s ease-in-out infinite; }
+.login-blob-2 { animation: blob-2 22s ease-in-out infinite 2s; }
+.login-blob-3 { animation: blob-3 26s ease-in-out infinite 4s; }
+
+/* Subtle entry animations for content */
+@keyframes login-fade-up {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+.login-fade-up {
+    animation: login-fade-up 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* ----- Editorial form input overrides for the login page only ----- */
+.login-form .ant-input,
+.login-form .ant-input-affix-wrapper,
+.login-form .ant-input-password {
+    background-color: transparent !important;
+    border: none !important;
+    border-bottom: 1px solid #d4cfc1 !important;
+    border-radius: 0 !important;
+    padding: 14px 0 !important;
+    font-family: 'Inter', system-ui, sans-serif !important;
+    font-size: 15px !important;
+    color: #1a1612 !important;
+    box-shadow: none !important;
+    transition: border-color 0.3s ease !important;
+}
+.login-form .ant-input::placeholder,
+.login-form .ant-input-affix-wrapper input::placeholder {
+    color: #a39d8c !important;
+    font-size: 14px !important;
+}
+.login-form .ant-input:focus,
+.login-form .ant-input-affix-wrapper:focus-within,
+.login-form .ant-input-affix-wrapper-focused {
+    border-bottom-color: #1a1612 !important;
+    box-shadow: none !important;
+}
+.login-form .ant-input-affix-wrapper > input.ant-input {
+    border: none !important;
+    padding: 0 !important;
+    background-color: transparent !important;
+}
+.login-form .ant-form-item {
+    margin-bottom: 24px;
+}
+.login-form .ant-form-item-explain-error {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 12px;
+    color: #a01313;
+    margin-top: 6px;
+}
+
+/* Primary login submit button */
+.login-submit.ant-btn {
+    background-color: #1a1612 !important;
+    border: 1px solid #1a1612 !important;
+    color: #ffffff !important;
+    font-family: 'Inter', system-ui, sans-serif !important;
+    font-size: 12px !important;
+    font-weight: 500 !important;
+    letter-spacing: 0.18em !important;
+    text-transform: uppercase !important;
+    padding: 24px 28px !important;
+    height: 52px !important;
+    border-radius: 0 !important;
+    width: 100%;
+    transition: background-color 0.3s ease, border-color 0.3s ease !important;
+}
+.login-submit.ant-btn:hover {
+    background-color: #a01313 !important;
+    border-color: #a01313 !important;
+    color: #ffffff !important;
+}
+
+/* ============================================================
+   Admin shell — editorial dark sidebar + clean header
+   ============================================================ */
+
+body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+/* ----- Sidebar ----- */
+.admin-sidebar {
+    width: 250px;
+    height: 100%;
+    background-color: #1a1612;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+    border-right: 1px solid rgba(255, 255, 255, 0.06);
+}
+.admin-sidebar__brand {
+    padding: 22px 24px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+}
+.admin-sidebar__brand-name {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 28px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: #fff;
+    line-height: 1;
+}
+.admin-sidebar__brand-tag {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.4);
+}
+.admin-sidebar__section-label {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 9.5px;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.35);
+    padding: 22px 24px 10px;
+}
+.admin-sidebar__nav {
+    flex: 1;
+    overflow-y: auto;
+    padding-bottom: 16px;
+}
+.admin-sidebar__item {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 11px 24px;
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 13.5px;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.65);
+    cursor: pointer;
+    transition: color 0.25s ease, background-color 0.25s ease;
+    text-align: left;
+    width: 100%;
+    border: none;
+    background: transparent;
+}
+.admin-sidebar__item::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 0;
+    height: 22px;
+    background-color: #a01313;
+    transition: width 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.admin-sidebar__item:hover {
+    color: #fff;
+    background-color: rgba(255, 255, 255, 0.03);
+}
+.admin-sidebar__item--active {
+    color: #fff;
+    background-color: rgba(160, 19, 19, 0.12);
+}
+.admin-sidebar__item--active::before {
+    width: 3px;
+}
+.admin-sidebar__item-icon {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+.admin-sidebar__item--active .admin-sidebar__item-icon {
+    color: #a01313;
+}
+.admin-sidebar__footer {
+    padding: 16px 24px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.3);
+}
+
+/* ----- Header ----- */
+.admin-header {
+    background-color: #ffffff;
+    border-bottom: 1px solid #e8e4da;
+    padding: 0 24px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.admin-header__title {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 26px;
+    font-weight: 500;
+    color: #1a1612;
+    line-height: 1;
+    letter-spacing: -0.01em;
+}
+.admin-header__crumb {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: rgba(26, 22, 18, 0.45);
+    margin-bottom: 4px;
+}
+.admin-header__action {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #1a1612;
+    border: 1px solid #d4cfc1;
+    background-color: transparent;
+    cursor: pointer;
+    transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+}
+.admin-header__action:hover {
+    background-color: #1a1612;
+    border-color: #1a1612;
+    color: #fff;
+}
+.admin-header__action--danger:hover {
+    background-color: #a01313;
+    border-color: #a01313;
+}
+.admin-header__avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background-color: #1a1612;
+    color: #fff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+/* ============================================================
+   Dashboard — editorial stats + activity feed
+   ============================================================ */
+
+.dash-page {
+    min-height: 100%;
+    padding: 32px;
+    background-color: #f4f2ec;
+}
+.dash-welcome-eyebrow {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: rgba(26, 22, 18, 0.5);
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+.dash-welcome-eyebrow::before {
+    content: '';
+    display: inline-block;
+    width: 32px;
+    height: 1px;
+    background-color: #a01313;
+}
+.dash-welcome-title {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-weight: 500;
+    color: #1a1612;
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+    font-size: clamp(32px, 4vw, 48px);
+    margin: 0 0 12px;
+}
+.dash-welcome-italic {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-style: italic;
+    font-weight: 400;
+    color: #a01313;
+}
+.dash-welcome-sub {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 14px;
+    color: rgba(26, 22, 18, 0.55);
+    line-height: 1.7;
+    max-width: 640px;
+}
+
+.dash-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 0;
+    margin-top: 32px;
+    background-color: #fff;
+    border: 1px solid #e8e4da;
+}
+.dash-stat {
+    padding: 28px 28px 24px;
+    border-right: 1px solid #e8e4da;
+    border-bottom: 1px solid #e8e4da;
+    background-color: #fff;
+    transition: background-color 0.3s ease;
+    cursor: pointer;
+    position: relative;
+}
+.dash-stat:hover {
+    background-color: #faf8f3;
+}
+.dash-stat__rule {
+    position: absolute;
+    left: 0;
+    top: 28px;
+    width: 0;
+    height: 2px;
+    background-color: #a01313;
+    transition: width 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.dash-stat:hover .dash-stat__rule {
+    width: 28px;
+}
+.dash-stat__label {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: rgba(26, 22, 18, 0.5);
+    margin-bottom: 14px;
+}
+.dash-stat__value {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-weight: 500;
+    font-size: 56px;
+    color: #1a1612;
+    line-height: 1;
+    margin-bottom: 8px;
+    letter-spacing: -0.02em;
+}
+.dash-stat__hint {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 12px;
+    color: rgba(26, 22, 18, 0.45);
+    line-height: 1.5;
+}
+.dash-stat__icon {
+    position: absolute;
+    top: 24px;
+    right: 24px;
+    color: rgba(26, 22, 18, 0.18);
+    font-size: 18px;
+    transition: color 0.3s ease;
+}
+.dash-stat:hover .dash-stat__icon {
+    color: #a01313;
+}
+
+/* Bottom row — activity feed + quick actions */
+.dash-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+    margin-top: 24px;
+}
+@media (min-width: 1024px) {
+    .dash-grid {
+        grid-template-columns: 2fr 1fr;
+    }
+}
+.dash-panel {
+    background-color: #fff;
+    border: 1px solid #e8e4da;
+    padding: 28px;
+}
+.dash-panel__head {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    border-bottom: 1px solid #e8e4da;
+    padding-bottom: 16px;
+    margin-bottom: 16px;
+}
+.dash-panel__eyebrow {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: rgba(26, 22, 18, 0.5);
+    display: block;
+}
+.dash-panel__title {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 24px;
+    font-weight: 500;
+    color: #1a1612;
+    line-height: 1.1;
+    margin: 4px 0 0;
+}
+.dash-panel__view-all {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: #a01313;
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 0;
+    transition: color 0.2s ease;
+}
+.dash-panel__view-all:hover {
+    color: #7c1c25;
+}
+
+.dash-feed-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 14px 0;
+    border-bottom: 1px solid #f4f2ec;
+}
+.dash-feed-item:last-child {
+    border-bottom: 0;
+}
+.dash-feed-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background-color: #1a1612;
+    color: #fff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 14px;
+    font-weight: 600;
+    flex-shrink: 0;
+}
+.dash-feed-name {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 13.5px;
+    font-weight: 500;
+    color: #1a1612;
+    line-height: 1.3;
+}
+.dash-feed-msg {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 12.5px;
+    color: rgba(26, 22, 18, 0.55);
+    line-height: 1.55;
+    margin-top: 4px;
+}
+.dash-feed-meta {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: rgba(26, 22, 18, 0.4);
+    margin-left: auto;
+    flex-shrink: 0;
+}
+
+.dash-action {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 16px;
+    margin-bottom: 8px;
+    background-color: #faf8f3;
+    border: 1px solid #e8e4da;
+    cursor: pointer;
+    transition: background-color 0.25s ease, border-color 0.25s ease;
+}
+.dash-action:hover {
+    background-color: #1a1612;
+    border-color: #1a1612;
+    color: #fff;
+}
+.dash-action:hover .dash-action__label {
+    color: #fff;
+}
+.dash-action:hover .dash-action__hint {
+    color: rgba(255, 255, 255, 0.65);
+}
+.dash-action:hover .dash-action__arrow {
+    color: #a01313;
+    transform: translate(2px, -2px);
+}
+.dash-action__label {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: #1a1612;
+    letter-spacing: 0.02em;
+}
+.dash-action__hint {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 11px;
+    color: rgba(26, 22, 18, 0.5);
+    margin-top: 2px;
+}
+.dash-action__arrow {
+    color: rgba(26, 22, 18, 0.4);
+    flex-shrink: 0;
+    transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), color 0.3s ease;
+}
+
+/* ============================================================
+   Admin list pages — unified page wrapper, action bar, table
+   (Type, Product, Category, Catalogue, Inquiry, Blog, etc.)
+   ============================================================ */
+
+.admin-page {
+    padding: 28px 32px;
+    min-height: 100%;
+    font-family: 'Inter', system-ui, sans-serif;
+}
+@media (max-width: 768px) {
+    .admin-page {
+        padding: 20px;
+    }
+}
+
+/* Top action bar — holds the "Add New X" buttons, sits above the card */
+.admin-page__action-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: flex-end;
+    margin-bottom: 20px;
+}
+
+/* Editorial Add-button override (apply via className="admin-add-btn") */
+.admin-add-btn.ant-btn {
+    background-color: #1a1612 !important;
+    color: #ffffff !important;
+    border: 1px solid #1a1612 !important;
+    border-radius: 0 !important;
+    padding: 10px 20px !important;
+    height: auto !important;
+    font-family: 'Inter', system-ui, sans-serif !important;
+    font-size: 11.5px !important;
+    font-weight: 500 !important;
+    letter-spacing: 0.18em !important;
+    text-transform: uppercase !important;
+    box-shadow: none !important;
+    transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease !important;
+}
+.admin-add-btn.ant-btn:hover {
+    background-color: #a01313 !important;
+    border-color: #a01313 !important;
+    color: #ffffff !important;
+}
+.admin-add-btn.ant-btn:focus {
+    background-color: #1a1612 !important;
+    border-color: #1a1612 !important;
+    color: #ffffff !important;
+}
+
+/* Card container for the list */
+.admin-page__card {
+    background-color: #ffffff;
+    border: 1px solid #e8e4da;
+}
+
+.admin-page__card-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 22px 24px;
+    border-bottom: 1px solid #e8e4da;
+}
+.admin-page__title-wrap {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+}
+.admin-page__title-eyebrow {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: rgba(26, 22, 18, 0.5);
+    display: block;
+    margin-bottom: 4px;
+}
+.admin-page__title {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 26px;
+    font-weight: 500;
+    line-height: 1.05;
+    color: #1a1612;
+    margin: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+}
+.admin-page__count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 32px;
+    height: 22px;
+    padding: 0 8px;
+    background-color: #a01313;
+    color: #ffffff;
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+}
+
+.admin-page__filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+}
+
+.admin-page__card-body {
+    padding: 0;
+}
+
+.admin-page__pagination-wrap {
+    padding: 16px 24px;
+    border-top: 1px solid #f4f2ec;
+    display: flex;
+    justify-content: flex-end;
+}
+
+/* ----- Ant Design Table overrides — Excel-style compact (scoped to .admin-page) ----- */
+.admin-page .ant-table-wrapper {
+    background: transparent;
+}
+.admin-page .ant-table {
+    background: transparent !important;
+    font-family: 'Inter', system-ui, sans-serif !important;
+    border: 1px solid #e8e4da !important;
+    border-right: 0 !important;
+    border-bottom: 0 !important;
+}
+.admin-page .ant-table-thead > tr > th {
+    background-color: #f4f2ec !important;
+    border-bottom: 1px solid #e8e4da !important;
+    border-right: 1px solid #e8e4da !important;
+    font-family: 'Inter', system-ui, sans-serif !important;
+    font-size: 10.5px !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.18em !important;
+    text-transform: uppercase !important;
+    color: rgba(26, 22, 18, 0.65) !important;
+    padding: 9px 12px !important;
+    line-height: 1.3 !important;
+}
+.admin-page .ant-table-thead > tr > th::before {
+    display: none !important;
+}
+.admin-page .ant-table-tbody > tr > td {
+    border-bottom: 1px solid #e8e4da !important;
+    border-right: 1px solid #e8e4da !important;
+    padding: 8px 12px !important;
+    font-family: 'Inter', system-ui, sans-serif !important;
+    font-size: 13px !important;
+    color: #1a1612 !important;
+    vertical-align: middle !important;
+    line-height: 1.4 !important;
+}
+.admin-page .ant-table-tbody > tr:hover > td,
+.admin-page .ant-table-tbody > tr.ant-table-row-hover > td,
+.admin-page .ant-table-tbody > tr > td.ant-table-cell-row-hover {
+    background-color: #faf8f3 !important;
+}
+.admin-page .ant-table.ant-table-bordered,
+.admin-page .ant-table-container,
+.admin-page .ant-table-wrapper .ant-table {
+    border-radius: 0 !important;
+}
+.admin-page .ant-table-row-expand-icon-cell {
+    padding: 0 !important;
+}
+
+/* Image cells inside the table — small Excel-style thumbnail */
+.admin-page .ant-image .ant-image-img,
+.admin-page .ant-table-tbody img.ant-image-img,
+.admin-page .ant-table-tbody .ant-image {
+    border-radius: 2px !important;
+    object-fit: cover !important;
+}
+.admin-page .ant-table-tbody .ant-image,
+.admin-page .ant-table-tbody .ant-image-img {
+    width: 40px !important;
+    height: 40px !important;
+}
+
+/* Ant Pagination override */
+.admin-page .ant-pagination {
+    font-family: 'Inter', system-ui, sans-serif !important;
+}
+.admin-page .ant-pagination .ant-pagination-item {
+    border-radius: 0 !important;
+    border-color: #e8e4da !important;
+    font-family: 'Inter', system-ui, sans-serif !important;
+    font-size: 12px !important;
+}
+.admin-page .ant-pagination .ant-pagination-item:hover {
+    border-color: #1a1612 !important;
+}
+.admin-page .ant-pagination .ant-pagination-item:hover a {
+    color: #1a1612 !important;
+}
+.admin-page .ant-pagination .ant-pagination-item-active {
+    background-color: #1a1612 !important;
+    border-color: #1a1612 !important;
+}
+.admin-page .ant-pagination .ant-pagination-item-active a {
+    color: #ffffff !important;
+}
+.admin-page .ant-pagination .ant-pagination-prev .ant-pagination-item-link,
+.admin-page .ant-pagination .ant-pagination-next .ant-pagination-item-link {
+    border-radius: 0 !important;
+    border-color: #e8e4da !important;
+}
+
+/* Ant Select override (used in filters) */
+.admin-page .ant-select:not(.ant-select-customize-input) .ant-select-selector {
+    border-radius: 0 !important;
+    border-color: #e8e4da !important;
+    font-family: 'Inter', system-ui, sans-serif !important;
+    font-size: 13px !important;
+    height: 38px !important;
+    padding: 4px 12px !important;
+}
+.admin-page .ant-select-selection-item,
+.admin-page .ant-select-selection-placeholder {
+    line-height: 28px !important;
+}
+.admin-page .ant-select:not(.ant-select-customize-input):not(.ant-select-disabled):hover .ant-select-selector {
+    border-color: #1a1612 !important;
+}
+
+/* Ant Input override */
+.admin-page .ant-input,
+.admin-page .ant-input-affix-wrapper {
+    border-radius: 0 !important;
+    border-color: #e8e4da !important;
+    font-family: 'Inter', system-ui, sans-serif !important;
+    font-size: 13px !important;
+    height: 38px !important;
+}
+.admin-page .ant-input:hover,
+.admin-page .ant-input-affix-wrapper:hover {
+    border-color: #1a1612 !important;
+}
+.admin-page .ant-input:focus,
+.admin-page .ant-input-focused,
+.admin-page .ant-input-affix-wrapper-focused {
+    border-color: #1a1612 !important;
+    box-shadow: none !important;
+}
+
+/* Action icon buttons in table cells (edit / delete) */
+.admin-page .iconbutton {
+    width: 28px !important;
+    height: 28px !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
+    background-color: #1a1612;
+    color: #ffffff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    font-size: 12px;
+}
+.admin-page .iconbutton:hover {
+    background-color: #a01313 !important;
+}
+.admin-page .iconbutton + .iconbutton {
+    margin-left: 4px;
+}
+
+/* Empty-state spacing */
+.admin-page .ant-table-placeholder {
+    background: transparent !important;
+}
+.admin-page .ant-empty-description {
+    color: rgba(26, 22, 18, 0.4) !important;
+    font-family: 'Inter', system-ui, sans-serif !important;
+    font-size: 13px !important;
+}

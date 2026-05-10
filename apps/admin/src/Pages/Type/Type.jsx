@@ -133,16 +133,6 @@ const Type = () => {
 
   const columns = () => [
     {
-      title: (
-        <span className="flex items-center">
-          Number <CaretUpOutlined className="ml-1" />
-        </span>
-      ),
-      dataIndex: "number",
-      key: "number",
-      render: (_, record, index) => index + 1 + (currentPage - 1) * pageSize,
-    },
-    {
       title: "Image",
       key: "image",
       render: (text) => (
@@ -206,67 +196,75 @@ const Type = () => {
   );
 
   return (
-    <>
-      <div className="mb-3 text-end">
-        <Button onClick={openAddNewTypeModal}>Add New Sub-Category</Button>
+    <div className="admin-page">
+      <div className="admin-page__action-bar">
+        <Button className="admin-add-btn" onClick={openAddNewTypeModal}>
+          Add New Sub-Category
+        </Button>
       </div>
-      <div className="p-4 bg-white rounded-md">
-        <div style={{display:'flex', justifyContent:'space-between'}}>
-        <div className="flex gap-3 items-center font-bold mb-3">
-          Type List
-          <span className="bg-red-700 text-white p-1 h-7 text-center w-7 rounded-sm">
-            {dataSource.length}
-          </span>
-        </div>
-        <div className="flex mb-4">
-          <Select
-            placeholder="Select Category"
-            onChange={handleCategoryChange}
-            style={{ width: 200, marginRight: '16px' }}
-            value={selectedCategory}
-            allowClear
-          >
-            {categories.map(category => (
-              <Option key={category._id} value={category._id}>
-                {category.category}
-              </Option>
-            ))}
-          </Select>
-          <Select
-            placeholder="Select Sub-Category"
-            onChange={handleSubCategoryChange}
-            style={{ width: 200 }}
-            disabled={!selectedCategory}
-            value={selectedSubCategory}
-            allowClear
-          >
-            {dataSource
-              .filter(item => String(item.category?._id || item.category) === String(selectedCategory))
-              .map(item => (
-                <Option key={item._id} value={item.subcategory}>
-                  {item.subcategory}
+
+      <div className="admin-page__card">
+        <div className="admin-page__card-head">
+          <div>
+            <span className="admin-page__title-eyebrow">Catalogue · Type</span>
+            <h2 className="admin-page__title">Type List</h2>
+          </div>
+          <div className="admin-page__filters">
+            <Select
+              placeholder="Select Category"
+              onChange={handleCategoryChange}
+              style={{ width: 200 }}
+              value={selectedCategory}
+              allowClear
+            >
+              {categories.map((category) => (
+                <Option key={category._id} value={category._id}>
+                  {category.category}
                 </Option>
               ))}
-          </Select>
+            </Select>
+            <Select
+              placeholder="Select Sub-Category"
+              onChange={handleSubCategoryChange}
+              style={{ width: 200 }}
+              disabled={!selectedCategory}
+              value={selectedSubCategory}
+              allowClear
+            >
+              {dataSource
+                .filter(
+                  (item) =>
+                    String(item.category?._id || item.category) ===
+                    String(selectedCategory)
+                )
+                .map((item) => (
+                  <Option key={item._id} value={item.subcategory}>
+                    {item.subcategory}
+                  </Option>
+                ))}
+            </Select>
+          </div>
         </div>
-        </div>
-        
-        
 
-        <Table
-          dataSource={paginatedDataSource}
-          columns={columns()}
-          pagination={false}
-          className="border border-gray-200"
-          loading={loading}
-        />
-        <Pagination
-          current={currentPage}
-          pageSize={pageSize}
-          total={filteredDataSource.length}
-          onChange={(page) => setCurrentPage(page)}
-          style={{ marginTop: '16px', textAlign: 'right' }}
-        />
+        <div className="admin-page__card-body">
+          <Table
+            dataSource={paginatedDataSource}
+            columns={columns()}
+            pagination={false}
+            loading={loading}
+            rowKey={(record) => record._id}
+          />
+        </div>
+
+        <div className="admin-page__pagination-wrap">
+          <Pagination
+            current={currentPage}
+            pageSize={pageSize}
+            total={filteredDataSource.length}
+            onChange={(page) => setCurrentPage(page)}
+            showSizeChanger={false}
+          />
+        </div>
       </div>
       <Modal
         title="Edit Sub-Category"
@@ -313,7 +311,7 @@ const Type = () => {
       </Modal>
 
       <AddNewTypeModal visible={addNewTypeModalOpen} onClose={closeAddNewTypeModal} fetchSubCategories={fetchSubCategories} />
-    </>
+    </div>
   );
 };
 

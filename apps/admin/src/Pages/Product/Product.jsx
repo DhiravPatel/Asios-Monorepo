@@ -98,16 +98,6 @@ const Product = () => {
 
   const columns = [
     {
-      title: (
-        <span className="flex items-center">
-          Number <CaretUpOutlined className="ml-1" />
-        </span>
-      ),
-      dataIndex: "number",
-      key: "number",
-      render: (text, record, index) => index + 1 + (currentPage - 1) * itemsPerPage,
-    },
-    {
       title: "Image",
       key: "image",
       render: (text) => (
@@ -172,31 +162,28 @@ const Product = () => {
   const currentProducts = filteredProducts.slice(indexOfFirstProduct, indexOfLastProduct);
 
   return (
-    <>
-      <div className="mb-3 text-end">
-       
-        <Button style={{ marginLeft: '15px' }} onClick={() => showAddProductModal(null)}>Add New Product</Button>
+    <div className="admin-page">
+      <div className="admin-page__action-bar">
+        <Button className="admin-add-btn" onClick={() => showAddProductModal(null)}>
+          Add New Product
+        </Button>
       </div>
-      <div className="p-4 bg-white rounded-md h-[calc(100%-100px)] justify-between flex flex-col">
-        <div>
-          <div className="flex justify-between">
-          <div className="flex gap-3 items-center font-bold mb-3">
-            Product List
-            <span className="bg-red-700 text-white p-1 h-7 text-center w-7 rounded-sm">
-              {products.length}
-            </span>
-          </div>
 
-          <div className="flex mb-4">
-            
+      <div className="admin-page__card">
+        <div className="admin-page__card-head">
+          <div>
+            <span className="admin-page__title-eyebrow">Catalogue · Product</span>
+            <h2 className="admin-page__title">Product List</h2>
+          </div>
+          <div className="admin-page__filters">
             <Select
               placeholder="Select Category"
               onChange={handleCategoryChange}
-              style={{ width: 200, marginRight: '16px' }}
+              style={{ width: 180 }}
               value={selectedCategory}
               allowClear
             >
-              {categories.map(category => (
+              {categories.map((category) => (
                 <Option key={category._id} value={category._id}>
                   {category.category}
                 </Option>
@@ -205,7 +192,7 @@ const Product = () => {
             <Select
               placeholder="Select Subcategory"
               onChange={handleSubcategoryChange}
-              style={{ width: 200 }}
+              style={{ width: 180 }}
               disabled={!selectedCategory}
               value={selectedSubcategory || undefined}
               allowClear
@@ -221,29 +208,33 @@ const Product = () => {
               })}
             </Select>
             <Search
-            placeholder="Search Product"
-            style={{ width: 200, marginLeft :'10px' }}
-            onChange={handleProductNameChange}
-            value={productNameFilter}
-          />  
-          <Button className="ml-[10px]" onClick={handleClear}>clear</Button>
+              placeholder="Search Product"
+              style={{ width: 200 }}
+              onChange={handleProductNameChange}
+              value={productNameFilter}
+            />
+            <Button onClick={handleClear}>Clear</Button>
           </div>
-          
-          </div>
+        </div>
+
+        <div className="admin-page__card-body">
           <Table
             dataSource={currentProducts}
             columns={columns}
             pagination={false}
-            className="border border-gray-200"
+            rowKey={(record) => record._id}
           />
         </div>
-        <Pagination
-          style={{ marginTop: '30px' }}
-          current={currentPage}
-          pageSize={itemsPerPage}
-          total={filteredProducts.length}
-          onChange={(page) => setCurrentPage(page)}
-        />
+
+        <div className="admin-page__pagination-wrap">
+          <Pagination
+            current={currentPage}
+            pageSize={itemsPerPage}
+            total={filteredProducts.length}
+            onChange={(page) => setCurrentPage(page)}
+            showSizeChanger={false}
+          />
+        </div>
       </div>
 
       <AddProductsModal
@@ -252,7 +243,7 @@ const Product = () => {
         product={selectedProduct}
         fetchProducts={fetchProducts}
       />
-    </>
+    </div>
   );
 };
 

@@ -1,29 +1,88 @@
 import React from 'react';
-import { Layout, Menu, Avatar } from 'antd';
-import { BellOutlined, UserOutlined, LogoutOutlined } from '@ant-design/icons';
-import 'antd/dist/reset.css'; // Import Ant Design styles
-import { useNavigate } from 'react-router-dom';
-const { Header } = Layout;
+import { useLocation, useNavigate } from 'react-router-dom';
+import { LogoutOutlined } from '@ant-design/icons';
+
+const ROUTE_TITLES = {
+  '/dashboard': { eyebrow: 'Overview', title: 'Dashboard' },
+  '/category': { eyebrow: 'Catalogue', title: 'Category' },
+  '/viewcategory': { eyebrow: 'Catalogue', title: 'View Category' },
+  '/type': { eyebrow: 'Catalogue', title: 'Type' },
+  '/products': { eyebrow: 'Catalogue', title: 'Product' },
+  '/catalogue': { eyebrow: 'Catalogue', title: 'Catalogue' },
+  '/blog': { eyebrow: 'Catalogue', title: 'Blog' },
+  '/add-blog': { eyebrow: 'Catalogue · Blog', title: 'New Post' },
+  '/bulk-email': { eyebrow: 'Engagement', title: 'Bulk Email' },
+  '/product-inquiry': { eyebrow: 'Engagement', title: 'Product Inquiry' },
+  '/inquiry': { eyebrow: 'Engagement', title: 'General Inquiry' },
+};
 
 const AppHeader = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
 
-const navigate = useNavigate()
+  // Resolve current route — fall back to first matching prefix for nested routes
+  const exact = ROUTE_TITLES[location.pathname];
+  const fallback = Object.entries(ROUTE_TITLES).find(([key]) =>
+    location.pathname.startsWith(key)
+  );
+  const current = exact || (fallback && fallback[1]) || {
+    eyebrow: 'Asios',
+    title: 'Admin',
+  };
 
-const handleLogout = ()=>{
-  localStorage.removeItem('token')
-  navigate('/')
-}
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    navigate('/');
+  };
 
   return (
-    <Header className="bg-gray-800 text-white p-4 flex items-center justify-between">
-      <div className="text-xl font-semibold">Asios Web-Panel</div>
-      <Menu mode="horizontal" theme="dark" className="flex items-center">
-       
-        <Menu.Item key="logout" icon={<LogoutOutlined />} onClick={handleLogout}>
-          Logout
-        </Menu.Item>
-      </Menu>
-    </Header>
+    <header className="admin-header">
+      <div>
+        <div className="admin-header__crumb">{current.eyebrow}</div>
+        <div className="admin-header__title">{current.title}</div>
+      </div>
+
+      <div className="flex items-center gap-3">
+        <div className="hidden sm:flex items-center gap-3">
+          <span
+            className="admin-header__avatar"
+            aria-label="Admin user avatar"
+          >
+            A
+          </span>
+          <div className="leading-tight">
+            <div
+              style={{
+                fontFamily: 'Inter, system-ui, sans-serif',
+                fontSize: 13,
+                fontWeight: 500,
+                color: '#1a1612',
+              }}
+            >
+              Admin
+            </div>
+            <div
+              style={{
+                fontFamily: 'Inter, system-ui, sans-serif',
+                fontSize: 11,
+                color: 'rgba(26,22,18,0.5)',
+              }}
+            >
+              Asios Global
+            </div>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          onClick={handleLogout}
+          className="admin-header__action admin-header__action--danger"
+        >
+          <LogoutOutlined style={{ fontSize: 13 }} />
+          <span>Sign out</span>
+        </button>
+      </div>
+    </header>
   );
 };
 

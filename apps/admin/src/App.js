@@ -1,7 +1,6 @@
 import React from "react";
 import { Route, Routes, useLocation } from "react-router-dom";
 import Login from "./Pages/Login";
-import Layout from "./Layouts.js/Layout";
 import Dashboard from "./Pages/Dashboard/Dashboard";
 import Category from "./Pages/Category/Category";
 import AppHeader from "./Layouts.js/Header";
@@ -24,28 +23,28 @@ function App() {
   const isLoginPage = location.pathname === "/";
 
   return (
-    <div className="flex flex-col h-screen">
-      {/* Conditionally render AppHeader and Sidebar */}
+    <div className="flex h-screen overflow-hidden">
+      {/* Conditionally render Sidebar + content with Header */}
       {!isLoginPage && (
         <>
-          <AppHeader />
-          <div className="flex flex-1">
-            <Sidebar />
-            <main className="flex-1 p-4 bg-gray-100"> 
+          <Sidebar />
+          <div className="flex flex-col flex-1 min-w-0">
+            <AppHeader />
+            <main className="flex-1 overflow-y-auto" style={{ backgroundColor: '#f4f2ec' }}>
               <Routes>
-              <Route element={<ProtectedRoute />}>
-                <Route path="dashboard" element={<Dashboard />} />
-                <Route path="category" element={<Category />} />
-                <Route path="viewcategory" element={<ViewCategory />} />
-                <Route path="type" element={<Type />} />
-                <Route path="products" element={<Product />} />
-                <Route path="catalogue" element={<Catelouge />} />
-                <Route path="inquiry" element={<Inquiry />} />
-                <Route path="product-inquiry" element={<ProductInquiry />} />
-                <Route path="/blog" element={<Blog />} />
-                <Route path="/add-blog" element={<AddBlog />} />
-                <Route path="/edit-blog/:id" element={<AddBlog />} />
-                <Route path="/bulk-email" element={<BulkEmail />} />
+                <Route element={<ProtectedRoute />}>
+                  <Route path="dashboard" element={<Dashboard />} />
+                  <Route path="category" element={<Category />} />
+                  <Route path="viewcategory" element={<ViewCategory />} />
+                  <Route path="type" element={<Type />} />
+                  <Route path="products" element={<Product />} />
+                  <Route path="catalogue" element={<Catelouge />} />
+                  <Route path="inquiry" element={<Inquiry />} />
+                  <Route path="product-inquiry" element={<ProductInquiry />} />
+                  <Route path="/blog" element={<Blog />} />
+                  <Route path="/add-blog" element={<AddBlog />} />
+                  <Route path="/edit-blog/:id" element={<AddBlog />} />
+                  <Route path="/bulk-email" element={<BulkEmail />} />
                 </Route>
               </Routes>
             </main>
@@ -53,7 +52,7 @@ function App() {
         </>
       )}
       {isLoginPage && (
-        <main className="flex-1 p-4 bg-gray-100"> 
+        <main className="flex-1">
           <Routes>
             <Route path="/" element={<Login />} />
           </Routes>

@@ -50,27 +50,82 @@ const ContactUS = () => {
 
   return (
     <main className="bg-white">
-      {/* Hero */}
-      <section className="bg-cream">
-        <div className="max-w-[1400px] mx-auto px-6 md:px-10 lg:px-12 pt-20 md:pt-28 pb-16 md:pb-24">
+      {/* Animated abstract hero — drifting red gradient blobs over dark canvas */}
+      <section className="relative bg-ink text-white overflow-hidden h-[70vh] min-h-[480px]">
+        {/* Drifting gradient blobs */}
+        <motion.div
+          className="absolute top-[-15%] left-[-10%] w-[60vw] h-[60vw] max-w-[720px] max-h-[720px] bg-primary/25 rounded-full blur-3xl"
+          animate={{
+            x: [0, 80, -40, 0],
+            y: [0, 60, 30, 0],
+            scale: [1, 1.15, 1.05, 1],
+          }}
+          transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
+        />
+        <motion.div
+          className="absolute top-[20%] right-[-15%] w-[55vw] h-[55vw] max-w-[680px] max-h-[680px] bg-primary/18 rounded-full blur-3xl"
+          animate={{
+            x: [0, -60, 30, 0],
+            y: [0, 40, -30, 0],
+            scale: [1, 1.2, 1.1, 1],
+          }}
+          transition={{ duration: 22, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+        />
+        <motion.div
+          className="absolute bottom-[-20%] left-[25%] w-[50vw] h-[50vw] max-w-[600px] max-h-[600px] bg-primary/15 rounded-full blur-3xl"
+          animate={{
+            x: [0, -40, 60, 0],
+            y: [0, -50, 20, 0],
+            scale: [1, 1.1, 1.2, 1],
+          }}
+          transition={{ duration: 26, repeat: Infinity, ease: "easeInOut", delay: 4 }}
+        />
+        <motion.div
+          className="absolute top-[40%] left-[35%] w-[40vw] h-[40vw] max-w-[480px] max-h-[480px] bg-primary/8 rounded-full blur-3xl"
+          animate={{
+            x: [0, 50, -50, 0],
+            y: [0, 30, -40, 0],
+          }}
+          transition={{ duration: 20, repeat: Infinity, ease: "easeInOut", delay: 6 }}
+        />
+
+        {/* Subtle grid pattern texture */}
+        <div
+          className="absolute inset-0 opacity-[0.04] pointer-events-none"
+          style={{
+            backgroundImage:
+              "linear-gradient(to right, #ffffff 1px, transparent 1px), linear-gradient(to bottom, #ffffff 1px, transparent 1px)",
+            backgroundSize: "72px 72px",
+          }}
+        />
+
+        {/* Edge vignette for text contrast */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/25 via-transparent to-black/45 pointer-events-none" />
+
+        {/* Top + bottom shimmer lines */}
+        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/60 to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
+
+        {/* Content */}
+        <div className="relative h-full max-w-[1400px] mx-auto px-6 md:px-10 lg:px-12 flex flex-col justify-end pb-16 md:pb-20">
           <motion.div
-            initial="hidden"
-            animate="visible"
-            variants={fadeUp}
-            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
             className="max-w-3xl"
           >
-            <div className="flex items-center gap-3 mb-6">
-              <span className="rule" />
-              <span className="eyebrow">Contact</span>
+            <div className="flex items-center gap-3 mb-5">
+              <span className="rule rule-light !w-10" />
+              <span className="eyebrow eyebrow-light !text-white">Contact</span>
             </div>
-            <h1 className="display text-5xl md:text-6xl lg:text-7xl leading-[1.05] mb-6">
-              Let's begin a <br />
+            <h1 className="display !text-white text-5xl md:text-6xl lg:text-7xl leading-[1.05] mb-5">
+              Let&apos;s begin a{" "}
               <span className="display-italic text-primary">conversation.</span>
             </h1>
-            <p className="text-[15px] md:text-[17px] text-sand-600 leading-[1.85] max-w-2xl">
-              Whether you're sourcing for a single project or building a long-term supply
-              relationship — write to us. Our export desk responds within one business day.
+            <p className="text-[15px] md:text-[16px] text-white/80 leading-[1.85] max-w-2xl">
+              Whether you&apos;re sourcing for a single project or building a long-term
+              supply relationship — write to us. Our export desk responds within one
+              business day.
             </p>
           </motion.div>
         </div>

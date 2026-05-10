@@ -77,16 +77,6 @@ const Category = () => {
 
   const columns = (showModal) => [
     {
-      title: (
-        <span className="flex items-center">
-          Number <CaretUpOutlined className="ml-1" />
-        </span>
-      ),
-      dataIndex: "_id",
-      key: "_id",
-      render: (_, record, index) => index + 1 + (currentPage - 1) * pageSize,
-    },
-    {
       title: "Image",
       key: "image",
       render: (text) => (
@@ -171,38 +161,47 @@ const Category = () => {
   );
 
   return (
-    <>
-      <div className="p-4 bg-white rounded-md">
-        <div className="mb-3 text-end">
-          <Search
-            placeholder="Search Category"
-            style={{ width: 200 }}
-            onChange={e => setSearchQuery(e.target.value)}
+    <div className="admin-page">
+      <div className="admin-page__action-bar">
+        <Button className="admin-add-btn" onClick={openAddNewTypeModal}>
+          Add New Category
+        </Button>
+      </div>
+
+      <div className="admin-page__card">
+        <div className="admin-page__card-head">
+          <div>
+            <span className="admin-page__title-eyebrow">Catalogue · Category</span>
+            <h2 className="admin-page__title">Category List</h2>
+          </div>
+          <div className="admin-page__filters">
+            <Search
+              placeholder="Search Category"
+              style={{ width: 220 }}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
+        </div>
+
+        <div className="admin-page__card-body">
+          <Table
+            dataSource={paginatedDataSource}
+            columns={columns(showModal)}
+            pagination={false}
+            loading={loading}
+            rowKey={(record) => record._id}
           />
-          <Button style={{ marginLeft: '15px' }} onClick={openAddNewTypeModal}>
-            Add New Category
-          </Button>
         </div>
-        <div className="flex gap-3 items-center font-bold mb-3">
-          Category List
-          <span className="bg-red-700 text-white p-1 h-7 text-center w-7 rounded-sm">
-            {filteredDataSource.length}
-          </span>
+
+        <div className="admin-page__pagination-wrap">
+          <Pagination
+            current={currentPage}
+            pageSize={pageSize}
+            total={filteredDataSource.length}
+            onChange={(page) => setCurrentPage(page)}
+            showSizeChanger={false}
+          />
         </div>
-        <Table
-          dataSource={paginatedDataSource}
-          columns={columns(showModal)}
-          pagination={false}
-          className="border border-gray-200"
-          loading={loading}
-        />
-        <Pagination
-          current={currentPage}
-          pageSize={pageSize}
-          total={filteredDataSource.length}
-          onChange={page => setCurrentPage(page)}
-          style={{ marginTop: '16px', textAlign: 'right' }}
-        />
       </div>
 
       <Modal
@@ -248,7 +247,7 @@ const Category = () => {
         onClose={closeAddNewTypeModal}
         fetchCategories={fetchCategories}
       />
-    </>
+    </div>
   );
 };
 

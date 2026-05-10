@@ -46,16 +46,6 @@ const Product = () => {
 
   const columns = [
     {
-      title: (
-        <span className="flex items-center">
-          Number <CaretUpOutlined className="ml-1" />
-        </span>
-      ),
-      dataIndex: "number",
-      key: "number",
-      render: (text, record, index) => index + 1 + (currentPage - 1) * itemsPerPage,
-    },
-    {
       title: "Image",
       key: "image",
       render: (text) => (
@@ -126,35 +116,51 @@ const Product = () => {
   };
 
   return (
-    <>
-      <div className="flex justify-end items-center gap-2 mb-3">
-        <Button onClick={() => showAddCatelougeModal(null)}>Add New Catalogue</Button>
-        <Button onClick={() => setIsAddCatalougeCategoryModalVisible(true)}>Add New Catalogue Category</Button>
-        <Button onClick={() => setIsAddCatalougeSubCategoryModalVisible(true)}>Add New Catalogue Sub-Category</Button>
+    <div className="admin-page">
+      <div className="admin-page__action-bar">
+        <Button className="admin-add-btn" onClick={() => showAddCatelougeModal(null)}>
+          Add New Catalogue
+        </Button>
+        <Button
+          className="admin-add-btn"
+          onClick={() => setIsAddCatalougeCategoryModalVisible(true)}
+        >
+          Add Catalogue Category
+        </Button>
+        <Button
+          className="admin-add-btn"
+          onClick={() => setIsAddCatalougeSubCategoryModalVisible(true)}
+        >
+          Add Catalogue Sub-Category
+        </Button>
       </div>
-      <div className="p-4 bg-white rounded-md h-[calc(100%-100px)] flex flex-col justify-between">
-        <div>
-          <div className="flex gap-3 items-center font-bold mb-3">
-            Catalogue List
-            <span className="bg-red-700 text-white p-1 h-7 text-center w-7 rounded-sm">
-              {catalogueData.length}
-            </span>
+
+      <div className="admin-page__card">
+        <div className="admin-page__card-head">
+          <div>
+            <span className="admin-page__title-eyebrow">Catalogue · Editions</span>
+            <h2 className="admin-page__title">Catalogue List</h2>
           </div>
+        </div>
+
+        <div className="admin-page__card-body">
           <Table
             dataSource={paginatedData}
             columns={columns}
             pagination={false}
-            className="border border-gray-200"
             rowKey="_id"
           />
         </div>
-        <Pagination 
-          current={currentPage} 
-          total={catalogueData.length} 
-          pageSize={itemsPerPage} 
-          onChange={handlePageChange} 
-          className="mt-2"
-        />
+
+        <div className="admin-page__pagination-wrap">
+          <Pagination
+            current={currentPage}
+            total={catalogueData.length}
+            pageSize={itemsPerPage}
+            onChange={handlePageChange}
+            showSizeChanger={false}
+          />
+        </div>
       </div>
 
       <AddCatelouge
@@ -163,15 +169,15 @@ const Product = () => {
         catalogue={currentCatalogue}
         fetchCatalogueData={fetchCatalogueData}
       />
-      <AddCatelougeCategory 
+      <AddCatelougeCategory
         visible={isAddCatalougeCategoryModalVisible}
         onClose={() => setIsAddCatalougeCategoryModalVisible(false)}
       />
-      <AddCatelougeSubCategory 
+      <AddCatelougeSubCategory
         visible={isAddCatalougeSubCategoryModalVisible}
         onClose={() => setIsAddCatalougeSubCategoryModalVisible(false)}
       />
-    </>
+    </div>
   );
 };
 

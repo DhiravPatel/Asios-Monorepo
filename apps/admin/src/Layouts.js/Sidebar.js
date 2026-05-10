@@ -1,52 +1,88 @@
 import React from 'react';
-import { Menu } from 'antd';
-import { HomeOutlined, UserOutlined, MessageOutlined, ProductOutlined, QuestionOutlined, BookOutlined, CodeSandboxOutlined, FormOutlined, MailOutlined } from '@ant-design/icons';
-import { useNavigate } from 'react-router-dom'; 
-import 'antd/dist/reset.css'; 
+import { useNavigate, useLocation } from 'react-router-dom';
+import {
+  HomeOutlined,
+  AppstoreOutlined,
+  CodeSandboxOutlined,
+  ShoppingOutlined,
+  BookOutlined,
+  FormOutlined,
+  MailOutlined,
+  MessageOutlined,
+  QuestionCircleOutlined,
+} from '@ant-design/icons';
+
+const overviewItems = [
+  { key: 'dashboard', label: 'Dashboard', path: '/dashboard', icon: <HomeOutlined /> },
+];
+
+const catalogueItems = [
+  { key: 'category', label: 'Category', path: '/category', icon: <AppstoreOutlined /> },
+  { key: 'type', label: 'Type', path: '/type', icon: <CodeSandboxOutlined /> },
+  { key: 'products', label: 'Product', path: '/products', icon: <ShoppingOutlined /> },
+  { key: 'catalogue', label: 'Catalogue', path: '/catalogue', icon: <BookOutlined /> },
+  { key: 'blog', label: 'Blog', path: '/blog', icon: <FormOutlined /> },
+];
+
+const engagementItems = [
+  { key: 'bulk-email', label: 'Bulk Email', path: '/bulk-email', icon: <MailOutlined /> },
+  {
+    key: 'product-inquiry',
+    label: 'Product Inquiry',
+    path: '/product-inquiry',
+    icon: <MessageOutlined />,
+  },
+  {
+    key: 'inquiry',
+    label: 'General Inquiry',
+    path: '/inquiry',
+    icon: <QuestionCircleOutlined />,
+  },
+];
 
 const Sidebar = () => {
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  const handleClick = (path) => {
-    navigate(path); 
-  };
+  const isActive = (path) => location.pathname === path;
+
+  const renderItem = (item) => (
+    <button
+      key={item.key}
+      type="button"
+      onClick={() => navigate(item.path)}
+      className={`admin-sidebar__item ${
+        isActive(item.path) ? 'admin-sidebar__item--active' : ''
+      }`}
+    >
+      <span className="admin-sidebar__item-icon">{item.icon}</span>
+      <span>{item.label}</span>
+    </button>
+  );
 
   return (
-    <div className="w-64 h-full bg-[#001529] text-white"> 
-      <Menu
-        mode="inline"
-        theme="dark"
-        className="mt-2"
-      >
-        <Menu.Item  icon={<HomeOutlined />} onClick={() => handleClick('/dashboard')}>
-          Dashboard
-        </Menu.Item>
-        <Menu.Item  icon={<UserOutlined />} onClick={() => handleClick('/category')}>
-          Category
-        </Menu.Item>
-        <Menu.Item  icon={<CodeSandboxOutlined />} onClick={() => handleClick('/type')}>
-          Type
-        </Menu.Item>
-        <Menu.Item icon={<ProductOutlined />} onClick={() => handleClick('/products')}>
-          Product
-        </Menu.Item>
-        <Menu.Item  icon={<BookOutlined />} onClick={() => handleClick('/catalogue')}>
-          Catalogue
-        </Menu.Item>
-        <Menu.Item  icon={<FormOutlined />} onClick={() => handleClick('/blog')}>
-          Blog
-        </Menu.Item>
-        <Menu.Item  icon={<MailOutlined />} onClick={() => handleClick('/bulk-email')}>
-          Bulk Email
-        </Menu.Item>
-        <Menu.Item  icon={<MessageOutlined />} onClick={() => handleClick('/product-inquiry')}>
-          Product Inquiry
-        </Menu.Item>
-        <Menu.Item  icon={<QuestionOutlined />} onClick={() => handleClick('/inquiry')}>
-          Inquiry
-        </Menu.Item>
-      </Menu>
-    </div>
+    <aside className="admin-sidebar">
+      {/* Brand */}
+      <div className="admin-sidebar__brand">
+        <span className="admin-sidebar__brand-name">ASIOS</span>
+        <span className="admin-sidebar__brand-tag">· Admin</span>
+      </div>
+
+      {/* Nav */}
+      <nav className="admin-sidebar__nav">
+        <div className="admin-sidebar__section-label">Overview</div>
+        {overviewItems.map(renderItem)}
+
+        <div className="admin-sidebar__section-label">Catalogue</div>
+        {catalogueItems.map(renderItem)}
+
+        <div className="admin-sidebar__section-label">Engagement</div>
+        {engagementItems.map(renderItem)}
+      </nav>
+
+      {/* Footer */}
+      <div className="admin-sidebar__footer">v1.0 · Morbi</div>
+    </aside>
   );
 };
 
