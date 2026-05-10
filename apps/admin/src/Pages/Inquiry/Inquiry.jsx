@@ -37,27 +37,42 @@ const Inquiry = () => {
   );
 
   return (
-    <div className="p-4 bg-white rounded-md">
-      <h2 className="text-2xl font-semibold mb-4">Inquiries</h2>
-      {loading ? (
-        <Spin tip="Loading..." />
-      ) : (
-        <>
-          <Table
-            dataSource={paginatedData}
-            columns={columns}
-            pagination={false}
-            rowKey="_id"
-          />
-          <Pagination
-            current={currentPage}
-            pageSize={pageSize}
-            total={inquiries.length}
-            onChange={(page) => setCurrentPage(page)}
-            style={{ marginTop: '16px', textAlign: 'right' }}
-          />
-        </>
-      )}
+    <div className="admin-page">
+      <div className="admin-page__card">
+        <div className="admin-page__card-head">
+          <div>
+            <span className="admin-page__title-eyebrow">Engagement · General</span>
+            <h2 className="admin-page__title">Inquiry List</h2>
+          </div>
+        </div>
+
+        <div className="admin-page__card-body">
+          {loading ? (
+            <div className="flex justify-center py-12">
+              <Spin tip="Loading..." />
+            </div>
+          ) : (
+            <Table
+              dataSource={paginatedData}
+              columns={columns}
+              pagination={false}
+              rowKey="_id"
+            />
+          )}
+        </div>
+
+        {!loading && (
+          <div className="admin-page__pagination-wrap">
+            <Pagination
+              current={currentPage}
+              pageSize={pageSize}
+              total={inquiries.length}
+              onChange={(page) => setCurrentPage(page)}
+              showSizeChanger={false}
+            />
+          </div>
+        )}
+      </div>
     </div>
   );
 };

@@ -23,7 +23,7 @@ const Category = () => {
   const [updatedImage, setUpdatedImage] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize] = useState(4);
+  const [pageSize] = useState(8);
 
   const handleDelete = (id) => {
     Modal.confirm({

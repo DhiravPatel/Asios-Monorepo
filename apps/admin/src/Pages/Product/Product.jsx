@@ -19,7 +19,7 @@ const Product = () => {
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5;
+  const itemsPerPage = 8;
 
   // Filter states
   const [selectedCategory, setSelectedCategory] = useState(null);
@@ -213,7 +213,9 @@ const Product = () => {
               onChange={handleProductNameChange}
               value={productNameFilter}
             />
-            <Button onClick={handleClear}>Clear</Button>
+            <Button onClick={handleClear} className="admin-modal-clear-btn">
+              Clear
+            </Button>
           </div>
         </div>
 

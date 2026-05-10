@@ -10,7 +10,9 @@ import {
   MailOutlined,
   MessageOutlined,
   QuestionCircleOutlined,
+  LogoutOutlined,
 } from '@ant-design/icons';
+import asiosLogo from '../assets/asios_logo.svg';
 
 const overviewItems = [
   { key: 'dashboard', label: 'Dashboard', path: '/dashboard', icon: <HomeOutlined /> },
@@ -18,7 +20,7 @@ const overviewItems = [
 
 const catalogueItems = [
   { key: 'category', label: 'Category', path: '/category', icon: <AppstoreOutlined /> },
-  { key: 'type', label: 'Type', path: '/type', icon: <CodeSandboxOutlined /> },
+  { key: 'type', label: 'Sub Category', path: '/type', icon: <CodeSandboxOutlined /> },
   { key: 'products', label: 'Product', path: '/products', icon: <ShoppingOutlined /> },
   { key: 'catalogue', label: 'Catalogue', path: '/catalogue', icon: <BookOutlined /> },
   { key: 'blog', label: 'Blog', path: '/blog', icon: <FormOutlined /> },
@@ -46,6 +48,11 @@ const Sidebar = () => {
 
   const isActive = (path) => location.pathname === path;
 
+  const handleSignOut = () => {
+    localStorage.removeItem('token');
+    navigate('/');
+  };
+
   const renderItem = (item) => (
     <button
       key={item.key}
@@ -64,7 +71,7 @@ const Sidebar = () => {
     <aside className="admin-sidebar">
       {/* Brand */}
       <div className="admin-sidebar__brand">
-        <span className="admin-sidebar__brand-name">ASIOS</span>
+        <img src={asiosLogo} alt="Asios" className="admin-sidebar__brand-logo" />
         <span className="admin-sidebar__brand-tag">· Admin</span>
       </div>
 
@@ -80,8 +87,23 @@ const Sidebar = () => {
         {engagementItems.map(renderItem)}
       </nav>
 
-      {/* Footer */}
-      <div className="admin-sidebar__footer">v1.0 · Morbi</div>
+      {/* Profile + sign out */}
+      <div className="admin-sidebar__profile">
+        <span className="admin-sidebar__profile-avatar">A</span>
+        <div className="min-w-0 flex-1">
+          <div className="admin-sidebar__profile-name">Admin</div>
+          <div className="admin-sidebar__profile-role">Asios Global</div>
+        </div>
+        <button
+          type="button"
+          className="admin-sidebar__signout"
+          onClick={handleSignOut}
+          aria-label="Sign out"
+          title="Sign out"
+        >
+          <LogoutOutlined style={{ fontSize: 13 }} />
+        </button>
+      </div>
     </aside>
   );
 };

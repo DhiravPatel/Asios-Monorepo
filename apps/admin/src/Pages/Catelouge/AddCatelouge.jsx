@@ -110,9 +110,10 @@ const AddCatelouge = ({ visible, onClose, catalogue, fetchCatalogueData }) => {
   return (
     <Modal
       title={catalogue ? "Edit Catalogue" : "Add New Catalogue"}
-      visible={visible}
+      open={visible}
       onOk={handleOk}
       onCancel={onClose}
+      width={680}
     >
       <div className="flex flex-col space-y-4">
         <div className="flex items-center gap-3">

@@ -123,18 +123,27 @@ const Blog = () => {
   );
 
   return (
-    <div className="p-4 bg-white rounded-md">
-      <div className="flex justify-between">
-        <h2 className="text-2xl font-semibold mb-4">Blogs</h2>
-        <Button style={{ marginLeft: '15px' }} onClick={handleAddBlog}>
+    <div className="admin-page">
+      <div className="admin-page__action-bar">
+        <Button className="admin-add-btn" onClick={handleAddBlog}>
           Add New Blog
         </Button>
       </div>
-      {loading ? (
-        <Spin tip="Loading..." />
-      ) : (
-        <>
-          <div className="overflow-x-auto">
+
+      <div className="admin-page__card">
+        <div className="admin-page__card-head">
+          <div>
+            <span className="admin-page__title-eyebrow">Catalogue · Blog</span>
+            <h2 className="admin-page__title">Blog List</h2>
+          </div>
+        </div>
+
+        <div className="admin-page__card-body">
+          {loading ? (
+            <div className="flex justify-center py-12">
+              <Spin tip="Loading..." />
+            </div>
+          ) : (
             <Table
               dataSource={paginatedData}
               columns={columns}
@@ -142,16 +151,21 @@ const Blog = () => {
               rowKey="$id"
               scroll={{ x: 800 }}
             />
+          )}
+        </div>
+
+        {!loading && (
+          <div className="admin-page__pagination-wrap">
+            <Pagination
+              current={currentPage}
+              pageSize={pageSize}
+              total={blogs.length}
+              onChange={(page) => setCurrentPage(page)}
+              showSizeChanger={false}
+            />
           </div>
-          <Pagination
-            current={currentPage}
-            pageSize={pageSize}
-            total={blogs.length}
-            onChange={(page) => setCurrentPage(page)}
-            style={{ marginTop: '16px', textAlign: 'right' }}
-          />
-        </>
-      )}
+        )}
+      </div>
     </div>
   );
 };

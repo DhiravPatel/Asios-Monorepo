@@ -23,9 +23,10 @@ const AddCatelougeCategory = ({ visible, onClose }) => {
     return (
         <Modal
             title="Add New Catalogue Category"
-            visible={visible}
+            open={visible}
             onOk={handleOk}
             onCancel={handleCancel}
+            width={560}
         >
             <div className="flex flex-col space-y-4 mt-5">
                 <div className="flex items-center gap-3">

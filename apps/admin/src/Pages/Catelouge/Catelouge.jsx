@@ -15,7 +15,7 @@ const Product = () => {
   const [isAddCatalougeSubCategoryModalVisible, setIsAddCatalougeSubCategoryModalVisible] = useState(false);
   const [currentCatalogue, setCurrentCatalogue] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5;
+  const itemsPerPage = 8;
 
   const handlePageChange = (page) => {
     setCurrentPage(page);

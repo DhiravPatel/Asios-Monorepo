@@ -50,61 +50,69 @@ const BulkEmail = () => {
 
 
   return (
-    <div className="p-4 bg-white rounded-md">
-      <div className="flex items-center mb-6 justify-between">
-        <h2 className="text-2xl font-semibold">Send Bulk Email</h2>
+    <div className="admin-page">
+      <div className="admin-page__card">
+        <div className="admin-page__card-head">
+          <div>
+            <span className="admin-page__title-eyebrow">Engagement · Outreach</span>
+            <h2 className="admin-page__title">Send Bulk Email</h2>
+          </div>
+        </div>
+
+        <div style={{ padding: '24px 28px' }}>
+          <Form form={form} layout="vertical" onFinish={handleSend} autoComplete="off">
+            <Form.Item
+              label="Subject"
+              name="subject"
+              rules={[
+                { required: true, message: 'Please enter email subject!' },
+                { min: 3, message: 'Subject must be at least 3 characters!' },
+              ]}
+            >
+              <Input placeholder="Enter email subject" />
+            </Form.Item>
+
+            <Form.Item
+              label="Recipients"
+              name="recipientsText"
+              rules={[{ required: true, message: 'Please enter recipient email addresses!' }]}
+            >
+              <Input.TextArea
+                placeholder="Enter email addresses, separated by commas"
+                value={recipientsText}
+                onChange={(e) => setRecipientsText(e.target.value)}
+                autoSize={{ minRows: 2, maxRows: 4 }}
+              />
+            </Form.Item>
+
+            <Form.Item
+              label="Message"
+              name="message"
+              rules={[{ required: true, message: 'Please enter email message!' }]}
+            >
+              <ReactQuill
+                value={form.getFieldValue('message') || ''}
+                onChange={(value) => form.setFieldsValue({ message: value })}
+                theme="snow"
+                style={{ minHeight: '200px' }}
+              />
+            </Form.Item>
+
+            <Form.Item className="mb-0" style={{ marginTop: 8 }}>
+              <div className="flex gap-3 justify-end">
+                <Button onClick={handleCancel}>Cancel</Button>
+                <Button
+                  className="admin-add-btn"
+                  htmlType="submit"
+                  loading={loading}
+                >
+                  Send Email
+                </Button>
+              </div>
+            </Form.Item>
+          </Form>
+        </div>
       </div>
-      <Card>
-        <Form form={form} layout="vertical" onFinish={handleSend} autoComplete="off">
-          <Form.Item
-            label="Subject"
-            name="subject"
-            rules={[
-              { required: true, message: 'Please enter email subject!' },
-              { min: 3, message: 'Subject must be at least 3 characters!' },
-            ]}
-          >
-            <Input placeholder="Enter email subject" size="large" />
-          </Form.Item>
-
-          <Form.Item
-            label="Recipients"
-            name="recipientsText"
-            rules={[{ required: true, message: 'Please enter recipient email addresses!' }]}
-          >
-            <Input.TextArea
-              placeholder="Enter email addresses, separated by commas"
-              value={recipientsText}
-              onChange={e => setRecipientsText(e.target.value)}
-              autoSize={{ minRows: 2, maxRows: 4 }}
-            />
-          </Form.Item>
-
-          <Form.Item
-            label="Message"
-            name="message"
-            rules={[{ required: true, message: 'Please enter email message!' }]}
-          >
-            <ReactQuill
-              value={form.getFieldValue('message') || ''}
-              onChange={(value) => form.setFieldsValue({ message: value })}
-              theme="snow"
-              style={{ minHeight: '200px' }}
-            />
-          </Form.Item>
-
-          <Form.Item className="mb-0">
-            <div className="flex gap-3 justify-end">
-              <Button size="large" onClick={handleCancel}>
-                Cancel
-              </Button>
-              <Button htmlType="submit" size="large" loading={loading}>
-                Send Email
-              </Button>
-            </div>
-          </Form.Item>
-        </Form>
-      </Card>
     </div>
   );
 };

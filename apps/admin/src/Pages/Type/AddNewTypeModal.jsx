@@ -69,6 +69,7 @@ const AddNewTypeModal = ({ visible, onClose, fetchSubCategories }) => {
       open={visible}
       onOk={handleSubmit}
       onCancel={handleCancel}
+      width={620}
     >
       <div className="flex flex-col space-y-4">
         <div className="flex items-center gap-3">

@@ -582,6 +582,12 @@ body {
     border: 1px solid #e8e4da;
     cursor: pointer;
     transition: background-color 0.25s ease, border-color 0.25s ease;
+    text-align: left;
+    width: 100%;
+}
+.dash-action > :first-child {
+    flex: 1;
+    min-width: 0;
 }
 .dash-action:hover {
     background-color: #1a1612;
@@ -667,6 +673,28 @@ body {
     background-color: #1a1612 !important;
     border-color: #1a1612 !important;
     color: #ffffff !important;
+}
+
+/* Outlined "Clear" / secondary modal button — paired with .admin-add-btn */
+.admin-modal-clear-btn.ant-btn {
+    background-color: transparent !important;
+    color: rgba(26, 22, 18, 0.7) !important;
+    border: 1px solid #d4cfc1 !important;
+    border-radius: 0 !important;
+    padding: 10px 20px !important;
+    height: auto !important;
+    font-family: 'Inter', system-ui, sans-serif !important;
+    font-size: 11.5px !important;
+    font-weight: 500 !important;
+    letter-spacing: 0.18em !important;
+    text-transform: uppercase !important;
+    box-shadow: none !important;
+    transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease !important;
+}
+.admin-modal-clear-btn.ant-btn:hover {
+    background-color: transparent !important;
+    border-color: #1a1612 !important;
+    color: #1a1612 !important;
 }
 
 /* Card container for the list */
@@ -873,6 +901,38 @@ body {
     box-shadow: none !important;
 }
 
+/* Ant Input.Search override — editorial search icon button */
+.admin-page .ant-input-search .ant-input {
+    border-right: 0 !important;
+}
+.admin-page .ant-input-search > .ant-input-group > .ant-input-group-addon:last-child {
+    background-color: transparent !important;
+}
+.admin-page .ant-input-search-button {
+    border-radius: 0 !important;
+    background-color: #1a1612 !important;
+    border: 1px solid #1a1612 !important;
+    color: #ffffff !important;
+    height: 38px !important;
+    width: 44px !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+    transition: background-color 0.2s ease, border-color 0.2s ease !important;
+}
+.admin-page .ant-input-search-button:hover {
+    background-color: #a01313 !important;
+    border-color: #a01313 !important;
+    color: #ffffff !important;
+}
+.admin-page .ant-input-search-button .anticon {
+    color: #ffffff !important;
+    font-size: 14px !important;
+}
+/* Search input itself — match the same height and ink hover */
+.admin-page .ant-input-search .ant-input-group .ant-input {
+    height: 38px !important;
+}
+
 /* Action icon buttons in table cells (edit / delete) */
 .admin-page .iconbutton {
     width: 28px !important;
@@ -903,4 +963,387 @@ body {
     color: rgba(26, 22, 18, 0.4) !important;
     font-family: 'Inter', system-ui, sans-serif !important;
     font-size: 13px !important;
+}
+
+/* Form labels inside admin pages — editorial eyebrow style */
+.admin-page .ant-form-item-label > label {
+    font-family: 'Inter', system-ui, sans-serif !important;
+    font-size: 10px !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.18em !important;
+    text-transform: uppercase !important;
+    color: rgba(26, 22, 18, 0.6) !important;
+    height: auto !important;
+    padding-bottom: 6px !important;
+}
+.admin-page .ant-form-item-label > label::after {
+    display: none !important;
+}
+/* Ant Quill editor — square edges, sand borders */
+.admin-page .ql-toolbar.ql-snow,
+.admin-page .ql-container.ql-snow {
+    border-radius: 0 !important;
+    border-color: #e8e4da !important;
+    font-family: 'Inter', system-ui, sans-serif !important;
+}
+.admin-page .ql-container.ql-snow {
+    min-height: 200px !important;
+    font-size: 14px !important;
+}
+
+/* ============================================================
+   Editorial modals — global Ant Design Modal overrides
+   ============================================================ */
+
+/* Backdrop */
+.ant-modal-mask {
+    background-color: rgba(20, 16, 12, 0.55) !important;
+    backdrop-filter: blur(6px) !important;
+    -webkit-backdrop-filter: blur(6px) !important;
+}
+
+/* Modal content shell */
+.ant-modal {
+    padding: 0 !important;
+    font-family: 'Inter', system-ui, sans-serif !important;
+}
+.ant-modal-content {
+    padding: 0 !important;
+    border-radius: 0 !important;
+    background-color: #ffffff !important;
+    border: 1px solid #e8e4da !important;
+    box-shadow: 0 24px 60px -20px rgba(20, 16, 12, 0.32),
+        0 4px 16px -8px rgba(20, 16, 12, 0.12) !important;
+    overflow: hidden !important;
+}
+
+/* Top red accent rule */
+.ant-modal-content::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(
+        to right,
+        transparent,
+        rgba(160, 19, 19, 0.7) 30%,
+        rgba(160, 19, 19, 0.7) 70%,
+        transparent
+    );
+    z-index: 1;
+}
+
+/* Header */
+.ant-modal-header {
+    background-color: #faf8f3 !important;
+    border-bottom: 1px solid #e8e4da !important;
+    padding: 22px 28px 18px !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+    position: relative;
+}
+.ant-modal-header::before {
+    content: '';
+    display: block;
+    width: 32px;
+    height: 1px;
+    background-color: #a01313;
+    margin-bottom: 10px;
+}
+.ant-modal-title {
+    font-family: 'Cormorant Garamond', Georgia, serif !important;
+    font-size: 26px !important;
+    font-weight: 500 !important;
+    line-height: 1.1 !important;
+    color: #1a1612 !important;
+    letter-spacing: -0.01em !important;
+}
+
+/* Close button */
+.ant-modal-close {
+    width: 36px !important;
+    height: 36px !important;
+    inset-inline-end: 18px !important;
+    top: 18px !important;
+    border-radius: 0 !important;
+    border: 1px solid transparent !important;
+    background-color: transparent !important;
+    color: rgba(26, 22, 18, 0.55) !important;
+    transition: all 0.2s ease !important;
+}
+.ant-modal-close:hover {
+    background-color: #1a1612 !important;
+    color: #ffffff !important;
+    border-color: #1a1612 !important;
+}
+.ant-modal-close-x {
+    line-height: 1 !important;
+    font-size: 14px !important;
+}
+
+/* Body */
+.ant-modal-body {
+    padding: 26px 28px !important;
+    background-color: #ffffff !important;
+    color: #1a1612 !important;
+    font-family: 'Inter', system-ui, sans-serif !important;
+    font-size: 13.5px !important;
+    line-height: 1.6 !important;
+    max-height: calc(100vh - 140px);
+    overflow-y: auto;
+}
+
+/* Wrapper centering — pull modal toward the top so it can use more height */
+.ant-modal-wrap {
+    padding: 16px;
+    align-items: flex-start !important;
+}
+.ant-modal {
+    top: 24px !important;
+}
+
+/* Footer */
+.ant-modal-footer {
+    padding: 16px 28px !important;
+    margin: 0 !important;
+    background-color: #faf8f3 !important;
+    border-top: 1px solid #e8e4da !important;
+    border-radius: 0 !important;
+    display: flex !important;
+    justify-content: flex-end !important;
+    gap: 10px;
+}
+.ant-modal-footer .ant-btn {
+    border-radius: 0 !important;
+    height: auto !important;
+    padding: 10px 20px !important;
+    font-family: 'Inter', system-ui, sans-serif !important;
+    font-size: 11px !important;
+    font-weight: 500 !important;
+    letter-spacing: 0.18em !important;
+    text-transform: uppercase !important;
+    box-shadow: none !important;
+    transition: all 0.25s ease !important;
+}
+/* Cancel button */
+.ant-modal-footer .ant-btn-default {
+    background-color: transparent !important;
+    border-color: #d4cfc1 !important;
+    color: rgba(26, 22, 18, 0.7) !important;
+}
+.ant-modal-footer .ant-btn-default:hover {
+    border-color: #1a1612 !important;
+    color: #1a1612 !important;
+    background-color: transparent !important;
+}
+/* OK button */
+.ant-modal-footer .ant-btn-primary {
+    background-color: #1a1612 !important;
+    border-color: #1a1612 !important;
+    color: #ffffff !important;
+}
+.ant-modal-footer .ant-btn-primary:hover {
+    background-color: #a01313 !important;
+    border-color: #a01313 !important;
+}
+/* Danger / OK type danger (used in confirm dialogs) */
+.ant-modal-footer .ant-btn-dangerous,
+.ant-modal-footer .ant-btn-primary.ant-btn-dangerous {
+    background-color: #a01313 !important;
+    border-color: #a01313 !important;
+    color: #ffffff !important;
+}
+.ant-modal-footer .ant-btn-dangerous:hover,
+.ant-modal-footer .ant-btn-primary.ant-btn-dangerous:hover {
+    background-color: #7c1c25 !important;
+    border-color: #7c1c25 !important;
+}
+
+/* ----- Form fields inside modals ----- */
+.ant-modal-body .ant-input,
+.ant-modal-body .ant-input-affix-wrapper,
+.ant-modal-body .ant-select-selector,
+.ant-modal-body .ant-input-number,
+.ant-modal-body .ant-picker {
+    border-radius: 0 !important;
+    border-color: #e8e4da !important;
+    font-family: 'Inter', system-ui, sans-serif !important;
+    font-size: 13.5px !important;
+    box-shadow: none !important;
+}
+.ant-modal-body .ant-input,
+.ant-modal-body .ant-picker,
+.ant-modal-body .ant-select-selector {
+    height: 40px !important;
+    padding: 6px 12px !important;
+}
+.ant-modal-body .ant-select-selector {
+    padding: 4px 12px !important;
+}
+.ant-modal-body .ant-select-selection-item,
+.ant-modal-body .ant-select-selection-placeholder {
+    line-height: 30px !important;
+}
+.ant-modal-body .ant-input:hover,
+.ant-modal-body .ant-input-affix-wrapper:hover,
+.ant-modal-body .ant-select:hover .ant-select-selector,
+.ant-modal-body .ant-picker:hover {
+    border-color: #1a1612 !important;
+}
+.ant-modal-body .ant-input:focus,
+.ant-modal-body .ant-input-affix-wrapper-focused,
+.ant-modal-body .ant-select-focused .ant-select-selector,
+.ant-modal-body .ant-picker-focused {
+    border-color: #1a1612 !important;
+    box-shadow: none !important;
+}
+.ant-modal-body textarea.ant-input {
+    height: auto !important;
+    min-height: 80px !important;
+    padding: 10px 12px !important;
+}
+
+/* Upload button inside modal */
+.ant-modal-body .ant-upload .ant-btn {
+    border-radius: 0 !important;
+    border-color: #d4cfc1 !important;
+    background-color: transparent !important;
+    color: #1a1612 !important;
+    font-family: 'Inter', system-ui, sans-serif !important;
+    font-size: 12px !important;
+    font-weight: 500 !important;
+    letter-spacing: 0.1em !important;
+    height: 40px !important;
+    padding: 0 16px !important;
+}
+.ant-modal-body .ant-upload .ant-btn:hover {
+    border-color: #1a1612 !important;
+    color: #1a1612 !important;
+}
+
+/* Form labels — small uppercase eyebrow style */
+.ant-modal-body .ant-form-item-label > label {
+    font-family: 'Inter', system-ui, sans-serif !important;
+    font-size: 10px !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.18em !important;
+    text-transform: uppercase !important;
+    color: rgba(26, 22, 18, 0.6) !important;
+    height: auto !important;
+    padding-bottom: 6px !important;
+}
+.ant-modal-body .ant-form-item-label > label::after {
+    display: none !important;
+}
+
+/* Inline label-style spans (used by some custom modals) — keep them subtle */
+.ant-modal-body span.w-36,
+.ant-modal-body span.w-28 {
+    font-family: 'Inter', system-ui, sans-serif !important;
+    font-size: 11px !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.16em !important;
+    text-transform: uppercase !important;
+    color: rgba(26, 22, 18, 0.55) !important;
+}
+
+/* ============================================================
+   Confirm modal (Modal.confirm) — match the editorial style
+   ============================================================ */
+.ant-modal-confirm .ant-modal-content {
+    padding: 0 !important;
+}
+.ant-modal-confirm .ant-modal-confirm-body-wrapper {
+    padding: 28px 28px 18px !important;
+}
+.ant-modal-confirm .ant-modal-confirm-title {
+    font-family: 'Cormorant Garamond', Georgia, serif !important;
+    font-size: 22px !important;
+    font-weight: 500 !important;
+    color: #1a1612 !important;
+    line-height: 1.2 !important;
+}
+.ant-modal-confirm .ant-modal-confirm-content {
+    font-family: 'Inter', system-ui, sans-serif !important;
+    font-size: 13.5px !important;
+    color: rgba(26, 22, 18, 0.6) !important;
+    line-height: 1.6 !important;
+    margin-top: 8px !important;
+}
+.ant-modal-confirm .ant-modal-confirm-btns {
+    margin: 0 !important;
+    padding: 16px 28px !important;
+    background-color: #faf8f3 !important;
+    border-top: 1px solid #e8e4da !important;
+    display: flex !important;
+    justify-content: flex-end !important;
+    gap: 10px;
+}
+
+/* ============================================================
+   Sidebar — profile + sign-out card at the bottom
+   ============================================================ */
+.admin-sidebar__profile {
+    padding: 16px 18px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.admin-sidebar__profile-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background-color: #a01313;
+    color: #fff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 16px;
+    font-weight: 600;
+    flex-shrink: 0;
+}
+.admin-sidebar__profile-name {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: #fff;
+    line-height: 1.2;
+}
+.admin-sidebar__profile-role {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.4);
+    margin-top: 2px;
+}
+.admin-sidebar__signout {
+    margin-left: auto;
+    width: 32px;
+    height: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    color: rgba(255, 255, 255, 0.7);
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: all 0.2s ease;
+}
+.admin-sidebar__signout:hover {
+    background-color: #a01313;
+    border-color: #a01313;
+    color: #fff;
+}
+
+/* Brand block — show the actual ASIOS logo SVG instead of text */
+.admin-sidebar__brand-logo {
+    height: 30px;
+    width: auto;
+    display: block;
 }

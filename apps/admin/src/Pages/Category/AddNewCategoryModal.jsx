@@ -57,6 +57,7 @@ const AddNewCategoryModal = ({ visible, onClose, fetchCategories }) => {
     <Modal
       title="Add New Category"
       open={visible}
+      width={560}
       onOk={handleSubmit}
       onCancel={() => {
         setCategoryName("");

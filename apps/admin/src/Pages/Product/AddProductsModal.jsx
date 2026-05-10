@@ -138,6 +138,11 @@ const AddProductsModal = ({ visible, onClose, product, fetchProducts }) => {
     onClose();
   };
 
+  const handleClear = () => {
+    form.resetFields();
+    setImage(null);
+  };
+
   const uploadProps = {
     name: "file",
     listType: "picture",
@@ -151,10 +156,11 @@ const AddProductsModal = ({ visible, onClose, product, fetchProducts }) => {
   return (
     <Modal
       title={product ? "Edit Product" : "Add Product"}
-      visible={visible}
+      open={visible}
       onOk={handleOk}
       onCancel={handleCancel}
       footer={null}
+      width={1080}
     >
       {loading ? (
         <div style={{ textAlign: 'center' }}>
@@ -259,12 +265,30 @@ const AddProductsModal = ({ visible, onClose, product, fetchProducts }) => {
             <Input type="text" placeholder="Enter Color" />
           </Form.Item>
 
-          <Form.Item label="link" name="link">
+          <Form.Item label="Catalogue Link" name="link">
             <Input type="link" placeholder="Enter Catalogue link" />
           </Form.Item>
         </Form>
       )}
-      <Button type="primary" onClick={handleOk}>Submit</Button>
+      {!loading && (
+        <div
+          style={{
+            marginTop: 24,
+            paddingTop: 18,
+            borderTop: '1px solid #e8e4da',
+            display: 'flex',
+            justifyContent: 'flex-end',
+            gap: 10,
+          }}
+        >
+          <Button onClick={handleClear} className="admin-modal-clear-btn">
+            Clear
+          </Button>
+          <Button onClick={handleOk} className="admin-add-btn">
+            {product ? 'Update Product' : 'Submit Product'}
+          </Button>
+        </div>
+      )}
     </Modal>
   );
 };
