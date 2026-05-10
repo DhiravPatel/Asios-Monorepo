@@ -105,14 +105,14 @@ const Second_product_details = () => {
           <div className="grid lg:grid-cols-12 gap-10 lg:gap-16 items-start">
             {/* Image */}
             <motion.div
-              className="lg:col-span-7"
+              className="lg:col-span-5"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
             >
               {product ? (
                 <div
-                  className={`relative aspect-square w-full overflow-hidden bg-sand-100 group cursor-zoom-in ${
+                  className={`relative aspect-square w-full max-w-[460px] mx-auto lg:mx-0 overflow-hidden bg-sand-100 group cursor-zoom-in ${
                     isFramedImage ? "border border-sand-200" : ""
                   }`}
                   onClick={() => setViewerIsOpen(true)}
@@ -124,12 +124,12 @@ const Second_product_details = () => {
                       isFramedImage ? "object-cover" : "object-contain p-6"
                     }`}
                   />
-                  <span className="absolute top-5 right-5 w-11 h-11 rounded-full bg-white/95 text-ink flex items-center justify-center shadow-soft opacity-0 group-hover:opacity-100 transition-all duration-500 ease-editorial">
+                  <span className="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/95 text-ink flex items-center justify-center shadow-soft opacity-0 group-hover:opacity-100 transition-all duration-500 ease-editorial">
                     <FiZoomIn className="w-4 h-4" />
                   </span>
                 </div>
               ) : (
-                <div className="aspect-square">
+                <div className="aspect-square max-w-[460px] mx-auto lg:mx-0">
                   <SkeletonLoader width="100%" height="100%" />
                 </div>
               )}
@@ -137,7 +137,7 @@ const Second_product_details = () => {
 
             {/* Details */}
             <motion.div
-              className="lg:col-span-5 lg:sticky lg:top-28"
+              className="lg:col-span-7 lg:sticky lg:top-28"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
@@ -197,26 +197,17 @@ const Second_product_details = () => {
                   <button
                     type="button"
                     onClick={() => window.open(productDetails.link, "_blank")}
-                    className="btn-link"
+                    className="btn-link hover:!text-primary transition-colors duration-300"
                   >
                     View Brochure <FiDownload className="w-4 h-4" />
                   </button>
                 )}
-                <Link to="/contact" className="btn-link">
+                <Link
+                  to="/contact"
+                  className="btn-link hover:!text-primary transition-colors duration-300"
+                >
                   Contact Us <FiArrowUpRight className="arrow w-4 h-4" />
                 </Link>
-              </div>
-
-              {/* Trust copy */}
-              <div className="mt-12 pt-8 border-t border-sand-200 grid grid-cols-2 gap-6 text-[12.5px] text-sand-600 leading-[1.7]">
-                <div>
-                  <span className="eyebrow !text-[10px]">Quality Assured</span>
-                  <p className="mt-2">Inspected at every production stage before shipment.</p>
-                </div>
-                <div>
-                  <span className="eyebrow !text-[10px]">Global Delivery</span>
-                  <p className="mt-2">Exported to 50+ markets across five continents.</p>
-                </div>
               </div>
             </motion.div>
           </div>

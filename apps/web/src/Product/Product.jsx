@@ -57,24 +57,28 @@ const Product = () => {
                   transition={{ duration: 0.6, delay: i * 0.04, ease: [0.22, 1, 0.36, 1] }}
                 >
                   <Link to={`/main-product/${item._id}`} className="group block">
+                    {/* Image — clean, no overlay text */}
                     <div className="relative aspect-[3/4] overflow-hidden bg-sand-100">
                       <img
                         src={item.image || "fallback-image.jpg"}
                         alt={item.category}
                         className="w-full h-full object-cover transition-transform duration-[1200ms] ease-editorial group-hover:scale-105"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-transparent" />
-                      <span className="absolute top-5 left-5 text-[10px] tracking-[0.22em] uppercase font-semibold text-white/90">
-                        {String(i + 1).padStart(2, "0")}
-                      </span>
-                      <div className="absolute bottom-0 left-0 right-0 p-5 md:p-6 flex items-end justify-between gap-3">
-                        <h3 className="display text-xl md:text-2xl text-white leading-tight pr-2 capitalize">
+                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/15 transition-colors duration-500" />
+                    </div>
+
+                    {/* Editorial name plate */}
+                    <div className="mt-5 flex items-end justify-between gap-4">
+                      <div className="min-w-0 flex-1">
+                        <span className="block text-[10px] tracking-[0.22em] uppercase font-semibold text-sand-500 mb-2">
+                          Collection · {String(i + 1).padStart(2, "0")}
+                        </span>
+                        <h3 className="display text-2xl md:text-[26px] leading-tight capitalize group-hover:text-primary transition-colors duration-500">
                           {item.category}
                         </h3>
-                        <span className="w-10 h-10 rounded-full bg-white/95 text-ink flex items-center justify-center shrink-0 transition-all duration-500 ease-editorial group-hover:bg-primary group-hover:text-white">
-                          <FiArrowUpRight className="w-4 h-4" />
-                        </span>
+                        <div className="mt-3 h-px w-10 bg-sand-300 group-hover:w-24 group-hover:bg-primary transition-all duration-700 ease-editorial" />
                       </div>
+                      <FiArrowUpRight className="w-6 h-6 shrink-0 text-ink/60 group-hover:text-primary group-hover:-translate-y-1 group-hover:translate-x-1 transition-all duration-500 ease-editorial" />
                     </div>
                   </Link>
                 </motion.div>

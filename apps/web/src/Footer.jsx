@@ -11,9 +11,23 @@ const Footer = () => {
   const categories = footerData || [];
 
   return (
-    <footer className="bg-ink text-white">
+    <footer className="relative bg-ink text-white overflow-hidden">
+      {/* Ambient red glow shadows */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        {/* top-edge shimmer line */}
+        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/60 to-transparent" />
+        {/* upper red glows */}
+        <div className="absolute -top-32 left-1/4 w-[520px] h-[260px] bg-primary/12 rounded-full blur-3xl" />
+        <div className="absolute -top-20 right-1/4 w-[600px] h-[280px] bg-primary/8 rounded-full blur-3xl" />
+        {/* bottom corner glows */}
+        <div className="absolute -bottom-40 -left-32 w-[500px] h-[500px] bg-primary/10 rounded-full blur-3xl" />
+        <div className="absolute -bottom-32 -right-20 w-[400px] h-[400px] bg-primary/8 rounded-full blur-3xl" />
+        {/* center subtle wash */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[300px] bg-primary/[0.04] rounded-full blur-3xl" />
+      </div>
+
       {/* Editorial top stripe */}
-      <div className="border-t border-white/10">
+      <div className="relative border-t border-white/10">
         <div className="max-w-[1400px] mx-auto px-6 md:px-10 lg:px-12 py-16 md:py-20">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-12">
             {/* Brand column */}
@@ -60,12 +74,12 @@ const Footer = () => {
             <div className="lg:col-span-2">
               <span className="eyebrow eyebrow-light !text-white/60">Explore</span>
               <ul className="mt-5 flex flex-col gap-3 text-[13.5px] text-white/75">
-                <li><Link to="/" className="hover:text-white transition-colors">Home</Link></li>
-                <li><Link to="/about" className="hover:text-white transition-colors">About</Link></li>
-                <li><Link to="/product" className="hover:text-white transition-colors">Products</Link></li>
-                <li><Link to="/catalogue" className="hover:text-white transition-colors">E-Catalogue</Link></li>
-                <li><Link to="/export" className="hover:text-white transition-colors">Export</Link></li>
-                <li><Link to="/contact" className="hover:text-white transition-colors">Contact</Link></li>
+                <li><Link to="/" className="hover:text-primary transition-colors">Home</Link></li>
+                <li><Link to="/about" className="hover:text-primary transition-colors">About</Link></li>
+                <li><Link to="/product" className="hover:text-primary transition-colors">Products</Link></li>
+                <li><Link to="/catalogue" className="hover:text-primary transition-colors">E-Catalogue</Link></li>
+                <li><Link to="/export" className="hover:text-primary transition-colors">Export</Link></li>
+                <li><Link to="/contact" className="hover:text-primary transition-colors">Contact</Link></li>
               </ul>
             </div>
 
@@ -73,12 +87,12 @@ const Footer = () => {
             <div className="lg:col-span-2">
               <span className="eyebrow eyebrow-light !text-white/60">Information</span>
               <ul className="mt-5 flex flex-col gap-3 text-[13.5px] text-white/75">
-                <li><Link to="/tiles-calculator" className="hover:text-white transition-colors">Tiles Calculator</Link></li>
-                <li><Link to="/packing-details" className="hover:text-white transition-colors">Packing Details</Link></li>
-                <li><Link to="/quality-assurance" className="hover:text-white transition-colors">Quality Assurance</Link></li>
-                <li><Link to="/sample-request" className="hover:text-white transition-colors">Sample Request</Link></li>
-                <li><Link to="/customization" className="hover:text-white transition-colors">Customization</Link></li>
-                <li><Link to="/blog" className="hover:text-white transition-colors">Blog</Link></li>
+                <li><Link to="/tiles-calculator" className="hover:text-primary transition-colors">Tiles Calculator</Link></li>
+                <li><Link to="/packing-details" className="hover:text-primary transition-colors">Packing Details</Link></li>
+                <li><Link to="/quality-assurance" className="hover:text-primary transition-colors">Quality Assurance</Link></li>
+                <li><Link to="/sample-request" className="hover:text-primary transition-colors">Sample Request</Link></li>
+                <li><Link to="/customization" className="hover:text-primary transition-colors">Customization</Link></li>
+                <li><Link to="/blog" className="hover:text-primary transition-colors">Blog</Link></li>
               </ul>
             </div>
 
@@ -91,7 +105,7 @@ const Footer = () => {
                     <li key={item._id}>
                       <Link
                         to={`/main-product/${item._id}`}
-                        className="capitalize hover:text-white transition-colors"
+                        className="capitalize hover:text-primary transition-colors"
                       >
                         {item.category}
                       </Link>
@@ -111,7 +125,7 @@ const Footer = () => {
                   href="https://www.google.com/maps/place/ASIOS+GLOBAL/@22.8141528,70.8669576,17z"
                   target="_blank"
                   rel="noreferrer"
-                  className="flex items-start gap-2 hover:text-white transition-colors"
+                  className="flex items-start gap-2 hover:text-primary transition-colors"
                 >
                   <IoLocationSharp className="w-4 h-4 mt-0.5 shrink-0 text-primary" />
                   <span className="leading-relaxed">
@@ -119,17 +133,17 @@ const Footer = () => {
                     Morbi, Gujarat 363642
                   </span>
                 </a>
-                <a href="mailto:info@asios.in" className="flex items-center gap-2 hover:text-white transition-colors">
+                <a href="mailto:info@asios.in" className="flex items-center gap-2 hover:text-primary transition-colors">
                   <MdEmail className="w-4 h-4 shrink-0 text-primary" />
                   <span>info@asios.in</span>
                 </a>
                 <div className="flex items-start gap-2">
                   <FaPhoneAlt className="w-3.5 h-3.5 mt-1 shrink-0 text-primary" />
                   <div className="flex flex-col gap-1">
-                    <a href="tel:9409000751" className="hover:text-white transition-colors">
+                    <a href="tel:9409000751" className="hover:text-primary transition-colors">
                       +91 9409000751 <span className="text-white/50">(Export)</span>
                     </a>
-                    <a href="tel:9327624243" className="hover:text-white transition-colors">
+                    <a href="tel:9327624243" className="hover:text-primary transition-colors">
                       +91 9327624243 <span className="text-white/50">(Domestic)</span>
                     </a>
                   </div>
@@ -141,7 +155,7 @@ const Footer = () => {
       </div>
 
       {/* Bottom bar */}
-      <div className="border-t border-white/10">
+      <div className="relative border-t border-white/10">
         <div className="max-w-[1400px] mx-auto px-6 md:px-10 lg:px-12 py-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
           <span className="text-[12px] text-white/50 tracking-wide">
             © 2025 Asios Global. All rights reserved.
