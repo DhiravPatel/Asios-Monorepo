@@ -32,7 +32,7 @@ const GlobalFootprint = () => {
             { value: "50+", label: "Export Markets" },
             { value: "5", label: "Continents" },
             { value: "1,200+", label: "Designs Shipped" },
-            { value: "15+", label: "Years of Craft" },
+            { value: "8+", label: "Years of Craft" },
           ].map((s, i) => (
             <div key={i} className="text-center px-2 py-6 border-l border-sand-200 first:border-l-0 md:first:border-l-0">
               <div className="display text-3xl md:text-4xl text-ink">{s.value}</div>

@@ -1,5 +1,5 @@
-import React from "react";
-import { motion } from "framer-motion";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
 import { FiArrowUpRight } from "react-icons/fi";
 import aboutus from "../assets/about.webp";
@@ -34,23 +34,73 @@ const commitments = [
 const milestones = [
   {
     year: "2017",
+    chapter: "Chapter 01",
     title: "Foundations of Excellence",
     desc: "Asios laid the cornerstone for a journey dedicated to tile craftsmanship — a vision built on precision and the redefinition of space.",
+    keyword: "Founded",
   },
   {
     year: "2020",
+    chapter: "Chapter 02",
     title: "Innovation Unleashed",
     desc: "We expanded our range to incorporate cutting-edge designs, materials, and technology — earning the trust of a growing clientele despite global headwinds.",
+    keyword: "Expanded",
   },
   {
     year: "2021",
+    chapter: "Chapter 03",
     title: "Design Diversity",
     desc: "A celebrated year of design diversity. We introduced styles and patterns to suit varied tastes, becoming a curated destination for discerning specifiers.",
+    keyword: "Diversified",
   },
   {
     year: "2023",
+    chapter: "Chapter 04",
     title: "Pinnacles of Success",
     desc: "Asios reached new heights — synonymous with top-tier surface solutions, enriching homes and commercial spaces across the globe.",
+    keyword: "Recognised",
+  },
+  {
+    year: "Today",
+    chapter: "Chapter 05",
+    title: "Onward, Outward",
+    desc: "Fifty-plus markets, more than a thousand designs in active production, and a roadmap that grows with every partner who chooses us.",
+    keyword: "Scaling",
+  },
+];
+
+const stats = [
+  { value: "8+", label: "Years of Craft", note: "Since the cornerstone in 2017" },
+  { value: "50+", label: "Export Markets", note: "Across five continents" },
+  { value: "1,200+", label: "Active Designs", note: "Curated across collections" },
+  { value: "27,500+", label: "Tonnes Shipped", note: "Annual freight tonnage" },
+];
+
+const principles = [
+  {
+    index: "01",
+    title: "We don't ship what we wouldn't lay in our own homes.",
+    note: "Quality is the only currency that compounds over a long client relationship.",
+  },
+  {
+    index: "02",
+    title: "We answer every inquiry within one business day.",
+    note: "Speed is the cheapest form of respect we can offer.",
+  },
+  {
+    index: "03",
+    title: "We document every container with photo evidence.",
+    note: "Transparency removes ambiguity; ambiguity is where claims start.",
+  },
+  {
+    index: "04",
+    title: "We sign nothing until samples are approved.",
+    note: "Surfaces are decided in the hand, never on the screen.",
+  },
+  {
+    index: "05",
+    title: "We treat partnership longer than transactions.",
+    note: "If the third order isn't easier than the first, we've failed.",
   },
 ];
 
@@ -60,6 +110,9 @@ const heroFade = {
 };
 
 const AboutUS = () => {
+  const [activeMilestone, setActiveMilestone] = useState(0);
+  const milestone = milestones[activeMilestone];
+
   return (
     <main>
       {/* Hero */}
@@ -174,6 +227,30 @@ const AboutUS = () => {
         </div>
       </section>
 
+      {/* Numbers in motion */}
+      <section className="bg-white border-y border-sand-200">
+        <div className="max-w-[1400px] mx-auto px-6 md:px-10 lg:px-12 py-14 md:py-20">
+          <div className="grid grid-cols-2 lg:grid-cols-4 divide-x divide-sand-200">
+            {stats.map((s, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.4 }}
+                transition={{ duration: 0.6, delay: i * 0.08, ease: [0.22, 1, 0.36, 1] }}
+                className="px-4 md:px-8 py-4 first:pl-0 last:pr-0 text-center lg:text-left"
+              >
+                <div className="display text-5xl md:text-6xl lg:text-[72px] text-ink leading-none mb-3">
+                  {s.value}
+                </div>
+                <div className="eyebrow !text-[10px]">{s.label}</div>
+                <div className="mt-2 text-[12.5px] text-sand-500 leading-[1.6]">{s.note}</div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Commitments + image grid */}
       <section className="section bg-cream">
         <div className="max-w-[1400px] mx-auto px-6 md:px-10 lg:px-12">
@@ -218,56 +295,234 @@ const AboutUS = () => {
         </div>
       </section>
 
-      {/* Milestones timeline */}
-      <section className="section bg-ink text-white">
+      {/* Milestones — interactive year navigator */}
+      <section className="section bg-ink text-white relative overflow-hidden">
+        {/* ambient red glow */}
+        <div className="absolute -top-32 -right-32 w-96 h-96 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-40 -left-32 w-[500px] h-[500px] bg-primary/5 rounded-full blur-3xl pointer-events-none" />
+
+        <div className="relative max-w-[1400px] mx-auto px-6 md:px-10 lg:px-12">
+          <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-8 mb-14 md:mb-20">
+            <div>
+              <div className="flex items-center gap-3 mb-5">
+                <span className="rule rule-light !w-10" />
+                <span className="eyebrow eyebrow-light !text-white">Our Journey</span>
+              </div>
+              <h2 className="display !text-white text-4xl md:text-5xl lg:text-[56px] leading-[1.05]">
+                Milestones that <span className="display-italic text-primary">shaped us.</span>
+              </h2>
+            </div>
+            <p className="text-[14.5px] text-white/55 leading-[1.85] max-w-md">
+              Five chapters in our story so far. Tap a year to read its page.
+            </p>
+          </div>
+
+          <div className="grid lg:grid-cols-12 gap-10 lg:gap-16 items-start">
+            {/* Year selector */}
+            <div className="lg:col-span-4">
+              <div className="flex lg:flex-col gap-3 lg:gap-2 overflow-x-auto lg:overflow-visible -mx-6 px-6 lg:mx-0 lg:px-0 pb-2 lg:pb-0">
+                {milestones.map((m, i) => {
+                  const isActive = i === activeMilestone;
+                  return (
+                    <button
+                      key={m.year}
+                      type="button"
+                      onClick={() => setActiveMilestone(i)}
+                      className="group relative flex items-baseline gap-4 lg:gap-6 lg:py-5 py-3 px-4 lg:px-0 lg:border-l-2 lg:pl-6 transition-all duration-500 ease-editorial flex-shrink-0 lg:flex-shrink"
+                      style={{
+                        borderColor: isActive ? "#a42832" : "rgba(255,255,255,0.08)",
+                      }}
+                    >
+                      <span
+                        className={`text-[10px] tracking-[0.22em] uppercase font-semibold transition-colors duration-500 ${
+                          isActive ? "text-primary" : "text-white/30 group-hover:text-white/55"
+                        }`}
+                      >
+                        {m.chapter}
+                      </span>
+                      <span
+                        className={`display block transition-all duration-500 ${
+                          isActive
+                            ? "!text-white text-3xl md:text-4xl"
+                            : "!text-white/30 text-2xl group-hover:!text-white/60"
+                        }`}
+                      >
+                        {m.year}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Active milestone content */}
+            <div className="lg:col-span-8 min-h-[280px]">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={activeMilestone}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                >
+                  <div className="flex items-center gap-3 mb-5">
+                    <span className="rule rule-light !w-8" />
+                    <span className="eyebrow eyebrow-light !text-white/80 !text-[10px]">
+                      {milestone.keyword}
+                    </span>
+                  </div>
+                  {/* huge year ghost */}
+                  <div className="relative">
+                    <span className="absolute -top-4 -left-2 display text-8xl md:text-[140px] lg:text-[180px] text-white/5 leading-none pointer-events-none select-none">
+                      {milestone.year}
+                    </span>
+                    <h3 className="relative display !text-white text-3xl md:text-4xl lg:text-[44px] leading-[1.1] mb-6 pt-4">
+                      {milestone.title}
+                    </h3>
+                    <p className="relative text-[15px] md:text-[16px] text-white/70 leading-[1.85] max-w-2xl">
+                      {milestone.desc}
+                    </p>
+                  </div>
+                </motion.div>
+              </AnimatePresence>
+
+              {/* Progress bar */}
+              <div className="mt-12 flex items-center gap-3">
+                <span className="font-mono text-[11px] tracking-[0.18em] text-white/55">
+                  {String(activeMilestone + 1).padStart(2, "0")}
+                </span>
+                <div className="flex-1 h-px bg-white/10 relative">
+                  <span
+                    className="absolute left-0 top-0 h-full bg-primary transition-all duration-700 ease-editorial"
+                    style={{
+                      width: `${((activeMilestone + 1) / milestones.length) * 100}%`,
+                    }}
+                  />
+                </div>
+                <span className="font-mono text-[11px] tracking-[0.18em] text-white/35">
+                  {String(milestones.length).padStart(2, "0")}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* The Asios Way — manifesto */}
+      <section className="section bg-white">
         <div className="max-w-[1400px] mx-auto px-6 md:px-10 lg:px-12">
           <div className="text-center mb-14 md:mb-20">
             <div className="flex items-center justify-center gap-3 mb-5">
-              <span className="rule rule-light !w-10" />
-              <span className="eyebrow eyebrow-light !text-white">Our Journey</span>
-              <span className="rule rule-light !w-10" />
+              <span className="rule !w-10" />
+              <span className="eyebrow">The Asios Way</span>
+              <span className="rule !w-10" />
             </div>
-            <h2 className="display !text-white text-4xl md:text-5xl lg:text-[52px] leading-[1.05]">
-              Milestones that <span className="display-italic text-primary">shaped us.</span>
+            <h2 className="display text-4xl md:text-5xl lg:text-[56px] leading-[1.05] max-w-3xl mx-auto">
+              Five rules we <span className="display-italic text-primary">don't break.</span>
             </h2>
+            <p className="mt-6 text-[15px] text-sand-600 leading-[1.85] max-w-2xl mx-auto">
+              The internal language we keep coming back to — when a quote is hard to make,
+              when a deadline is tight, when something goes wrong on the line.
+            </p>
           </div>
 
-          <div className="relative">
-            {/* desktop spine */}
-            <div className="hidden lg:block absolute top-0 bottom-0 left-1/2 w-px bg-white/15" />
+          <div className="border-t border-sand-300">
+            {principles.map((p, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.2 }}
+                transition={{ duration: 0.6, delay: i * 0.05, ease: [0.22, 1, 0.36, 1] }}
+                className="grid grid-cols-12 gap-4 md:gap-8 py-8 md:py-12 border-b border-sand-300 group hover:bg-cream/60 transition-colors duration-500 px-2 md:px-4"
+              >
+                <div className="col-span-2 md:col-span-1">
+                  <span className="display text-2xl md:text-3xl text-sand-300 group-hover:text-primary transition-colors">
+                    {p.index}
+                  </span>
+                </div>
+                <div className="col-span-10 md:col-span-7">
+                  <h3 className="display text-2xl md:text-[32px] lg:text-[36px] leading-[1.15]">
+                    {p.title}
+                  </h3>
+                </div>
+                <div className="col-span-12 md:col-span-4 md:pl-4 flex items-end">
+                  <p className="text-[13.5px] md:text-[14px] text-sand-500 italic leading-[1.7]">
+                    {p.note}
+                  </p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
 
-            <div className="flex flex-col gap-10 lg:gap-16">
-              {milestones.map((m, i) => (
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0, y: 28 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, amount: 0.3 }}
-                  transition={{ duration: 0.7, delay: i * 0.08, ease: [0.22, 1, 0.36, 1] }}
-                  className={`lg:grid lg:grid-cols-2 lg:gap-16 relative ${
-                    i % 2 === 1 ? "lg:[&>div:first-child]:col-start-2" : ""
-                  }`}
+      {/* Founder's Note */}
+      <section className="section bg-cream relative overflow-hidden">
+        <div className="absolute -top-24 right-0 w-72 h-72 bg-primary/8 rounded-full blur-3xl pointer-events-none" />
+        <div className="relative max-w-[1400px] mx-auto px-6 md:px-10 lg:px-12">
+          <div className="grid lg:grid-cols-12 gap-10 lg:gap-16">
+            <div className="lg:col-span-4">
+              <div className="flex items-center gap-3 mb-5">
+                <span className="rule" />
+                <span className="eyebrow">A Note From</span>
+              </div>
+              <h2 className="display text-4xl md:text-5xl lg:text-[52px] leading-[1.05] mb-6">
+                The <span className="display-italic text-primary">leadership.</span>
+              </h2>
+              <p className="text-[14px] text-sand-500 leading-[1.7] max-w-xs">
+                Personal correspondence from the desk of the founding team — read in the spirit
+                in which it was written.
+              </p>
+            </div>
+            <motion.div
+              className="lg:col-span-8"
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.3 }}
+              transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+            >
+              <div className="bg-white p-8 md:p-12 lg:p-16 border border-sand-200 shadow-soft relative">
+                {/* serif quote mark */}
+                <span
+                  className="absolute -top-6 -left-2 md:-left-4 display text-[140px] md:text-[180px] text-primary/15 leading-none pointer-events-none select-none"
+                  aria-hidden="true"
                 >
-                  <div className={`${i % 2 === 1 ? "lg:text-left" : "lg:text-right"}`}>
-                    <div
-                      className={`inline-flex flex-col ${
-                        i % 2 === 1 ? "lg:items-start" : "lg:items-end"
-                      } items-start max-w-md`}
-                    >
-                      <span className="display text-5xl md:text-6xl text-primary mb-3">
-                        {m.year}
-                      </span>
-                      <h3 className="display !text-white text-2xl md:text-[28px] mb-3 leading-tight">
-                        {m.title}
-                      </h3>
-                      <p className="text-[14px] text-white/65 leading-[1.8]">{m.desc}</p>
+                  &ldquo;
+                </span>
+
+                <div className="relative">
+                  <p className="display text-2xl md:text-3xl lg:text-[34px] leading-[1.4] mb-8 text-ink">
+                    Ceramics is a slow craft. The clay needs time, the kiln needs patience, and
+                    the buyer — the right buyer — needs the same honesty over and over.
+                  </p>
+                  <p className="text-[15px] text-sand-600 leading-[1.85] mb-5">
+                    When we set up shop in Morbi, the calculation was simple: build a name a
+                    family would want to inherit. Not the loudest in the catalogue, not the
+                    cheapest in the quote. The most trustworthy. The one a designer specifies
+                    twice without checking the brief.
+                  </p>
+                  <p className="text-[15px] text-sand-600 leading-[1.85] mb-10">
+                    Eight years on, the work is the same. Show up early. Inspect twice. Answer
+                    the email before the kettle boils. Ship what we'd lay in our own homes.
+                    Repeat. We're grateful you're here — read the rest of the site, and write
+                    to us when you're ready.
+                  </p>
+
+                  <div className="flex items-center gap-5 pt-6 border-t border-sand-200">
+                    <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+                      <span className="display text-xl text-primary">A</span>
+                    </div>
+                    <div>
+                      <div className="display text-xl">The Asios Team</div>
+                      <div className="text-[12px] tracking-[0.22em] uppercase text-sand-500 mt-1">
+                        Morbi · Gujarat · India
+                      </div>
                     </div>
                   </div>
-                  {/* spine dot */}
-                  <span className="hidden lg:block absolute left-1/2 top-3 w-3 h-3 rounded-full bg-primary -translate-x-1/2" />
-                </motion.div>
-              ))}
-            </div>
+                </div>
+              </div>
+            </motion.div>
           </div>
         </div>
       </section>

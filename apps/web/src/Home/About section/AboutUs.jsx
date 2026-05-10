@@ -72,7 +72,7 @@ const AboutUs = () => {
             {/* Stats strip */}
             <div className="grid grid-cols-3 gap-6 lg:gap-10 mt-12 pt-10 border-t border-sand-200">
               <div>
-                <div className="display text-3xl md:text-4xl text-ink">15+</div>
+                <div className="display text-3xl md:text-4xl text-ink">8+</div>
                 <div className="eyebrow mt-1.5 !text-[10px]">Years of Craft</div>
               </div>
               <div>
