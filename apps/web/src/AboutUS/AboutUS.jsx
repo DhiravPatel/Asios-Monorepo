@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useRef, useState } from "react";
+import { motion, AnimatePresence, useScroll, useMotionValueEvent } from "framer-motion";
 import { Link } from "react-router-dom";
 import { FiArrowUpRight } from "react-icons/fi";
 import aboutus from "../assets/about.webp";
@@ -110,8 +110,31 @@ const heroFade = {
 };
 
 const AboutUS = () => {
+  const milestonesRef = useRef(null);
   const [activeMilestone, setActiveMilestone] = useState(0);
   const milestone = milestones[activeMilestone];
+
+  const { scrollYProgress } = useScroll({
+    target: milestonesRef,
+    offset: ["start start", "end end"],
+  });
+
+  // Map scroll progress (0 → 1) to active chapter index, evenly spaced.
+  useMotionValueEvent(scrollYProgress, "change", (value) => {
+    const N = milestones.length;
+    const idx = Math.min(N - 1, Math.max(0, Math.floor(value * N)));
+    setActiveMilestone(idx);
+  });
+
+  // Click on a year → smooth-scroll to the middle of that chapter's scroll range.
+  const scrollToMilestone = (idx) => {
+    const section = milestonesRef.current;
+    if (!section) return;
+    const sectionTop = section.getBoundingClientRect().top + window.scrollY;
+    const scrollableRange = section.offsetHeight - window.innerHeight;
+    const target = sectionTop + ((idx + 0.5) / milestones.length) * scrollableRange;
+    window.scrollTo({ top: Math.max(0, target), behavior: "smooth" });
+  };
 
   return (
     <main>
@@ -295,27 +318,32 @@ const AboutUS = () => {
         </div>
       </section>
 
-      {/* Milestones — interactive year navigator */}
-      <section className="section bg-ink text-white relative overflow-hidden">
-        {/* ambient red glow */}
-        <div className="absolute -top-32 -right-32 w-96 h-96 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute -bottom-40 -left-32 w-[500px] h-[500px] bg-primary/5 rounded-full blur-3xl pointer-events-none" />
+      {/* Milestones — scroll-driven chapter navigator */}
+      <section
+        ref={milestonesRef}
+        className="bg-ink text-white relative"
+        style={{ minHeight: `${milestones.length * 100}vh` }}
+      >
+        <div className="sticky top-0 h-screen flex items-center overflow-hidden">
+          {/* ambient red glow */}
+          <div className="absolute -top-32 -right-32 w-96 h-96 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute -bottom-40 -left-32 w-[500px] h-[500px] bg-primary/5 rounded-full blur-3xl pointer-events-none" />
 
-        <div className="relative max-w-[1400px] mx-auto px-6 md:px-10 lg:px-12">
-          <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-8 mb-14 md:mb-20">
-            <div>
-              <div className="flex items-center gap-3 mb-5">
-                <span className="rule rule-light !w-10" />
-                <span className="eyebrow eyebrow-light !text-white">Our Journey</span>
+          <div className="relative w-full max-w-[1400px] mx-auto px-6 md:px-10 lg:px-12">
+            <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-10 md:mb-14">
+              <div>
+                <div className="flex items-center gap-3 mb-5">
+                  <span className="rule rule-light !w-10" />
+                  <span className="eyebrow eyebrow-light !text-white">Our Journey</span>
+                </div>
+                <h2 className="display !text-white text-3xl md:text-4xl lg:text-[48px] leading-[1.05]">
+                  Milestones that <span className="display-italic text-primary">shaped us.</span>
+                </h2>
               </div>
-              <h2 className="display !text-white text-4xl md:text-5xl lg:text-[56px] leading-[1.05]">
-                Milestones that <span className="display-italic text-primary">shaped us.</span>
-              </h2>
+              <p className="text-[13px] text-white/55 leading-[1.85] max-w-md">
+                Five chapters in our story so far. Scroll to read each one.
+              </p>
             </div>
-            <p className="text-[14.5px] text-white/55 leading-[1.85] max-w-md">
-              Five chapters in our story so far. Tap a year to read its page.
-            </p>
-          </div>
 
           <div className="grid lg:grid-cols-12 gap-10 lg:gap-16 items-start">
             {/* Year selector */}
@@ -327,8 +355,8 @@ const AboutUS = () => {
                     <button
                       key={m.year}
                       type="button"
-                      onClick={() => setActiveMilestone(i)}
-                      className="group relative flex items-baseline gap-4 lg:gap-6 lg:py-5 py-3 px-4 lg:px-0 lg:border-l-2 lg:pl-6 transition-all duration-500 ease-editorial flex-shrink-0 lg:flex-shrink"
+                      onClick={() => scrollToMilestone(i)}
+                      className="group relative flex items-baseline gap-4 lg:gap-6 lg:py-4 py-3 px-4 lg:px-0 lg:border-l-2 lg:pl-6 transition-all duration-500 ease-editorial flex-shrink-0 lg:flex-shrink"
                       style={{
                         borderColor: isActive ? "#a42832" : "rgba(255,255,255,0.08)",
                       }}
@@ -404,6 +432,7 @@ const AboutUS = () => {
                 </span>
               </div>
             </div>
+          </div>
           </div>
         </div>
       </section>
